@@ -46,14 +46,30 @@ class Externalcompanies_controller extends CI_Controller
     **/
     public function add()
     {
-        print_r($_POST);
-        // if(in_array('ADD', $this->actions))
-        // {
-        //     $params                                                             =   $this->security->xss_clean($_POST);
+        if(in_array('ADD', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
 
-        //     if ($params)
-        //     {
-        //         $exist_user                                                     =   $this->_users_model->exist_user($params);
+            if ($params)
+            {
+                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
+                
+                echo json_encode($exist_company);
+                exit();
+                // if ($exist_company['data'])
+                // {
+
+                // }
+                // else
+                // {
+                //     echo json_encode($exist_company);
+                //     exit();
+                // }
+
+    // **** BORRAR ****
+            }
+        }
+    // **** BORRAR ****
 
         //         if ($exist_user['data'])
         //         {

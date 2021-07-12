@@ -65,6 +65,10 @@
                         <div class="form-layout">
                             <form id="form_add" method="post" action="{$path_add}">
                                 <div class="row mg-b-25">
+                                <div class="col-lg-12">
+                                <div id="form-errors" class="alert alert-danger d-none">
+                                </div>
+                                </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Nombre de la empresa: </label>

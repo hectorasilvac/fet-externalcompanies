@@ -159,15 +159,15 @@ $(document).ready(function () {
             minlength: 5,
             maxlength: 60,
         },
-        country_cv_ec: {
-            required: true,
-        },
-        department_cv_ec: {
-            required: true,
-        },
-        city_cv_ec: {
-            required: true,
-        }
+        // country_cv_ec: {
+        //     required: true,
+        // },
+        // department_cv_ec: {
+        //     required: true,
+        // },
+        // city_cv_ec: {
+        //     required: true,
+        // }
     },
     messages: {
         name_cv_ec: {
@@ -222,36 +222,45 @@ $(document).ready(function () {
 });
 
 function submit(form) {
-    $(form).ajaxSubmit({
-        dataType: "json",
-        url: window.location.href + "/add",
-        type: "post",
-        resetForm: true,
-        clearForm: true,
-        success: function ({ data, message, error }) {
-            if (error && data.length >= 1) {
-                $("#form-errors").removeClass("d-none");
-                $("#form-errors").addClass("alert alert-danger");
-                data.forEach((item) => {
-                    $(item).appendTo("#form-errors");
-                });
-            } else if (error) {
-                $("#form-errors").addClass("d-none");
-                iziToast.error({
-                    title: "Error",
-                    message: message,
-                    position: "topRight",
-                });
-            } else {
-                $("#form-errors").addClass("d-none");
-                iziToast.success({
-                    message: message,
-                    position: "topRight",
-                });
-            }
-            table.ajax.reload();
-        },
+  $(form).ajaxSubmit({
+    dataType: "json",
+    url: window.location.href + "/add",
+    type: "post",
+    resetForm: false, // TRUE
+    clearForm: false, // TRUE
+    success: function ({ data, message }) {
+      $(".text-error").empty();
+
+      if (data === false) {
+        errorAlert(message);
+
+        $("#form-errors").removeClass("d-none");
+        $(`<span class="text-error">${message}</span>`).appendTo(
+          "#form-errors"
+        );
+        return false;
+      }
+
+      $("#form-errors").addClass("d-none");
+      successAlert("Empresa agregada correctamente");
+
+      // table.ajax.reload();
+    },
+  });
+}
+
+// iziToast - Alerts
+function errorAlert(message) {
+    iziToast.warning({
+        message: message,
+        position: "topRight",
     });
 }
 
+function successAlert(message) {
+    iziToast.success({
+        message: message,
+        position: "topRight",
+    });
+}
 });
