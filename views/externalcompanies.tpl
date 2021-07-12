@@ -136,11 +136,9 @@
                                     </div>
                                 </div>
                         </div>
+                        <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
+                        <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
                         </form>
-                        <div>
-                            <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
-                            <button id="btn_cancel_add" class="btn btn-secondary">Cancelar</button>
-                        </div>
                     </div>
                 </div>
             {/if}

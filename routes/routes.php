@@ -194,4 +194,7 @@ $route['users/exportxlsx']                                                      
 // EMPRESAS EXTERNAS
 $route['externalcompanies']                                                     =   'externalcompanies_controller/view';
 
+$route['externalcompanies/add']                                                 =   'externalcompanies_controller/add';
+
 $route['externalcompanies/location']                                           =   'externalcompanies_controller/location';
+

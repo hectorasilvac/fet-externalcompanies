@@ -44,10 +44,10 @@ class Externalcompanies_model extends CI_Model
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
-    * @param     array $params array $table
+    * @param     array $params, array $table, array|null $parent_table
     * @return    array $result
     **/
-    public function location_select($params, $tables)
+    public function location_select($params, $table, $parent_table = NULL)
     {
         $result                                                                 =   array();
         $page                                                                   =   $params['page'];
@@ -55,16 +55,11 @@ class Externalcompanies_model extends CI_Model
         $start                                                                  =   ($page - 1) * $range;
         $limit                                                                  =   $start + $range;
 
-        $table_name                                                             =   $params['name'];
-        $table                                                                  =   $tables[$table_name];
-
         $this->db->select("{$table['id']} AS id, {$table['text']} AS text");
         $this->db->where('flag_drop', 0);
 
-        if (isset($params['parentId']) && $params['parentId'] != 0)
-        {
-            $parent_name                                                            =   $params['parentName'];
-            $parent_table                                                           =   $tables[$parent_name];  
+        if ( ! is_null($parent_table))
+        { 
             $this->db->where($parent_table['id'], $params['parentId']);
         }
 

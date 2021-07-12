@@ -37,6 +37,66 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function add()
+    {
+        print_r($_POST);
+        // if(in_array('ADD', $this->actions))
+        // {
+        //     $params                                                             =   $this->security->xss_clean($_POST);
+
+        //     if ($params)
+        //     {
+        //         $exist_user                                                     =   $this->_users_model->exist_user($params);
+
+        //         if ($exist_user['data'])
+        //         {
+        //             $add                                                        =   $this->_users_model->add($params);
+
+        //             echo json_encode($add);
+        //             exit();
+        //         }
+        //         else
+        //         {
+        //             echo json_encode($exist_user);
+        //             exit();
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if ($this->input->method(TRUE) == 'GET')
+        //         {
+        //             header("Location: " . site_url('users'));
+        //         }
+        //         else
+        //         {
+        //             echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+        //         }
+
+        //         exit();
+        //     }
+        // } 
+        // else
+        // {
+        //     if ($this->input->method(TRUE) == 'GET')
+        //     {
+        //         header("Location: " . site_url('users'));
+        //     }
+        //     else
+        //     {
+        //         echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+        //     }
+
+        //     exit();
+        // } 
+    }
+
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
@@ -124,21 +184,26 @@ class Externalcompanies_controller extends CI_Controller
             ],
         ];
 
-        if (isset($tables[$table_name]))
+        if (count($tables[$table_name]) > 0 && $params['parentId'] != 0 && strlen($params['parentName']) > 0)
         {
-            $location                                                          =   $this->_externalcompanies_model->location_select($params, $tables);
-
+            $parent_table_name                                                  =   $params['parentName'];
+            $location                                                           =   $this->_externalcompanies_model->location_select($params, $tables[$table_name], $tables[$parent_table_name]);
+            
             echo json_encode($location);
             exit();
         }
-        else
+
+        if (count($tables[$table_name]) > 0) {
+            $location                                                           =   $this->_externalcompanies_model->location_select($params, $tables[$table_name]);
+
+            echo json_encode($location);
+            exit();
+        } 
+        else 
         {
-            if ($this->input->method(TRUE) == 'GET')
-            {
+            if ($this->input->method(TRUE) == 'GET') {
                 header("Location: " . site_url('externalcompanies'));
-            } 
-            else 
-            {
+            } else {
                 echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
             }
 
