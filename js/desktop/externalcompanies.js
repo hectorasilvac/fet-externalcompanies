@@ -157,17 +157,17 @@ $(document).ready(function () {
         },
         address_cv_ec: {
             minlength: 5,
-            maxlength: 60,
+            maxlength: 80,
         },
-        // country_cv_ec: {
-        //     required: true,
-        // },
-        // department_cv_ec: {
-        //     required: true,
-        // },
-        // city_cv_ec: {
-        //     required: true,
-        // }
+        country_cv_ec: {
+            required: true,
+        },
+        department_cv_ec: {
+            required: true,
+        },
+        city_cv_ec: {
+            required: true,
+        }
     },
     messages: {
         name_cv_ec: {
@@ -226,25 +226,33 @@ function submit(form) {
     dataType: "json",
     url: window.location.href + "/add",
     type: "post",
-    resetForm: false, // TRUE
-    clearForm: false, // TRUE
+    resetForm: true,
+    clearForm: true,
     success: function ({ data, message }) {
-      $(".text-error").empty();
+      $('#error-list').empty();
 
-      if (data === false) {
+      if (data === false && typeof message == 'object') {
+        Object.values(message).forEach((item) => {
+            $(`<li>${item}</li>`).appendTo("#error-list");
+        });
+
+        $("#form-errors").removeClass("d-none");
+        return false;
+      }
+
+      if (data === false && typeof message == 'string') {
+        $(`<li>${message}</li>`).appendTo("#error-list");
+
         errorAlert(message);
 
         $("#form-errors").removeClass("d-none");
-        $(`<span class="text-error">${message}</span>`).appendTo(
-          "#form-errors"
-        );
         return false;
-      }
+    }
 
       $("#form-errors").addClass("d-none");
       successAlert("Empresa agregada correctamente");
 
-      // table.ajax.reload();
+      table.ajax.reload();
     },
   });
 }

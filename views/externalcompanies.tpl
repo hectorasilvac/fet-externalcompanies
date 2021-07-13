@@ -36,7 +36,7 @@
                         {/if}
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
-                    <div class="table-wrapper d-none">
+                    <div class="table-wrapper">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force">
                                 <thead>
@@ -61,12 +61,14 @@
                 </div>
                 {if $mobile}<br />{/if}
                 {if $act_add}
-                    <div id="view_form_add" class="mg-t-60">
+                    <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
                             <form id="form_add" method="post" action="{$path_add}">
                                 <div class="row mg-b-25">
                                 <div class="col-lg-12">
                                 <div id="form-errors" class="alert alert-danger d-none">
+                                <ul id="error-list" class="px-3 mb-0">
+                                </ul>
                                 </div>
                                 </div>
                                     <div class="col-lg-12">

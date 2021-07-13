@@ -88,7 +88,7 @@ class Externalcompanies_model extends CI_Model
         exit();
     }
 
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
@@ -98,14 +98,14 @@ class Externalcompanies_model extends CI_Model
     public function exist_company($params)
     {
         $result                                                                 =   array();
+        $name_is_set                                                            =   strlen($params['name_cv_ec']) > 0;
         $nit_is_set                                                             =   strlen($params['nit_cv_ec']) > 0 && is_numeric($params['nit_cv_ec']);
         $email_is_set                                                           =   strlen($params['email_cv_ec']) > 0;
         $phone_is_set                                                           =   strlen($params['phone_cv_ec']) > 0 && is_numeric($params['phone_cv_ec']);
 
         $select_query                                                           =   '';
-        $select_query                                                           .=   'name_cv_ec, ';
-        $select_query                                                           .=   'type_cv_ec, '; 
 
+        $name_is_set  ?   $select_query .=  'name_cv_ec, '    : NULL;
         $nit_is_set   ?   $select_query .=  'nit_cv_ec, '     : NULL;
         $email_is_set ?   $select_query .=  'email_cv_ec, '   : NULL;
         $phone_is_set ?   $select_query .=  'phone_cv_ec, '   : NULL;
@@ -115,7 +115,8 @@ class Externalcompanies_model extends CI_Model
         $this->db->where('flag_drop', 0);
 
         $this->db->group_start();
-        $nit_is_set   ?   $this->db->where('nit_cv_ec', $params['nit_cv_ec'])         :   NULL;
+        $name_is_set  ?   $this->db->where('name_cv_ec', $params['name_cv_ec'])       :   NULL;
+        $nit_is_set   ?   $this->db->or_where('nit_cv_ec', $params['nit_cv_ec'])      :   NULL;
         $email_is_set ?   $this->db->or_where('email_cv_ec', $params['email_cv_ec'])  :   NULL;
         $phone_is_set ?   $this->db->or_where('phone_cv_ec', $params['phone_cv_ec'])  :   NULL;
         $this->db->group_end();
@@ -124,13 +125,14 @@ class Externalcompanies_model extends CI_Model
 
         if (count($query->result_array()) > 0)
         {
+
             $message                                                            =   '';
             foreach ($query->row_array() as $key => $value)
-            {
-                $value == trim($params['name_cv_ec'])   ?   $message = 'este nombre'    :   NULL;
-                $value == trim($params['nit_cv_ec'])    ?   $message = 'este NIT'       :   NULL;
-                $value == trim($params['email_cv_ec'])  ?   $message = 'este correo'    :   NULL;
-                $value == trim($params['phone_cv_ec'])  ?   $message = 'este teléfono'  :   NULL;
+            {   
+                strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
+                strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
+                strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;
+                strtolower($value) == strtolower(trim($params['phone_cv_ec']))  ?   $message = 'este teléfono' :   NULL;
             }
 
             $result['data']                                                     =   FALSE;
@@ -140,6 +142,136 @@ class Externalcompanies_model extends CI_Model
         {
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   FALSE;
+        }
+
+        return $result;
+        exit();
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function add($params)
+    {
+        $result                                                                 =   array();
+
+        $entries = [
+            [
+                'field' => 'name_cv_ec',
+                'label' => 'nombre de la empresa',
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'El %s no puede quedar en blanco.',
+                ]
+            ],
+            [
+                'field' => 'nit_cv_ec',
+                'label' => 'NIT de la empresa',
+                'rules' => 'numeric',
+                'errors' => [
+                    'numeric' => 'El %s solo puede contener números.',
+                ]
+            ],
+            [
+                'field' => 'type_cv_ec',
+                'label' => 'tipo de empresa',
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Por favor seleccione el %s',
+                ]
+            ],
+            [
+                'field' => 'email_cv_ec',
+                'label' => 'correo electrónico',
+                'rules' => 'is_unique[fet_cv_ec.email_cv_ec]|valid_email',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'valid_email' => 'El %s no tiene un formato válido',
+                ]
+            ],
+            [
+                'field' => 'phone_cv_ec',
+                'label' =>   'teléfono',
+                'rules' => 'numeric|min_length[7]|max_length[10]',
+                'errors' =>  [
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 7 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 10 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'address_cv_ec',
+                'label' =>   'dirección',
+                'rules' => 'min_length[5]|max_length[80]',
+                'errors' =>  [
+                    'min_length' => 'La %s debe contener al menos 5 caracteres.',
+                    'max_length' => 'La %s debe contener máximo 80 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'country_cv_ec',
+                'label' =>   'país',
+                'rules' => 'required',
+                'errors' =>  [
+                    'required' => 'Por favor seleccione el %s',
+                ]
+            ],
+            [
+                'field' => 'department_cv_ec',
+                'label' =>   'departamento',
+                'rules' => 'required',
+                'errors' =>  [
+                    'required' => 'Por favor seleccione el %s',
+                ]
+            ],
+            [
+                'field' => 'city_cv_ec',
+                'label' =>   'ciudad',
+                'rules' => 'required',
+                'errors' =>  [
+                    'required' => 'Por favor seleccione la %s',
+                ]
+            ],
+        ];
+
+        $this->form_validation->set_rules($entries);
+
+        if ($this->form_validation->run())
+        {
+            $data                                                               =   array();
+            $data['name_cv_ec']                                                 =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec'])));
+            $data['nit_cv_ec']                                                  =   trim($params['nit_cv_ec']);
+            $data['type_cv_ec']                                                 =   trim($params['type_cv_ec']);
+            $data['email_cv_ec']                                                =   $this->_trabajandofet_model->user_name(trim($params['email_cv_ec']));
+            $data['phone_cv_ec']                                                =   trim($params['phone_cv_ec']);
+            $data['address_cv_ec']                                              =   trim($params['address_cv_ec']);
+            $data['country_cv_ec']                                              =   trim($params['country_cv_ec']);
+            $data['department_cv_ec']                                           =   trim($params['department_cv_ec']);
+            $data['city_cv_ec']                                                 =   trim($params['city_cv_ec']);
+            $data['user_insert']                                                =   $this->session->userdata['id_user'];
+            $data['date_insert']                                                =   date('Y-m-d H:i:s');
+
+            $query                                                              =   $this->db->insert('fet_cv_ec', $data);
+
+            if ($query)
+            {
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'La empresa se ha registrado correctamente';
+            }
+            else
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Error al registrar la empresa';
+            }
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   $this->form_validation->error_array();
         }
 
         return $result;
