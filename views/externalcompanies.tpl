@@ -38,18 +38,16 @@
                     {if $mobile}<br /><br /><br />{/if}
                     <div class="table-wrapper">
                         {if $act_view}
-                            <table id="default_table" class="table table-hover tb-responsive wd-100p-force">
-                                <thead>
+                            <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
+                                <thead class="thead-light">
                                     <tr>
-                                        {if !$mobile}<th class="wd-10p-force p-2">No</th>{/if}
-                                        <th class="wd-15p-force p-2">Nombre</th>
-                                        <th class="wd-10p-force p-2">Rol</th>
-                                        <th class="wd-10p-force p-2">Usuario</th>
-                                        <th class="wd-10p-force p-2">Correo</th>
-                                        <th class="wd-15p-force p-2">Último ingreso</th>
-                                        <th class="wd-15p-force p-2">Aspirante</th>
-                                        {if $act_display or $act_edit or $act_drop or $act_trace}
-                                            <th class="wd-15p-force p-2"></th>
+                                        <th class="wd-15p-force p-3 text-center text-uppercase text-secondary">Nombre</th>
+                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">NIT</th>
+                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">Tipo</th>
+                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">Correo</th>
+                                        <th class="wd-15p-force p-3 text-center text-uppercase text-secondary">Teléfono</th>
+                                        {if $act_edit or $act_drop or $act_trace}
+                                            <th class="wd-15p-force p-3 text-center text-uppercase text-secondary"></th>
                                         {else}
                                             <th class="d-none"></th>
                                         {/if}
@@ -65,12 +63,12 @@
                         <div class="form-layout">
                             <form id="form_add" method="post" action="{$path_add}">
                                 <div class="row mg-b-25">
-                                <div class="col-lg-12">
-                                <div id="form-errors" class="alert alert-danger d-none">
-                                <ul id="error-list" class="px-3 mb-0">
-                                </ul>
-                                </div>
-                                </div>
+                                    <div class="col-lg-12">
+                                        <div id="form-errors" class="alert alert-danger d-none">
+                                            <ul id="error-list" class="px-3 mb-0">
+                                            </ul>
+                                        </div>
+                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Nombre de la empresa: </label>
@@ -79,13 +77,13 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">NIT de la empresa: <span
-                                        class="tx-primary tx-10">(Opcional)</span></label>
-                                        <input class="form-control" type="text" id="nit_cv_ec" name="nit_cv_ec"
-                                            placeholder="Ingresa el NIT de la empresa" autocomplete="off">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">NIT de la empresa: <span
+                                                    class="tx-primary tx-10">(Opcional)</span></label>
+                                            <input class="form-control" type="text" id="nit_cv_ec" name="nit_cv_ec"
+                                                placeholder="Ingresa el NIT de la empresa" autocomplete="off">
+                                        </div>
                                     </div>
-                                </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Tipo de empresa: </label>
@@ -127,96 +125,79 @@
                                             </select>
                                         </div>
                                     </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Departamento: </label>
-                                        <select class="form-control" id="department_cv_ec" name="department_cv_ec">
-                                        </select>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Departamento: </label>
+                                            <select class="form-control" id="department_cv_ec" name="department_cv_ec">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Ciudad: </label>
+                                            <select class="form-control" id="city_cv_ec" name="city_cv_ec">
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Ciudad: </label>
-                                        <select class="form-control" id="city_cv_ec" name="city_cv_ec">
-                                        </select>
-                                    </div>
-                                </div>
+                                <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
+                                <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
+                            </form>
                         </div>
-                        <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
-                        <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
-                        </form>
                     </div>
-                </div>
-            {/if}
-            {if $act_edit}
-                <div id="view_form_edit" class="mg-t-60 d-none">
-                    <div class="form-layout">
-                        <form id="form_edit" method="post" action="{$path_edit}">
-                            <input class="form-control" type="hidden" id="id_user" name="pk">
-                            <input class="form-control" type="hidden" id="name_password" name="name" value="password_user"
-                                placeholder="Ingresa contraseña" autocomplete="off">
-                            <label id="txt_name"></label>
-                            <div class="row mg-b-25">
-                                <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Contraseña: </label>
-                                        <input class="form-control" type="password" id="password_user_edit" name="value"
-                                            placeholder="Ingresa contraseña" autocomplete="off">
+                {/if}
+                {if $act_edit}
+                    <div id="view_form_edit" class="mg-t-60 d-none">
+                        <div class="form-layout">
+                            <form id="form_edit" method="post" action="{$path_edit}">
+                                <input class="form-control" type="hidden" id="id_user" name="pk">
+                                <input class="form-control" type="hidden" id="name_password" name="name" value="password_user"
+                                    placeholder="Ingresa contraseña" autocomplete="off">
+                                <label id="txt_name"></label>
+                                <div class="row mg-b-25">
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Contraseña: </label>
+                                            <input class="form-control" type="password" id="password_user_edit" name="value"
+                                                placeholder="Ingresa contraseña" autocomplete="off">
+                                        </div>
                                     </div>
                                 </div>
+                            </form>
+                            <div>
+                                <button id="btn_confirm_edit" class="btn btn-info">Editar</button>
+                                <button id="btn_cancel_edit" class="btn btn-secondary">Cancelar</button>
                             </div>
-                        </form>
-                        <div>
-                            <button id="btn_confirm_edit" class="btn btn-info">Editar</button>
-                            <button id="btn_cancel_edit" class="btn btn-secondary">Cancelar</button>
                         </div>
                     </div>
-                </div>
-                <div id="view_edit_flags" class="mg-t-60 d-none">
-                    <div class="form-layout">
-                        <input class="form-control" type="hidden" id="id_user_flags" name="id_user">
-                        <div class="row mg-b-25">
-                            {foreach from=$all_flags item=row}
-                                <div class="col-lg-6 mg-t-20">
-                                    <label class="ckbox">
-                                        <input class="flags_edit" id="flag{$row.id_flag}" name="{$row.name_flag}" type="checkbox"
-                                            value="{$row.id_flag}">
-                                        <span>{$row.name_es_flag}</span>
-                                    </label>
-                                </div>
-                            {/foreach}
-                        </div>
-                        <div>
-                            <button id="btn_cancel_edit_flags" class="btn btn-secondary">Cerrar</button>
+                    <div id="view_edit_flags" class="mg-t-60 d-none">
+                        <div class="form-layout">
+                            <input class="form-control" type="hidden" id="id_user_flags" name="id_user">
+                            <div class="row mg-b-25">
+                                {foreach from=$all_flags item=row}
+                                    <div class="col-lg-6 mg-t-20">
+                                        <label class="ckbox">
+                                            <input class="flags_edit" id="flag{$row.id_flag}" name="{$row.name_flag}"
+                                                type="checkbox" value="{$row.id_flag}">
+                                            <span>{$row.name_es_flag}</span>
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                            <div>
+                                <button id="btn_cancel_edit_flags" class="btn btn-secondary">Cerrar</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {/if}
+                {/if}
+            </div>
         </div>
-    </div>
     </div>
     <footer class="br-footer">
         <div class="footer-left">
             <div class="mg-b-2 tx-gray-800">{$COPYRIGHT}</div>
         </div>
     </footer>
-    {if $act_display}
-        <div id="modal_display" class="d-none">
-            <div class="bd-0 tx-14">
-                <div class="card bd-0">
-                    <div class="card-body bd bd-t-0 rounded-bottom-0">
-                        <br />
-                        <p class="mg-b-0"> Seguro que deseas <span id="txt_display"></span> este usuario?</p>
-                        <br />
-                    </div>
-                    <div class="card-footer bd bd-t-0 d-flex justify-content-between">
-                        <button id="btn_confirm_display" class="btn btn-primary">Confirmar</button>
-                        <button id="btn_cancel_display" class="btn btn-secondary">Cancelar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {/if}
     {if $act_drop}
         <div id="modal_delete" class="d-none">
             <div class="bd-0 tx-14">
@@ -259,6 +240,7 @@
 {/block}
 {block name='scripts'}
     <script type="text/javascript">
+        var $path_add                                                           =   '{$path_add}';
         var $path_view                                                          =   '{$path_view}';
         var $path_edit                                                          =   '{$path_edit}';
         var $path_userflags                                                     =   '{$path_userflags}';
@@ -271,10 +253,13 @@
 
         var $path_location                                                      =   '{$path_location}';
 
+        var act_view                                                            =   '{$act_view}';
         var act_edit                                                            =   '{$act_edit}';
-        var act_display                                                         =   '{$act_display}';
+        var act_details                                                         =   '{$act_details}';
+        var act_assign                                                          =   '{$act_assign}';
         var act_drop                                                            =   '{$act_drop}';
         var act_trace                                                           =   '{$act_trace}';
+        var act_export_xlsx                                                     =   '{$act_export_xlsx}';
     </script>
     {if $mobile}
         <script src="{$RESOURCES}js/mobile/externalcompanies.js"></script>

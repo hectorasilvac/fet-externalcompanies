@@ -44,6 +44,84 @@ class Externalcompanies_model extends CI_Model
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
+    * @param     string $search
+    * @return    array $result
+    **/
+    public function count_rows($search)
+    {
+        $result                                                                 =   array();
+
+        $this->db->where('flag_drop', 0);
+        $this->db->from('fet_cv_ec');
+
+        $result['total']                                                        =   $this->db->count_all_results();
+
+        if ( ! empty($search))
+        {
+            $this->db->select('name_cv_ec');
+            $this->db->from('fet_cv_ec');
+            $this->db->where('flag_drop', 0);
+
+            $result['total_filtered']                                           =   $this->db->count_all_results();
+        }
+        else
+        {
+            $result['total_filtered']                                           =   $result['total'];
+        }
+
+        return $result;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     int $limit, int $start, string $search, int $col, string $dir
+    * @return    array $query->result_array()
+    **/
+    public function all_rows($limit, $start, $search, $col, $dir)
+    {
+        $this->db->select('id_cv_ec, name_cv_ec, nit_cv_ec, type_cv_ec, email_cv_ec, phone_cv_ec');
+        $this->db->from('fet_cv_ec');
+        $this->db->where('flag_drop', 0);
+
+        if ( ! empty($search))
+        {
+            $this->db->group_start();
+            $this->db->like('name_cv_ec', $search);
+            $this->db->or_like('nit_cv_ec', $search);
+            $this->db->or_like('type_cv_ec', $search);
+            $this->db->or_like('email_cv_ec', $search);
+            $this->db->or_like('phone_cv_ec', $search);            
+            $this->db->group_end();
+        }
+
+        $this->db->limit($limit, $start);
+        $this->db->order_by($col, $dir);
+
+        $query                                                                  =   $this->db->get();
+
+        $companies                                                              =   $query->result_array();
+
+        if ($this->session->userdata['mobile'] == 0)
+        {
+            $count                                                              =   $start;
+            foreach ($companies as $key => $action)
+            {
+                $count++;
+                $companies[$key]['number']                                      =   $count;
+            }
+        }
+
+        return $companies;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
     * @param     array $params, array $table, array|null $parent_table
     * @return    array $result
     **/
@@ -98,28 +176,39 @@ class Externalcompanies_model extends CI_Model
     public function exist_company($params)
     {
         $result                                                                 =   array();
-        $name_is_set                                                            =   strlen($params['name_cv_ec']) > 0;
-        $nit_is_set                                                             =   strlen($params['nit_cv_ec']) > 0 && is_numeric($params['nit_cv_ec']);
-        $email_is_set                                                           =   strlen($params['email_cv_ec']) > 0;
-        $phone_is_set                                                           =   strlen($params['phone_cv_ec']) > 0 && is_numeric($params['phone_cv_ec']);
 
-        $select_query                                                           =   '';
+        if (isset($params['pk'])) 
+        {
+            $this->db->select($params['name']);
+            $this->db->where('flag_drop', 0);
+            $this->db->where($params['name'], trim($params['value']));
+            $this->db->where('id_cv_ec !=', $params['pk']);
+        } 
+        else 
+        {
+            $name_is_set                                                        =   isset($params['name_cv_ec'])  && strlen($params['name_cv_ec']) > 0;
+            $nit_is_set                                                         =   isset($params['nit_cv_ec'])   && strlen($params['nit_cv_ec']) > 0   && is_numeric($params['nit_cv_ec']);
+            $email_is_set                                                       =   isset($params['email_cv_ec']) && strlen($params['email_cv_ec']) > 0;
+            $phone_is_set                                                       =   isset($params['phone_cv_ec']) && strlen($params['phone_cv_ec']) > 0 && is_numeric($params['phone_cv_ec']);
 
-        $name_is_set  ?   $select_query .=  'name_cv_ec, '    : NULL;
-        $nit_is_set   ?   $select_query .=  'nit_cv_ec, '     : NULL;
-        $email_is_set ?   $select_query .=  'email_cv_ec, '   : NULL;
-        $phone_is_set ?   $select_query .=  'phone_cv_ec, '   : NULL;
+            $select_query                                                       =   '';
 
-        $select_query                                                           =  rtrim(trim($select_query),',');
-        $this->db->select($select_query);
-        $this->db->where('flag_drop', 0);
+            $name_is_set  ?   $select_query .=  'name_cv_ec, '  : NULL;
+            $nit_is_set   ?   $select_query .=  'nit_cv_ec, '   : NULL;
+            $email_is_set ?   $select_query .=  'email_cv_ec, ' : NULL;
+            $phone_is_set ?   $select_query .=  'phone_cv_ec, ' : NULL;
 
-        $this->db->group_start();
-        $name_is_set  ?   $this->db->where('name_cv_ec', $params['name_cv_ec'])       :   NULL;
-        $nit_is_set   ?   $this->db->or_where('nit_cv_ec', $params['nit_cv_ec'])      :   NULL;
-        $email_is_set ?   $this->db->or_where('email_cv_ec', $params['email_cv_ec'])  :   NULL;
-        $phone_is_set ?   $this->db->or_where('phone_cv_ec', $params['phone_cv_ec'])  :   NULL;
-        $this->db->group_end();
+            $select_query                                                       =  rtrim(trim($select_query), ',');
+            $this->db->select($select_query);
+            $this->db->where('flag_drop', 0);
+
+            $this->db->group_start();
+            $name_is_set  ?   $this->db->where('name_cv_ec', $params['name_cv_ec'])       :   NULL;
+            $nit_is_set   ?   $this->db->or_where('nit_cv_ec', $params['nit_cv_ec'])      :   NULL;
+            $email_is_set ?   $this->db->or_where('email_cv_ec', $params['email_cv_ec'])  :   NULL;
+            $phone_is_set ?   $this->db->or_where('phone_cv_ec', $params['phone_cv_ec'])  :   NULL;
+            $this->db->group_end();
+        }
 
         $query                                                                  =   $this->db->get('fet_cv_ec');
 
@@ -272,6 +361,60 @@ class Externalcompanies_model extends CI_Model
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   $this->form_validation->error_array();
+        }
+
+        return $result;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function edit($params)
+    {
+        $result                                                                 =   array();
+
+        if ($params['value'] != '' || $params['value'] != null)
+        {
+            $data                                                               =   array();
+
+            $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']   = mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
+            $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']    = $params['value']                                                      : NULL;
+            $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']   = $this->_trabajandofet_model->user_name($params['value'])              : NULL;
+            $params['name'] == 'email_cv_ec' ?  $data['email_cv_ec']  = $this->_trabajandofet_model->user_name($params['value'])              : NULL;
+            $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']  = $params['value'] : NULL;
+
+            $data['id']                                                         =   $params['pk'];
+            $data['user_update']                                                =   $this->session->userdata['id_user'];
+            $data['date_update']                                                =   date('Y-m-d H:i:s');
+
+            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+
+            // $data_history                                                       =   $data;
+            // $data_history['id_cv_ec']                                           =   $data_history['id'];
+            // unset($data_history['id']);
+
+            // $this->_trabajandofet_model->insert_data($data_history, 'git_roles_history');
+
+            if ($answer)
+            {
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'Acción realizada con éxito!';
+            }
+            else
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Problemas al editar el rol.';
+            }
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Completa todos los campos.';
         }
 
         return $result;

@@ -37,83 +37,7 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
-        /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fabrica de Desarrollo
-    * @since     v2.0.1
-    * @param     array $params
-    * @return    json array
-    **/
-    public function add()
-    {
-        if(in_array('ADD', $this->actions))
-        {
-            $params                                                             =   $this->security->xss_clean($_POST);
-
-            if ($params)
-            {
-                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
-
-                if ($exist_company['data'])
-                {
-                    $add                                                        =   $this->_externalcompanies_model->add($params);
-
-                    echo json_encode($add);
-                    exit();
-                }
-                else
-                {
-                    echo json_encode($exist_company);
-                    exit();
-                }
-
-    // **** BORRAR ****
-            }
-        }
-    // **** BORRAR ****
-
-        //         if ($exist_user['data'])
-        //         {
-        //             $add                                                        =   $this->_users_model->add($params);
-
-        //             echo json_encode($add);
-        //             exit();
-        //         }
-        //         else
-        //         {
-        //             echo json_encode($exist_user);
-        //             exit();
-        //         }
-        //     }
-        //     else
-        //     {
-        //         if ($this->input->method(TRUE) == 'GET')
-        //         {
-        //             header("Location: " . site_url('users'));
-        //         }
-        //         else
-        //         {
-        //             echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
-        //         }
-
-        //         exit();
-        //     }
-        // } 
-        // else
-        // {
-        //     if ($this->input->method(TRUE) == 'GET')
-        //     {
-        //         header("Location: " . site_url('users'));
-        //     }
-        //     else
-        //     {
-        //         echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
-        //     }
-
-        //     exit();
-        // } 
-    }
-
+    
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
@@ -143,9 +67,10 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('act_view',                                    in_array('VIEW', $this->actions));
             $this->_view->assign('act_add',                                     in_array('ADD', $this->actions));
             $this->_view->assign('act_edit',                                    in_array('EDIT', $this->actions));
+            $this->_view->assign('act_details',                                 in_array('DETAILS', $this->actions));
+            $this->_view->assign('act_assign',                                  in_array('ASSIGN', $this->actions));
             $this->_view->assign('act_drop',                                    in_array('UDROP', $this->actions));
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
-            $this->_view->assign('act_display',                                 in_array('DISPLAY', $this->actions));
             $this->_view->assign('act_export_xlsx',                             in_array('EXPORTXLSX', $this->actions));
 
             $this->_view->assign('path_view',                                   site_url('externalcompanies/datatable'));
@@ -167,11 +92,193 @@ class Externalcompanies_controller extends CI_Controller
             header("Location: " . $this->session->userdata['initial_site']);
         }
         exit();
-
-        print_r('Holaa');
     }
 
-        /**
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param
+    * @return    array json
+    **/
+    public function datatable()
+    {
+        if(in_array('VIEW', $this->actions))
+        {
+            if ($this->session->userdata['mobile'] == 0)
+            {
+                $columns                                                        =   array(
+                    0                                                                   =>  'name_cv_ec',
+                    1                                                                   =>  'nit_cv_ec',
+                    2                                                                   =>  'type_cv_ec',
+                    3                                                                   =>  'email_cv_ec',
+                    4                                                                   =>  'phone_cv_ec'
+                                                                                    );
+            }
+            else
+            {
+                $columns                                                        =   array(
+                    0                                                                   =>  'name_cv_ec',
+                    1                                                                   =>  'nit_cv_ec',
+                    2                                                                   =>  'type_cv_ec',
+                    3                                                                   =>  'email_cv_ec',
+                    4                                                                   =>  'phone_cv_ec'
+                                                                                    );
+            }
+
+            $limit                                                              =   $this->input->post('length');
+            $start                                                              =   $this->input->post('start');
+            $search                                                             =   $this->input->post('search')['value'];
+            $order                                                              =   $columns[$this->input->post('order')[0]['column']];
+            $dir                                                                =   $this->input->post('order')[0]['dir'];
+
+            $count_rows                                                         =   $this->_externalcompanies_model->count_rows($search);
+            $all_rows                                                           =   $this->_externalcompanies_model->all_rows($limit, $start, $search, $order, $dir);
+
+            $json_data                                                          =   array(
+                "draw"                                                                  =>  intval($this->input->post('draw')),
+                "recordsTotal"                                                          =>  intval($count_rows['total']),
+                "recordsFiltered"                                                       =>  intval($count_rows['total_filtered']),
+                "data"                                                                  =>  $all_rows
+                                                                                    );
+
+            echo json_encode($json_data);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function add()
+    {
+        if(in_array('ADD', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
+
+                if ($exist_company['data'])
+                {
+                    $add                                                        =   $this->_externalcompanies_model->add($params);
+
+                    echo json_encode($add);
+                    exit();
+                }
+                else
+                {
+                    echo json_encode($exist_company);
+                    exit();
+                }
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();  
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function edit()
+    {
+        if(in_array('EDIT', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
+
+                if ($exist_company['data'])
+                {
+                    $edit                                                        =   $this->_externalcompanies_model->edit($params);
+
+                    echo json_encode($edit);
+                    exit();
+                }
+                else
+                {
+                    echo json_encode($exist_company);
+                    exit();
+                }
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();  
+        }
+    }
+
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
     * @since     v2.0.1
