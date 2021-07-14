@@ -1,3 +1,16 @@
+function appendTwoColumns({ firstCol, secondCol, elementRef }) {
+
+  $(elementRef).append(`
+  <tr>
+    <td>
+      ${firstCol}
+    </td>
+    <td>
+      ${secondCol}
+    </td>
+  </tr>`);
+}
+
 function locationSelect2({
         selectRef,
         dataName,
@@ -321,7 +334,7 @@ $(document).ready(function () {
         modal_alert(data, message);
 
         $(".select2-hidden-accessible").empty();
-        
+      
         $("#form_add")[0].reset();
 
         table.ajax.reload();
@@ -402,14 +415,14 @@ $(document).ready(function () {
 
           if (act_details) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Editar clave" href="javascript:void(0)" class="edit-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Detalle" href="javascript:void(0)" class="detail-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-asterisk"></i></a>';
           }
 
           if (act_assign) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Editar clave" href="javascript:void(0)" class="edit-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-exchange-alt"></i></a>';
           }
@@ -497,10 +510,16 @@ $(document).ready(function () {
   });
 
   /****************************************************************************************/
-  /*************************************** EDIT FORM **************************************/
+  /***************************************** EDIT *****************************************/
   /****************************************************************************************/
 
   $("#default_table").on("click", "a.edit-row", function () {
+
+    $('#view_table').addClass('d-none');
+    $('#view_form_edit').removeClass('d-none');
+    // validate_edit.resetForm();
+    $('#form_edit')[0].reset();
+
     var companyId = $(this).attr("data-id");
 
     var getCompanyById = $.ajax({
@@ -512,7 +531,12 @@ $(document).ready(function () {
         value: companyId,
         table: "fet_cv_ec",
       },
+      beforeSend: function () {
+        $("#loading").removeClass("d-none");
+      },
       success: function ({ data }) {
+
+        $("#loading").addClass("d-none");
         $('#form_edit input[name="pk"]').attr("value", data.id_cv_ec);
         $('#form_edit input[name="address_cv_ec"]').attr("value", data.address_cv_ec);
     
@@ -551,23 +575,8 @@ $(document).ready(function () {
 
       },
     });
-
-    $("#view_table").addClass("d-none");
-    $("#view_form_edit").removeClass("d-none");
-    // validate_edit.resetForm();
-    $("#form_edit")[0].reset();
-    // $('#id_user').val($(this).attr('data-id'));
   });
 
-  //   $('#btn_add').on('click', function ()
-//   {
-//       $('#view_table').addClass('d-none');
-//       $('#view_form_add').removeClass('d-none');
-//       $('#role').empty().trigger('change');
-//       validate.resetForm();
-//       $('#form_add')[0].reset();
-//       $('.flags').prop("checked", false);
-//   });
 
   $('#btn_confirm_edit').on('click', function ()
   {
@@ -578,7 +587,7 @@ $(document).ready(function () {
       dataType:  'json',
       success:  function(response) {
         modal_alert(response.data, response.message);
-        if (response.data) $(elementRef).addClass('d-none');
+        // if (response.data) $(elementRef).addClass('d-none');
       },
       beforeSubmit: function()
       {
@@ -596,9 +605,162 @@ $(document).ready(function () {
 
   });
 
+  /****************************************************************************************/
+  /**************************************** DETAILS ***************************************/
+  /****************************************************************************************/
+  $("#default_table").on("click", "a.detail-row", function () {
+    var companyId = $(this).attr("data-id");
+
+    var getCompanyById = $.ajax({
+      url: $path_find,
+      type: "POST",
+      dataType: "json",
+      data: {
+        pk: "id_cv_ec",
+        value: companyId,
+        table: "fet_cv_ec",
+      },
+      beforeSend: function () {
+        $("#loading").removeClass("d-none");
+      },
+      success: function ({ data }) {
+        $("#view_table").toggleClass("d-none");
+        $("#view_details").removeClass("d-none");
+
+        $('#view_details td[data-name="name_cv_ec"]').text(data.name_cv_ec);
+        $('#view_details td[data-name="nit_cv_ec"]').text(data.nit_cv_ec);
+        $('#view_details td[data-name="type_cv_ec"]').text(data.type_cv_ec);
+        $('#view_details td[data-name="phone_cv_ec"]').text(data.phone_cv_ec);
+        $('#view_details td[data-name="email_cv_ec"]').text(data.email_cv_ec);
+        $('#view_details td[data-name="address_cv_ec"]').text(
+          data.address_cv_ec
+        );
+
+        $.ajax({
+          url: $path_find,
+          type: "POST",
+          dataType: "json",
+          data: {
+            pk: "id_country",
+            value: data.country_cv_ec,
+            table: "git_countries",
+          },
+          success: function ({ data }) {
+            $('#view_details td[data-name="country_cv_ec"]').text(
+              data.name_country
+            );
+          },
+        });
+
+        $.ajax({
+          url: $path_find,
+          type: "POST",
+          dataType: "json",
+          data: {
+            pk: "id_department",
+            value: data.department_cv_ec,
+            table: "git_departments",
+          },
+          success: function ({ data }) {
+            $('#view_details td[data-name="department_cv_ec"]').text(
+              data.name_department
+            );
+          },
+        });
+
+        $.ajax({
+          url: $path_find,
+          type: "POST",
+          dataType: "json",
+          data: {
+            pk: "id_city",
+            value: data.city_cv_ec,
+            table: "git_cities",
+          },
+          success: function ({ data }) {
+            $("#loading").toggleClass("d-none");
+
+            $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
+          },
+        });
+      },
+    });
+  });
+
+  $("#btn_cancel_details").on("click", function () {
+    $("#view_details").addClass("d-none");
+    $("#view_table").toggleClass("d-none");
+  });
 
   /****************************************************************************************/
-  /**************************************** ADD FORM **************************************/
+  /***************************************** ASSIGN ***************************************/
+  /****************************************************************************************/
+  $("#default_table").on("click", "a.assign-row", function () {
+
+    $("#view_assign").toggleClass("d-none");
+    $("#view_table").toggleClass("d-none");
+
+    var companyId = $(this).attr("data-id");
+
+    var getAspirants = $.ajax({
+      url: $path_find,
+      type: "POST",
+      dataType: "json",
+      data: {
+        pk: "id_cv_ec",
+        value: companyId,
+        get_aspirants: true,
+      },
+      beforeSend: function () {
+        $("#loading").toggleClass("d-none");
+      },
+      success: function ({ data, message })
+      {
+        $("#loading").toggleClass("d-none");
+        $('tbody#assign_content').empty();
+        $('thead#assign_head').removeClass('d-none');
+
+        if (data)
+        {
+          if (data.length > 1) 
+          {
+            $.each(data, function(index, item) {
+              appendTwoColumns({
+                firstCol: item.full_name,
+                secondCol: item.number_dcv,
+                elementRef: 'tbody#assign_content'
+              });
+            });
+          }
+          else
+          {
+            appendTwoColumns({
+              firstCol: data.full_name,
+              secondCol: data.number_dcv,
+              elementRef: 'tbody#assign_content'
+            });
+          }
+        }
+        else
+        {
+          $('thead#assign_head').addClass('d-none');
+          $('tbody#assign_content').append(`
+          <tr>
+            <td colspan="2">No hay aspirantes asignados a esta empresa.</td>
+          </tr>
+          `);
+        }
+      },
+    });
+  });
+
+    $("#btn_cancel_assign").on("click", function () {
+      $("#view_assign").toggleClass("d-none");
+      $("#view_table").toggleClass("d-none");
+    });
+
+  /****************************************************************************************/
+  /***************************************** ADD ******************************************/
   /****************************************************************************************/
 
   $("#btn_add").on("click", function () {
@@ -666,6 +828,70 @@ $(document).ready(function () {
   //         $('#loading').removeClass('d-none');
   //     }
   // });
+
+  /****************************************************************************************/
+  /***************************************** DROP *****************************************/
+  /****************************************************************************************/
+
+  $('#default_table').on('click', 'a.remove-row', function()
+  {
+      // var user = $(this).attr('data-id');
+
+      $('#modal_delete').iziModal({
+          title: 'Eliminar usuario',
+          icon: 'fas fa-trash-alt',
+          headerColor: '#DC3545',
+          zindex: 9999,
+          onClosed: function()
+          {
+              $('#btn_confirm_delete').off('click');
+              $('#modal_delete').iziModal('destroy');
+          },
+          // onOpening: function()
+          // {
+          //     $('#btn_confirm_delete').on('click', function()
+          //     {
+          //         $('#loading').removeClass('d-none');
+
+          //         $.ajax({
+          //             type: 'POST',
+          //             url: $path_drop,
+          //             data: {
+          //                 id_user: user,
+          //             },
+          //             dataType: 'json',
+          //             success: function (response)
+          //             {
+          //                 var defaultTable = $('#default_table').DataTable();
+          //                 defaultTable.ajax.reload();
+          //                 modal_alert(response.data, response.message);
+          //                 $('#loading').addClass('d-none');
+          //             },
+          //             error: function () {
+          //                 modal_alert(false, 'Error de conexión.');
+          //             }
+          //         });
+
+          //         $('#modal_delete').iziModal('close');
+          //     });
+
+          //     $('#btn_cancel_delete').on('click', function()
+          //     {
+          //         $('#modal_delete').iziModal('close');
+          //     });
+          // }
+      });
+
+      $('#modal_delete').iziModal('open');
+  });
+
+
+
+
+
+
+
+
 
   // iziToast - Alerts
   function errorAlert(message) {

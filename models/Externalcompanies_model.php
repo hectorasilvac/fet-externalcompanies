@@ -250,19 +250,32 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $this->db->where($params['pk'], $params['value']);
-        $this->db->where('flag_drop', 0);
-        $query                                                                  = $this->db->get($params['table']);
+        if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true') 
+        {
+            $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
+            $this->db->from('fet_cv_we');
+            $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
+            $this->db->where('id_cv_ec', $params['value']);
+            $this->db->group_by('fet_cv.number_dcv');
+            $query = $this->db->get();
+        } 
+        else 
+        {
+            $this->db->where($params['pk'], $params['value']);
+            $this->db->where('flag_drop', 0);
+            $query                                                              =   $this->db->get($params['table']);
+        }
 
         if (count($query->result_array()) > 0)
         {
-            $result['data']                                                     =   $query->row_array();
+            count($query->result_array()) === 1 ? $result['data']               =   $query->row_array()     : NULL;
+            count($query->result_array()) > 1   ? $result['data']               =   $query->result_array()  : NULL;
             $result['message']                                                  =   FALSE;
-        }
-        else
+        } 
+        else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'No se pudo realizar la edición del permiso.';
+            $result['message']                                                  =   'No se podido realizar la operación.';
         }
         return $result;
         exit();

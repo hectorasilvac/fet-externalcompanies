@@ -37,7 +37,7 @@
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
                         {* Se debe quitar el d-none para mostrar la tabla *}
-                    <div class="table-wrapper d-none">
+                    <div class="table-wrapper">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead class="thead-light">
@@ -212,27 +212,63 @@
                     </div>
                 {/if}
                 {if $act_details}
-                    <div id="view_form_edit" class="mg-t-60">
-                    <p>Details</p>
+                    <div id="view_details" class="mg-t-60 d-none">
+                        <table class="table table-bordered border">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Nombre</th>
+                                    <td class="col-10" data-name="name_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">NIT</th>
+                                    <td class="col-10" data-name="nit_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Tipo</th>
+                                    <td class="col-10" data-name="type_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Teléfono</th>
+                                    <td class="col-10" data-name="phone_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Correo</th>
+                                    <td class="col-10" data-name="email_cv_ec">grupoaw@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Dirección</th>
+                                    <td class="col-10" data-name="address_cv_ec">Calle 45 #34-56</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">País</th>
+                                    <td class="col-10" data-name="country_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Departamento</th>
+                                    <td class="col-10" data-name="department_cv_ec"></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Ciudad</th>
+                                    <td class="col-10" data-name="city_cv_ec"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button id="btn_cancel_details" class="btn btn-secondary">Cerrar</button>
                     </div>
-                    <div id="view_edit_flags" class="mg-t-60 d-none">
-                        <div class="form-layout">
-                            <input class="form-control" type="hidden" id="id_user_flags" name="id_user">
-                            <div class="row mg-b-25">
-                                {foreach from=$all_flags item=row}
-                                    <div class="col-lg-6 mg-t-20">
-                                        <label class="ckbox">
-                                            <input class="flags_edit" id="flag{$row.id_flag}" name="{$row.name_flag}"
-                                                type="checkbox" value="{$row.id_flag}">
-                                            <span>{$row.name_es_flag}</span>
-                                        </label>
-                                    </div>
-                                {/foreach}
-                            </div>
-                            <div>
-                                <button id="btn_cancel_edit_flags" class="btn btn-secondary">Cerrar</button>
-                            </div>
-                        </div>
+                {/if}
+                {if $act_assign}
+                    <div id="view_assign" class="mg-t-60 d-none">
+                    <table class="table table-bordered border">
+                            <thead id="assign_head" class="thead-light">
+                                <tr>
+                                    <th scope="col">Nombre del Aspirante</th>
+                                    <th scope="col">Cédula del Aspirante</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assign_content">
+                            </tbody>
+                        </table>
+                        <button id="btn_cancel_assign" class="btn btn-secondary">Cerrar</button>
                     </div>
                 {/if}
                 </div>

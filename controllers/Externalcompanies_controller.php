@@ -231,7 +231,7 @@ class Externalcompanies_controller extends CI_Controller
     **/
     public function find_by_id()
     {
-        if (in_array('EDIT', $this->actions))
+        if (in_array('VIEW', $this->actions))
         {
             $params                                                             =   $this->security->xss_clean($_POST);
 
