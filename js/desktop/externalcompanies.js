@@ -835,10 +835,10 @@ $(document).ready(function () {
 
   $('#default_table').on('click', 'a.remove-row', function()
   {
-      // var user = $(this).attr('data-id');
+    var companyId = $(this).attr("data-id");
 
       $('#modal_delete').iziModal({
-          title: 'Eliminar usuario',
+          title: 'Eliminar empresa',
           icon: 'fas fa-trash-alt',
           headerColor: '#DC3545',
           zindex: 9999,
@@ -847,39 +847,39 @@ $(document).ready(function () {
               $('#btn_confirm_delete').off('click');
               $('#modal_delete').iziModal('destroy');
           },
-          // onOpening: function()
-          // {
-          //     $('#btn_confirm_delete').on('click', function()
-          //     {
-          //         $('#loading').removeClass('d-none');
+          onOpening: function()
+          {
+              $('#btn_confirm_delete').on('click', function()
+              {
+                  $('#loading').removeClass('d-none');
 
-          //         $.ajax({
-          //             type: 'POST',
-          //             url: $path_drop,
-          //             data: {
-          //                 id_user: user,
-          //             },
-          //             dataType: 'json',
-          //             success: function (response)
-          //             {
-          //                 var defaultTable = $('#default_table').DataTable();
-          //                 defaultTable.ajax.reload();
-          //                 modal_alert(response.data, response.message);
-          //                 $('#loading').addClass('d-none');
-          //             },
-          //             error: function () {
-          //                 modal_alert(false, 'Error de conexión.');
-          //             }
-          //         });
+                  $.ajax({
+                      type: 'POST',
+                      url: $path_drop,
+                      data: {
+                          id_cv_ec: companyId,
+                      },
+                      dataType: 'json',
+                      success: function (response)
+                      {
+                          var defaultTable = $('#default_table').DataTable();
+                          defaultTable.ajax.reload();
+                          modal_alert(response.data, response.message);
+                          $('#loading').addClass('d-none');
+                      },
+                      error: function () {
+                          modal_alert(false, 'Error de conexión.');
+                      }
+                  });
 
-          //         $('#modal_delete').iziModal('close');
-          //     });
+                  $('#modal_delete').iziModal('close');
+              });
 
-          //     $('#btn_cancel_delete').on('click', function()
-          //     {
-          //         $('#modal_delete').iziModal('close');
-          //     });
-          // }
+              $('#btn_cancel_delete').on('click', function()
+              {
+                  $('#modal_delete').iziModal('close');
+              });
+          }
       });
 
       $('#modal_delete').iziModal('open');

@@ -204,3 +204,4 @@ $route['externalcompanies/find']                                                
 
 $route['externalcompanies/location']                                            =   'externalcompanies_controller/location';
 
+$route['externalcompanies/udrop']                                               =   'externalcompanies_controller/udrop';

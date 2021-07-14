@@ -473,4 +473,39 @@ class Externalcompanies_model extends CI_Model
         return $result;
         exit();
     }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     arraay $param
+    * @return    array $result
+    **/
+    public function udrop($param)
+    {
+        $data                                                                   =   array(
+            'id'                                                                        =>  $param['id_cv_ec'],
+            'flag_drop'                                                                 =>  1,
+            'user_update'                                                               =>  $this->session->userdata['id_user'],
+            'date_update'                                                               =>  date('Y-m-d H:i:s')
+                                                                                    );
+
+        $result                                                                 =   array();
+
+        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+
+        if ($answer)
+        {
+            $result['data']                                                     =   TRUE;
+            $result['message']                                                  =   'Acción realizada con éxito!';
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Problemas al eliminar la empresa.';
+        }
+
+        return $result;
+        exit();
+    }
 }

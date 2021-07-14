@@ -285,7 +285,7 @@
                 <div class="card bd-0">
                     <div class="card-body bd bd-t-0 rounded-bottom-0">
                         <br />
-                        <p class="mg-b-0"> Seguro que deseas eliminar este usuario?</p>
+                        <p class="mg-b-0"> Seguro que deseas eliminar esta empresa?</p>
                         <br />
                     </div>
                     <div class="card-footer bd bd-t-0 d-flex justify-content-between">

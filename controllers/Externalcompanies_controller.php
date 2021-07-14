@@ -37,7 +37,6 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
-    
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
@@ -390,6 +389,55 @@ class Externalcompanies_controller extends CI_Controller
                 header("Location: " . site_url('externalcompanies'));
             } else {
                 echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function udrop()
+    {
+        if(in_array('UDROP', $this->actions))
+        {
+            $param                                                              =   $this->security->xss_clean($_POST);
+
+            if ($param)
+            {
+                $udrop                                                          =   $this->_externalcompanies_model->udrop($param);
+
+                echo json_encode($udrop);
+                exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
             }
 
             exit();
