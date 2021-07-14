@@ -183,6 +183,8 @@ class Externalcompanies_model extends CI_Model
             $this->db->where('flag_drop', 0);
             $this->db->where($params['name'], trim($params['value']));
             $this->db->where('id_cv_ec !=', $params['pk']);
+
+            $params['name'] == 'type_cv_ec' ? $this->db->where('type_cv_ec !=', $params['value']) : NULL;
         } 
         else 
         {
@@ -238,6 +240,35 @@ class Externalcompanies_model extends CI_Model
     }
 
         /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function find_by_id($params)
+    {
+        $result                                                                 =   array();
+
+        $this->db->where($params['pk'], $params['value']);
+        $this->db->where('flag_drop', 0);
+        $query                                                                  = $this->db->get($params['table']);
+
+        if (count($query->result_array()) > 0)
+        {
+            $result['data']                                                     =   $query->row_array();
+            $result['message']                                                  =   FALSE;
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'No se pudo realizar la edición del permiso.';
+        }
+        return $result;
+        exit();
+    }
+    
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
@@ -377,22 +408,31 @@ class Externalcompanies_model extends CI_Model
     public function edit($params)
     {
         $result                                                                 =   array();
+        $data                                                                   =   array();
 
-        if ($params['value'] != '' || $params['value'] != null)
+        if (count($params) >= 2) 
         {
-            $data                                                               =   array();
-
-            $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']   = mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
-            $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']    = $params['value']                                                      : NULL;
-            $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']   = $this->_trabajandofet_model->user_name($params['value'])              : NULL;
-            $params['name'] == 'email_cv_ec' ?  $data['email_cv_ec']  = $this->_trabajandofet_model->user_name($params['value'])              : NULL;
-            $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']  = $params['value'] : NULL;
 
             $data['id']                                                         =   $params['pk'];
             $data['user_update']                                                =   $this->session->userdata['id_user'];
             $data['date_update']                                                =   date('Y-m-d H:i:s');
 
-            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+            if (isset($params['value']) && $params['value'] != '' && $params['value'] != null) 
+            {
+                $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']         =   mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
+                $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']          =   $params['value']                                                      : NULL;
+                $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']         =   $this->_trabajandofet_model->user_name($params['value'])              : NULL;
+                $params['name'] == 'email_cv_ec' ?  $data['email_cv_ec']        =   $this->_trabajandofet_model->user_name($params['value'])              : NULL;
+                $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']        =   $params['value'] : NULL;
+
+                $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+            } 
+            else 
+            {
+                unset($params['pk']);
+                $data                                                           =   array_merge($data, $params);
+                $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+            }
 
             // $data_history                                                       =   $data;
             // $data_history['id_cv_ec']                                           =   $data_history['id'];
@@ -400,18 +440,18 @@ class Externalcompanies_model extends CI_Model
 
             // $this->_trabajandofet_model->insert_data($data_history, 'git_roles_history');
 
-            if ($answer)
+            if ($query) 
             {
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'Acción realizada con éxito!';
-            }
-            else
+            } 
+            else 
             {
                 $result['data']                                                 =   FALSE;
                 $result['message']                                              =   'Problemas al editar el rol.';
             }
-        }
-        else
+        } 
+        else 
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';

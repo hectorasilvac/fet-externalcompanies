@@ -36,7 +36,8 @@
                         {/if}
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
-                    <div class="table-wrapper">
+                        {* Se debe quitar el d-none para mostrar la tabla *}
+                    <div class="table-wrapper d-none">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead class="thead-light">
@@ -61,7 +62,7 @@
                 {if $act_add}
                     <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
-                            <form id="form_add" method="post" action="{$path_add}">
+                            <form id="form_add" method="post">
                                 <div class="row mg-b-25">
                                     <div class="col-lg-12">
                                         <div id="form-errors" class="alert alert-danger d-none">
@@ -114,31 +115,31 @@
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Dirección: <span
                                                     class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" id="address_cv_ec" name="address_cv_ec"
+                                            <input class="form-control" type="text" id="add_address_cv_ec" name="address_cv_ec"
                                                 placeholder="Ingresa la dirección" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">País: </label>
-                                            <select class="form-control" id="country_cv_ec" name="country_cv_ec">
-                                            </select>
-                                        </div>
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">País: </label>
+                                        <select class="form-control" id="country_cv_ec" name="country_cv_ec">
+                                        </select>
                                     </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Departamento: </label>
-                                            <select class="form-control" id="department_cv_ec" name="department_cv_ec">
-                                            </select>
-                                        </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">Departamento: </label>
+                                        <select class="form-control" id="department_cv_ec" name="department_cv_ec">
+                                        </select>
                                     </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Ciudad: </label>
-                                            <select class="form-control" id="city_cv_ec" name="city_cv_ec">
-                                            </select>
-                                        </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">Ciudad: </label>
+                                        <select class="form-control" id="city_cv_ec" name="city_cv_ec">
+                                        </select>
                                     </div>
+                                </div>
                                 </div>
                                 <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
                                 <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
@@ -150,16 +151,36 @@
                     <div id="view_form_edit" class="mg-t-60 d-none">
                         <div class="form-layout">
                             <form id="form_edit" method="post" action="{$path_edit}">
-                                <input class="form-control" type="hidden" id="id_user" name="pk">
-                                <input class="form-control" type="hidden" id="name_password" name="name" value="password_user"
-                                    placeholder="Ingresa contraseña" autocomplete="off">
-                                <label id="txt_name"></label>
                                 <div class="row mg-b-25">
+                                    <input class="form-control" type="hidden" name="pk">
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Contraseña: </label>
-                                            <input class="form-control" type="password" id="password_user_edit" name="value"
-                                                placeholder="Ingresa contraseña" autocomplete="off">
+                                            <label class="form-control-label">Dirección: <span
+                                                    class="tx-primary tx-10">(Opcional)</span></label>
+                                            <input class="form-control" type="text"
+                                                name="address_cv_ec" placeholder="Ingresa la dirección"
+                                                autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">País: </label>
+                                            <select class="form-control" name="country_cv_ec">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Departamento: </label>
+                                            <select class="form-control" name="department_cv_ec">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Ciudad: </label>
+                                            <select class="form-control" name="city_cv_ec">
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -190,7 +211,31 @@
                         </div>
                     </div>
                 {/if}
-            </div>
+                {if $act_details}
+                    <div id="view_form_edit" class="mg-t-60">
+                    <p>Details</p>
+                    </div>
+                    <div id="view_edit_flags" class="mg-t-60 d-none">
+                        <div class="form-layout">
+                            <input class="form-control" type="hidden" id="id_user_flags" name="id_user">
+                            <div class="row mg-b-25">
+                                {foreach from=$all_flags item=row}
+                                    <div class="col-lg-6 mg-t-20">
+                                        <label class="ckbox">
+                                            <input class="flags_edit" id="flag{$row.id_flag}" name="{$row.name_flag}"
+                                                type="checkbox" value="{$row.id_flag}">
+                                            <span>{$row.name_es_flag}</span>
+                                        </label>
+                                    </div>
+                                {/foreach}
+                            </div>
+                            <div>
+                                <button id="btn_cancel_edit_flags" class="btn btn-secondary">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+                </div>
         </div>
     </div>
     <footer class="br-footer">
@@ -250,6 +295,8 @@
         var $path_trace                                                         =   '{$path_trace}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
         var $path_roles                                                         =   '{$path_roles}';
+        var $path_roles                                                         =   '{$path_roles}';
+        var $path_find                                                          =   '{$path_find}';
 
         var $path_location                                                      =   '{$path_location}';
 

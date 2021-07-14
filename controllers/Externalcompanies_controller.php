@@ -84,6 +84,8 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('path_export_xlsx',                            site_url('externalcompanies/exportxlsx'));
             $this->_view->assign('path_roles',                                  site_url('externalcompanies/roles'));
             $this->_view->assign('path_location',                               site_url('externalcompanies/location'));
+            $this->_view->assign('path_find',                                   site_url('externalcompanies/find'));
+
 
             $this->_view->display('admin/externalcompanies.tpl');
         }
@@ -219,6 +221,56 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
+    
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function find_by_id()
+    {
+        if (in_array('EDIT', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                $find                                                           =   $this->_externalcompanies_model->find_by_id($params);
+
+                echo json_encode($find);
+                exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('users'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        } 
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('users'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
@@ -228,53 +280,62 @@ class Externalcompanies_controller extends CI_Controller
     **/
     public function edit()
     {
-        if(in_array('EDIT', $this->actions))
+        if (in_array('EDIT', $this->actions)) 
         {
             $params                                                             =   $this->security->xss_clean($_POST);
 
-            if ($params)
-            {
-                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
-
-                if ($exist_company['data'])
+            if ($params) {
+                if (isset($params['name']) && $params['name'] != '' && $params['name'] != null) 
                 {
-                    $edit                                                        =   $this->_externalcompanies_model->edit($params);
+                    $exist_company                                              =   $this->_externalcompanies_model->exist_company($params);
+
+                    if ($exist_company['data']) 
+                    {
+                        $edit                                                   =   $this->_externalcompanies_model->edit($params);
+
+                        echo json_encode($edit);
+                        exit();
+                    } 
+                    else 
+                    {
+                        echo json_encode($exist_company);
+                        exit();
+                    }
+                } 
+                else 
+                {
+                    $edit                                                       =   $this->_externalcompanies_model->edit($params);
 
                     echo json_encode($edit);
                     exit();
                 }
-                else
-                {
-                    echo json_encode($exist_company);
-                    exit();
-                }
-            }
-            else
+            } 
+            else 
             {
-                if ($this->input->method(TRUE) == 'GET')
+                if ($this->input->method(TRUE) == 'GET') 
                 {
                     header("Location: " . site_url('externalcompanies'));
-                }
-                else
+                } 
+                else 
                 {
-                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                    echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
                 }
 
                 exit();
             }
-        }
-        else
+        } 
+        else 
         {
-            if ($this->input->method(TRUE) == 'GET')
+            if ($this->input->method(TRUE) == 'GET') 
             {
                 header("Location: " . site_url('externalcompanies'));
-            }
-            else
+            } 
+            else 
             {
-                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+                echo json_encode(array('data' => FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
             }
 
-            exit();  
+            exit();
         }
     }
 
