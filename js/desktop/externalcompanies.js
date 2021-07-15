@@ -68,35 +68,47 @@ function locationSelect2({
       }
       
       function retrieveLocationSelect2({
-          selectRef,
-          dataName,
-          placeholder,
-          pk,
-          value,
-          table,
-          optionText,
-          optionValue
+        selectRef,
+        dataName,
+        placeholder,
+        pk,
+        value,
+        table,
+        parentId = null,
+        parentName = null,
+        optionText,
+        optionValue,
+        count = null,
       }) {
         locationSelect2({
           selectRef: selectRef,
           dataName: dataName,
           placeholder: placeholder,
+          parentId: parentId,
+          parentName: parentName,
         });
-      
-        $.ajax({
-          type: 'POST',
-          dataType: 'json',
-          url: $path_find,
-          data: {
-            pk: pk,
-            value: value,
-            table: table,
-          },
-        }).then(function ({ data }) {
-          var selectInput = selectRef;
-          var option = new Option(data[optionText], data[optionValue], true, true);
-          $(selectInput).append(option).trigger("change");
-        });
+
+        if (count === 1) {
+          $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: $path_find,
+            data: {
+              pk: pk,
+              value: value,
+              table: table,
+            },
+          }).then(function ({ data }) {
+            var selectInput = selectRef;
+            var option = new Option(
+              data[optionText],
+              data[optionValue],
+              true,
+              true
+            );
+            $(selectInput).append(option).trigger("change");
+          });
+        }
       }
       
       // Method for validating letters of the Spanish alphabet
@@ -137,7 +149,6 @@ $(document).ready(function () {
 
   $.fn.editable.defaults.mode = "inline";
 
-  // Implementing Select2 in the country, department and city fields.
   locationSelect2({
     selectRef: "#country_cv_ec",
     dataName: "countries",
@@ -481,6 +492,7 @@ $(document).ready(function () {
               isText: $(this).attr("data-type") == "text" || null,
             });
           },
+          emptyText: 'vacio',
           success: function (response, newValue) {
             response = $.parseJSON(response);
             modal_alert(response.data, response.message);
@@ -506,6 +518,8 @@ $(document).ready(function () {
           },
         });
       }
+
+      $('span.editable').css('border-bottom', 'none');
     },
   });
 
@@ -535,48 +549,188 @@ $(document).ready(function () {
         $("#loading").removeClass("d-none");
       },
       success: function ({ data }) {
-
-        $("#loading").addClass("d-none");
         $('#form_edit input[name="pk"]').attr("value", data.id_cv_ec);
-        $('#form_edit input[name="address_cv_ec"]').attr("value", data.address_cv_ec);
-    
-        retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="country_cv_ec"]',
-            dataName: 'countries',
-            placeholder: 'Selecciona un país',
-            pk: 'id_country',
-            value: data.country_cv_ec,
-            table: 'git_countries',
-            optionText: 'name_country',
-            optionValue: 'id_country'
-        });
+        $('#form_edit input[name="address_cv_ec"]').attr(
+          "value",
+          data.address_cv_ec
+        );
 
         retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="department_cv_ec"]',
-            dataName: 'departments',
-            placeholder: 'Selecciona un departamento',
-            pk: 'id_department',
-            value: data.department_cv_ec,
-            table: 'git_departments',
-            optionText: 'name_department',
-            optionValue: 'id_department'
+          selectRef: '#form_edit select[name="country_cv_ec"]',
+          dataName: "countries",
+          placeholder: "Selecciona un país",
+          pk: "id_country",
+          value: data.country_cv_ec,
+          table: "git_countries",
+          optionText: "name_country",
+          optionValue: "id_country",
+          count: 1,
         });
 
-        retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="city_cv_ec"]',
-            dataName: 'cities',
-            placeholder: 'Selecciona una ciudad',
-            pk: 'id_city',
-            value: data.city_cv_ec,
-            table: 'git_cities',
-            optionText: 'name_city',
-            optionValue: 'id_city'
+        var countryCount = 1;
+        $('#form_edit select[name="country_cv_ec"]').on("change", function (e) {
+          var country = $(
+            '#form_edit select[name="country_cv_ec"] option:selected'
+          ).val();
+
+          if (typeof country !== "undefined") {
+            retrieveLocationSelect2({
+              selectRef: '#form_edit select[name="department_cv_ec"]',
+              dataName: "departments",
+              placeholder: "Selecciona un departamento",
+              parentId: country,
+              parentName: "countries",
+              pk: "id_department",
+              value: data.department_cv_ec,
+              table: "git_departments",
+              optionText: "name_department",
+              optionValue: "id_department",
+              count: countryCount,
+            });
+          } else {
+            $('#form_edit select[name="department_cv_ec"]').prop(
+              "disabled",
+              true
+            );
+            $('#form_edit select[name="department_cv_ec"]').empty();
+
+            $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
+            $('#form_edit select[name="city_cv_ec"]').empty();
+          }
+
+          countryCount++;
         });
 
-      },
+        var departmentCount = 1;
+        $('#form_edit select[name="department_cv_ec"]').on(
+          "change",
+          function (e) {
+            var department = $(
+              '#form_edit select[name="department_cv_ec"] option:selected'
+            ).val();
+
+            if (typeof department !== "undefined") {
+              retrieveLocationSelect2({
+                selectRef: '#form_edit select[name="city_cv_ec"]',
+                dataName: "cities",
+                placeholder: "Selecciona una ciudad",
+                parentId: department,
+                parentName: "departments",
+                pk: "id_city",
+                value: data.city_cv_ec,
+                table: "git_cities",
+                optionText: "name_city",
+                optionValue: "id_city",
+                count: departmentCount,
+              });
+            } else {
+              $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
+              $('#form_edit select[name="city_cv_ec"]').empty();
+            }
+            departmentCount++;
+            $("#loading").addClass("d-none");
+          }
+        );
+     }
     });
   });
 
+  /***********************************************************************************************************/
+  var validateForm = $("#form_edit").validate({
+    onkeyup: false,
+    ignore: [],
+    rules: {
+      normalizer: function (value) {
+        return $.trim(value);
+      },
+      onkeyup: false,
+      focusCleanup: true,
+      address_cv_ec: {
+        minlength: 5,
+        maxlength: 80,
+      },
+      country_cv_ec: {
+        required: true,
+      },
+      department_cv_ec: {
+        required: true,
+      },
+      city_cv_ec: {
+        required: true,
+      },
+    },
+    messages: {
+      address_cv_ec: {
+        minlength: "La dirección debe contener al menos 5 caracteres",
+        maxlength: "La dirección debe contener máximo 60 caracteres",
+      },
+      country_cv_ec: {
+        required: "Seleccione el país",
+      },
+      department_cv_ec: {
+        required: "Seleccione el departamento",
+      },
+      city_cv_ec: {
+        required: "Seleccione la ciudad",
+      },
+    },
+    errorElement: "small",
+    errorPlacement: function (error, element) {
+      $(error).addClass("invalid-feedback font-weight-normal");
+
+      $(error).insertAfter(element);
+    },
+    // submitHandler: function (form) {
+    //   submit(form);
+    //   return false;
+    // },
+  });
+
+  // function submit(form) {
+  //   $(form).ajaxSubmit({
+  //     dataType: 'json',
+  //     url: $path_add,
+  //     type: 'post',
+  //     beforeSubmit: function()
+  //     {
+  //         $('#loading').removeClass('d-none');
+  //     },
+  //     success: function ({ data, message }) {
+  
+  //         $('#loading').addClass('d-none');
+  //         $("#error-list").empty();
+  
+
+  //       if (data === false && typeof message == "object") {
+  //         Object.values(message).forEach((item) => {
+  //           $(`<li>${item}</li>`).appendTo("#error-list");
+  //         });
+
+  //         $("#form-errors").removeClass("d-none");
+  //         return false;
+  //       }
+
+  //       if (data === false && typeof message == "string") {
+  //         $(`<li>${message}</li>`).appendTo("#error-list");
+
+  //         modal_alert(data, message);
+          
+  //         $("#form-errors").removeClass("d-none");
+  //         return false;
+  //       }
+
+  //       $("#form-errors").addClass("d-none");
+  //       modal_alert(data, message);
+
+  //       $(".select2-hidden-accessible").empty();
+      
+  //       $("#form_add")[0].reset();
+
+  //       table.ajax.reload();
+  //     },
+  //   });
+  // }
+  /************************************************************************************************************/
 
   $('#btn_confirm_edit').on('click', function ()
   {
@@ -884,28 +1038,4 @@ $(document).ready(function () {
 
       $('#modal_delete').iziModal('open');
   });
-
-
-
-
-
-
-
-
-
-  // iziToast - Alerts
-  function errorAlert(message) {
-    iziToast.warning({
-      message: message,
-      position: "topRight",
-    });
-  }
-
-
-  function successAlert(message) {
-    iziToast.success({
-      message: message,
-      position: "topRight",
-    });
-  }
 });
