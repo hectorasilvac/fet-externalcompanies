@@ -388,10 +388,19 @@ class Externalcompanies_model extends CI_Model
             $data['user_insert']                                                =   $this->session->userdata['id_user'];
             $data['date_insert']                                                =   date('Y-m-d H:i:s');
 
-            $query                                                              =   $this->db->insert('fet_cv_ec', $data);
+            $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_cv_ec');
 
             if ($query)
             {
+                $data_history                                                   =   $data;
+                $data_history['id_cv_ec']                                       =   $query;
+                $data_history['user_update']                                    =   $data['user_insert'];
+                $data['date_update']                                            =   date('Y-m-d H:i:s');
+                unset($data_history['date_insert']);
+                unset($data_history['user_insert']);
+
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'La empresa se ha registrado correctamente';
             }
@@ -447,11 +456,11 @@ class Externalcompanies_model extends CI_Model
                 $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
             }
 
-            // $data_history                                                       =   $data;
-            // $data_history['id_cv_ec']                                           =   $data_history['id'];
-            // unset($data_history['id']);
+            $data_history                                                       =   $data;
+            $data_history['id_cv_ec']                                           =   $data_history['id'];
+            unset($data_history['id']);
 
-            // $this->_trabajandofet_model->insert_data($data_history, 'git_roles_history');
+            $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
 
             if ($query) 
             {
@@ -496,6 +505,12 @@ class Externalcompanies_model extends CI_Model
 
         if ($answer)
         {
+            $data_history                                                       =   $data;
+            $data_history['id_cv_ec']                                           =   $data_history['id'];
+            unset($data_history['id']);
+
+            $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
         }
@@ -503,6 +518,124 @@ class Externalcompanies_model extends CI_Model
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Problemas al eliminar la empresa.';
+        }
+
+        return $result;
+        exit();
+    }
+
+     /**
+     * @author    Innovación y Tecnología
+     * @copyright 2021 Fabrica de Desarrollo
+     * @since     v2.0.1
+     * @param     array
+     * @return    array
+     **/
+    public function row_by_search($search)
+    {
+        $this->db->select('id_cv_ec, name_cv_ec, nit_cv_ec, type_cv_ec, email_cv_ec, phone_cv_ec');
+        $this->db->where('flag_drop', 0);
+
+        $this->db->like($search[0]['name'], $search[0]['value']);
+
+        if (count($search) > 0) {
+            $this->db->group_start();
+            $search_data = [];
+
+            foreach ($search as $element) {
+                $name = $element['name'];
+                $value = $element['value'];
+                $search_data[$name] = $value;
+            }
+
+            $this->db->or_like($search_data);
+            $this->db->group_end();
+        }
+
+        $query                                                                  =   $this->db->get('fet_cv_ec');
+        $actions                                                                =   $query->result_array();
+
+        return $actions;
+        exit();
+    }
+
+    /**
+    *@author    Innovación y Tecnología
+    *@copyright 2021 Fábrica de Desarrollo
+    *@since     v2.0.1
+    *@param     array $param
+    *@return    array $result
+    **/
+    public function trace_register($param)
+    {
+        $result                                                                 =   array();
+
+        $result['data']                                                         =   $this->_trabajandofet_model->trace_register('fet_cv_ec', 'id_cv_ec', $param['id_cv_ec']);
+        $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('fet_cv_ec_history', 'id_cv_ec', $param['id_cv_ec']);
+
+        if (count($result['data']) > 0)
+        {
+            $result['message']                                                  =   FALSE;
+
+            if (count($result['data_global']) == 0)
+            {
+                $result['data_global']                                          =   FALSE;
+            }
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['data_global']                                              =   FALSE;
+            $result['message']                                                  =   'No hay histórico de este registro.';
+        }
+
+        return $result;
+        exit();
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     string $search
+    * @return    array $result
+    **/
+    public function export_xlsx($search)
+    {
+        $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
+        $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
+        $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
+        $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
+        $this->db->where('fet_cv_ec.flag_drop', 0);
+
+        // if (!empty($search))
+        // {
+        //     $this->db->group_start();
+        //     $this->db->like('fu.name_user', $search);
+        //     $this->db->or_like('fu.lastname_user', $search);
+        //     $this->db->or_like('fr.name_role', $search);
+        //     $this->db->or_like('fu.user', $search);
+        //     $this->db->or_like('fu.email_user', $search);
+        //     $this->db->or_like('DATE_FORMAT(fu.date_keepalive, \'%d-%m-%Y\')', $search);
+        //     $this->db->or_like('CONCAT(fa.name_aspirant, " ", fa.first_last_name_aspirant, " ", fa.second_last_name_aspirant)', $search);
+        //     $this->db->group_end();
+        // }
+
+        $this->db->order_by('fet_cv_ec.name_cv_ec', 'ASC');
+        $query                                                                  =   $this->db->get('fet_cv_ec');
+
+        $result                                                                 =   array();
+
+        $result['data']                                                         =   $query->result_array();
+
+        if (count($result['data']) > 0)
+        {
+            $result['message']                                                  =   FALSE;
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'No hay usuarios para exportar.';
         }
 
         return $result;

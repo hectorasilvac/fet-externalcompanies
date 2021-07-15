@@ -68,35 +68,47 @@ function locationSelect2({
       }
       
       function retrieveLocationSelect2({
-          selectRef,
-          dataName,
-          placeholder,
-          pk,
-          value,
-          table,
-          optionText,
-          optionValue
+        selectRef,
+        dataName,
+        placeholder,
+        pk,
+        value,
+        table,
+        parentId = null,
+        parentName = null,
+        optionText,
+        optionValue,
+        count = null,
       }) {
         locationSelect2({
           selectRef: selectRef,
           dataName: dataName,
           placeholder: placeholder,
+          parentId: parentId,
+          parentName: parentName,
         });
-      
-        $.ajax({
-          type: 'POST',
-          dataType: 'json',
-          url: $path_find,
-          data: {
-            pk: pk,
-            value: value,
-            table: table,
-          },
-        }).then(function ({ data }) {
-          var selectInput = selectRef;
-          var option = new Option(data[optionText], data[optionValue], true, true);
-          $(selectInput).append(option).trigger("change");
-        });
+
+        if (count === 1) {
+          $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: $path_find,
+            data: {
+              pk: pk,
+              value: value,
+              table: table,
+            },
+          }).then(function ({ data }) {
+            var selectInput = selectRef;
+            var option = new Option(
+              data[optionText],
+              data[optionValue],
+              true,
+              true
+            );
+            $(selectInput).append(option).trigger("change");
+          });
+        }
       }
       
       // Method for validating letters of the Spanish alphabet
@@ -137,7 +149,6 @@ $(document).ready(function () {
 
   $.fn.editable.defaults.mode = "inline";
 
-  // Implementing Select2 in the country, department and city fields.
   locationSelect2({
     selectRef: "#country_cv_ec",
     dataName: "countries",
@@ -193,7 +204,6 @@ $(document).ready(function () {
     width: "100%",
   });
 
-  // Implementing jQuery Validate in all fields.
   var validateForm = $("#form_add").validate({
     onkeyup: false,
     ignore: [],
@@ -346,6 +356,27 @@ $(document).ready(function () {
   /******************************** IMPLEMENTING DATATABLE ********************************/
   /****************************************************************************************/
 
+  // Implementing jQuery Validate in all fields.
+	$("#default_table thead tr").clone(true).appendTo("#default_table thead");
+	$("#default_table thead tr:eq(1) th").each(function (i) {
+			var title = $(this).text();
+			if (i === 5){
+				$(this).html('');
+			}
+			else {
+			$(this).html(
+				`<input type="text" class="form-control form-control-sm col-11" placeholder="Buscar por ${title}" />`
+			);
+			}
+
+			// Filter event handler
+			$("input", this).on("keyup change", function () {
+				if (table.column(i).search() !== this.value) {
+					table.column(i).search(this.value).draw();
+				}
+			});
+	});
+
   var table = $("#default_table").DataTable({
     info: true,
     orderCellsTop: true,
@@ -369,35 +400,35 @@ $(document).ready(function () {
         targets: [0],
         data: "name_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='name_cv_ec' data-type='text' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='name_cv_ec' class='text-uppercase' data-type='text' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='nit_cv_ec' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [2],
         data: "type_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='type_cv_ec' class='type_cv_ec' data-value='${data}' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='type_cv_ec' class='type_cv_ec text-uppercase' data-value='${data}' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [3],
         data: "email_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='email_cv_ec' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='email_cv_ec' class='text-uppercase' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='phone_cv_ec' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -437,12 +468,7 @@ $(document).ready(function () {
           if (act_trace) {
             content +=
               '<a data-toggle="tooltip" data-placement="top" title="Trazabilidad" href="javascript:void(0)" class="trace-row pd-x-5-force" data-id="' +
-              data +
-              '" onclick="trace(\'' +
-              $path_trace +
-              "', 'id_user'," +
-              data +
-              ')"><i class="fas fa-history"></i></a>';
+              data + '" onclick="trace(\'' + $path_trace +"', 'id_cv_ec'," + data + ')"><i class="fas fa-history"></i></a>';
           }
 
           return content + "</div>";
@@ -451,26 +477,27 @@ $(document).ready(function () {
     ],
     drawCallback: function (settings) {
       var rows = this.fnGetData();
-      // var inputSearch = $('.dataTables_filter input').val();
+      var inputSearch = $('.dataTables_filter input').val();
 
-      // if (rows.length == 0)
-      // {
-      //     $('#btn_export_xlsx').removeAttr('href');
-      // }
-      // else
-      // {
-      //     if (inputSearch != '')
-      //     {
-      //         $('#btn_export_xlsx').attr('href', $path_export_xlsx + '/?search=' + inputSearch);
-      //     }
-      //     else
-      //     {
-      //         $('#btn_export_xlsx').attr('href', $path_export_xlsx);
-      //     }
-      // }
+      if (rows.length == 0)
+      {
+          $('#btn_export_xlsx').removeAttr('href');
+      }
+      else
+      {
+          if (inputSearch != '')
+          {
+              $('#btn_export_xlsx').attr('href', $path_export_xlsx + '/?search=' + inputSearch);
+          }
+          else
+          {
+              $('#btn_export_xlsx').attr('href', $path_export_xlsx);
+          }
+      }
 
       if (act_edit) {
         $("#default_table td span[data-type]").editable({
+          inputclass: 'py-2 pl-2 pr-3 mw-50',
           validate: function (value) {
             return validate_input({
               value: value,
@@ -481,6 +508,7 @@ $(document).ready(function () {
               isText: $(this).attr("data-type") == "text" || null,
             });
           },
+          emptyText: 'vacio',
           success: function (response, newValue) {
             response = $.parseJSON(response);
             modal_alert(response.data, response.message);
@@ -490,9 +518,9 @@ $(document).ready(function () {
         $(".type_cv_ec").editable({
           type: "select",
           source: [
-            { value: "PRIVADA", text: "PRIVADA" },
-            { value: "PUBLICA", text: "PUBLICA" },
-            { value: "INDEPENDIENTE", text: "INDEPENDIENTE" },
+            { value: "PRIVADA", text: "Privada" },
+            { value: "PUBLICA", text: "Pública" },
+            { value: "INDEPENDIENTE", text: "Independiente" },
           ],
           validate: function (value) {
             return validate_input({
@@ -506,6 +534,8 @@ $(document).ready(function () {
           },
         });
       }
+
+      $('span.editable').css('border-bottom', 'none');
     },
   });
 
@@ -535,48 +565,188 @@ $(document).ready(function () {
         $("#loading").removeClass("d-none");
       },
       success: function ({ data }) {
-
-        $("#loading").addClass("d-none");
         $('#form_edit input[name="pk"]').attr("value", data.id_cv_ec);
-        $('#form_edit input[name="address_cv_ec"]').attr("value", data.address_cv_ec);
-    
-        retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="country_cv_ec"]',
-            dataName: 'countries',
-            placeholder: 'Selecciona un país',
-            pk: 'id_country',
-            value: data.country_cv_ec,
-            table: 'git_countries',
-            optionText: 'name_country',
-            optionValue: 'id_country'
-        });
+        $('#form_edit input[name="address_cv_ec"]').attr(
+          "value",
+          data.address_cv_ec
+        );
 
         retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="department_cv_ec"]',
-            dataName: 'departments',
-            placeholder: 'Selecciona un departamento',
-            pk: 'id_department',
-            value: data.department_cv_ec,
-            table: 'git_departments',
-            optionText: 'name_department',
-            optionValue: 'id_department'
+          selectRef: '#form_edit select[name="country_cv_ec"]',
+          dataName: "countries",
+          placeholder: "Selecciona un país",
+          pk: "id_country",
+          value: data.country_cv_ec,
+          table: "git_countries",
+          optionText: "name_country",
+          optionValue: "id_country",
+          count: 1,
         });
 
-        retrieveLocationSelect2({
-            selectRef: '#form_edit select[name="city_cv_ec"]',
-            dataName: 'cities',
-            placeholder: 'Selecciona una ciudad',
-            pk: 'id_city',
-            value: data.city_cv_ec,
-            table: 'git_cities',
-            optionText: 'name_city',
-            optionValue: 'id_city'
+        var countryCount = 1;
+        $('#form_edit select[name="country_cv_ec"]').on("change", function (e) {
+          var country = $(
+            '#form_edit select[name="country_cv_ec"] option:selected'
+          ).val();
+
+          if (typeof country !== "undefined") {
+            retrieveLocationSelect2({
+              selectRef: '#form_edit select[name="department_cv_ec"]',
+              dataName: "departments",
+              placeholder: "Selecciona un departamento",
+              parentId: country,
+              parentName: "countries",
+              pk: "id_department",
+              value: data.department_cv_ec,
+              table: "git_departments",
+              optionText: "name_department",
+              optionValue: "id_department",
+              count: countryCount,
+            });
+          } else {
+            $('#form_edit select[name="department_cv_ec"]').prop(
+              "disabled",
+              true
+            );
+            $('#form_edit select[name="department_cv_ec"]').empty();
+
+            $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
+            $('#form_edit select[name="city_cv_ec"]').empty();
+          }
+
+          countryCount++;
         });
 
-      },
+        var departmentCount = 1;
+        $('#form_edit select[name="department_cv_ec"]').on(
+          "change",
+          function (e) {
+            var department = $(
+              '#form_edit select[name="department_cv_ec"] option:selected'
+            ).val();
+
+            if (typeof department !== "undefined") {
+              retrieveLocationSelect2({
+                selectRef: '#form_edit select[name="city_cv_ec"]',
+                dataName: "cities",
+                placeholder: "Selecciona una ciudad",
+                parentId: department,
+                parentName: "departments",
+                pk: "id_city",
+                value: data.city_cv_ec,
+                table: "git_cities",
+                optionText: "name_city",
+                optionValue: "id_city",
+                count: departmentCount,
+              });
+            } else {
+              $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
+              $('#form_edit select[name="city_cv_ec"]').empty();
+            }
+            departmentCount++;
+            $("#loading").addClass("d-none");
+          }
+        );
+     }
     });
   });
 
+  /***********************************************************************************************************/
+  var validateForm = $("#form_edit").validate({
+    onkeyup: false,
+    ignore: [],
+    rules: {
+      normalizer: function (value) {
+        return $.trim(value);
+      },
+      onkeyup: false,
+      focusCleanup: true,
+      address_cv_ec: {
+        minlength: 5,
+        maxlength: 80,
+      },
+      country_cv_ec: {
+        required: true,
+      },
+      department_cv_ec: {
+        required: true,
+      },
+      city_cv_ec: {
+        required: true,
+      },
+    },
+    messages: {
+      address_cv_ec: {
+        minlength: "La dirección debe contener al menos 5 caracteres",
+        maxlength: "La dirección debe contener máximo 60 caracteres",
+      },
+      country_cv_ec: {
+        required: "Seleccione el país",
+      },
+      department_cv_ec: {
+        required: "Seleccione el departamento",
+      },
+      city_cv_ec: {
+        required: "Seleccione la ciudad",
+      },
+    },
+    errorElement: "small",
+    errorPlacement: function (error, element) {
+      $(error).addClass("invalid-feedback font-weight-normal");
+
+      $(error).insertAfter(element);
+    },
+    // submitHandler: function (form) {
+    //   submit(form);
+    //   return false;
+    // },
+  });
+
+  // function submit(form) {
+  //   $(form).ajaxSubmit({
+  //     dataType: 'json',
+  //     url: $path_add,
+  //     type: 'post',
+  //     beforeSubmit: function()
+  //     {
+  //         $('#loading').removeClass('d-none');
+  //     },
+  //     success: function ({ data, message }) {
+  
+  //         $('#loading').addClass('d-none');
+  //         $("#error-list").empty();
+  
+
+  //       if (data === false && typeof message == "object") {
+  //         Object.values(message).forEach((item) => {
+  //           $(`<li>${item}</li>`).appendTo("#error-list");
+  //         });
+
+  //         $("#form-errors").removeClass("d-none");
+  //         return false;
+  //       }
+
+  //       if (data === false && typeof message == "string") {
+  //         $(`<li>${message}</li>`).appendTo("#error-list");
+
+  //         modal_alert(data, message);
+          
+  //         $("#form-errors").removeClass("d-none");
+  //         return false;
+  //       }
+
+  //       $("#form-errors").addClass("d-none");
+  //       modal_alert(data, message);
+
+  //       $(".select2-hidden-accessible").empty();
+      
+  //       $("#form_add")[0].reset();
+
+  //       table.ajax.reload();
+  //     },
+  //   });
+  // }
+  /************************************************************************************************************/
 
   $('#btn_confirm_edit').on('click', function ()
   {
@@ -587,7 +757,8 @@ $(document).ready(function () {
       dataType:  'json',
       success:  function(response) {
         modal_alert(response.data, response.message);
-        // if (response.data) $(elementRef).addClass('d-none');
+
+        if (response.data) $('#view_form_edit').addClass('d-none');      
       },
       beforeSubmit: function()
       {
@@ -884,28 +1055,4 @@ $(document).ready(function () {
 
       $('#modal_delete').iziModal('open');
   });
-
-
-
-
-
-
-
-
-
-  // iziToast - Alerts
-  function errorAlert(message) {
-    iziToast.warning({
-      message: message,
-      position: "topRight",
-    });
-  }
-
-
-  function successAlert(message) {
-    iziToast.success({
-      message: message,
-      position: "topRight",
-    });
-  }
 });

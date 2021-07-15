@@ -7,6 +7,10 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+include_once 'vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Externalcompanies_controller extends CI_Controller 
 {
     private $actions;
@@ -127,11 +131,44 @@ class Externalcompanies_controller extends CI_Controller
                                                                                     );
             }
 
+            $draw                                                               =   $this->input->post('draw');
             $limit                                                              =   $this->input->post('length');
             $start                                                              =   $this->input->post('start');
             $search                                                             =   $this->input->post('search')['value'];
             $order                                                              =   $columns[$this->input->post('order')[0]['column']];
             $dir                                                                =   $this->input->post('order')[0]['dir'];
+            $filtered_columns                                                   =   $this->input->post('columns');
+
+            // Filter by column search
+            $data                                                                   = [];
+            foreach ($filtered_columns as $column) 
+            {
+                $search_value                                                       = $column['search']['value'];
+
+                if (strlen($search_value) > 0) 
+                {
+                    $search_data = [
+                        'name' => $column['data'],
+                        'value' => $search_value
+                    ];
+                    array_push($data, $search_data);
+                }
+            }
+
+            if (count($data) > 0) 
+            {
+                $count_rows                                                         = $this->_externalcompanies_model->count_rows($data);
+                $all_data                                                           = $this->_externalcompanies_model->row_by_search($data);
+                $json_data = array(
+                    "draw"                                                          => intval($draw),
+                    "recordsTotal"                                                  => intval($count_rows['total']),
+                    "recordsFiltered"                                               => intval($count_rows['total_filtered']),
+                    "data"                                                          => $all_data,
+                );
+
+                echo json_encode($json_data);
+                exit();
+            }
 
             $count_rows                                                         =   $this->_externalcompanies_model->count_rows($search);
             $all_rows                                                           =   $this->_externalcompanies_model->all_rows($limit, $start, $search, $order, $dir);
@@ -428,6 +465,151 @@ class Externalcompanies_controller extends CI_Controller
 
                 exit();
             }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function trace()
+    {
+        if(in_array('TRACE', $this->actions))
+        {
+            $param                                                              =   $this->security->xss_clean($_POST);
+
+            if ($param)
+            {
+                $trace                                                          =   $this->_externalcompanies_model->trace_register($param);
+
+                echo json_encode($trace);
+                exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param
+    * @return    file
+    **/
+    public function export_xlsx()
+    {
+        if(in_array('EXPORTXLSX', $this->actions))
+        {
+            if ((isset($_GET["search"])) && ($_GET["search"] != "null") && ($_GET["search"] != ""))
+            {
+                $search                                                         =   $_GET["search"];
+            }
+            else
+            {
+                $search                                                         =   "";
+            }
+
+            $spreadsheet                                                        =   new Spreadsheet();
+            $sheet                                                              =   $spreadsheet->getActiveSheet();
+
+            $sheet->setCellValue('A1', 'No')
+                  ->setCellValue('B1', 'Nombre')
+                  ->setCellValue('C1', 'NIT')
+                  ->setCellValue('D1', 'Tipo')
+                  ->setCellValue('E1', 'Correo')
+                  ->setCellValue('F1', 'Telefono')
+                  ->setCellValue('G1', 'Dirección')
+                  ->setCellValue('H1', 'País')
+                  ->setCellValue('I1', 'Departamento')
+                  ->setCellValue('J1', 'Ciudad');
+
+
+            $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+
+            $sheet->getColumnDimension('A')->setWidth(10);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+            $sheet->getColumnDimension('E')->setWidth(30);
+            $sheet->getColumnDimension('F')->setWidth(20);
+            $sheet->getColumnDimension('G')->setWidth(50);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(30);
+            $sheet->getColumnDimension('J')->setWidth(30);
+
+
+
+            $export_xlsx                                                        =   $this->_externalcompanies_model->export_xlsx($search);
+            $count                                                              =   2;
+
+            for ($i = 0; $i < count($export_xlsx['data']); $i++)
+            {
+                $column                                                         =   'B';
+
+                foreach ($export_xlsx['data'][$i] as $key => $value)
+                {
+                    $sheet->setCellValue(''."A".''.$count.'', ''.($i + 1).'');
+                    $sheet->setCellValue(''.$column.''.$count.'', ''.$export_xlsx['data'][$i][$key].'');
+                    $column++;
+                }
+
+                $count++;
+            }
+
+            $writer                                                             =   new Xlsx($spreadsheet);
+            $sheet->setTitle('Empresas Externas');
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="trabajandofet_empresas_externas_' . date('dmY') . '.xlsx"');
+            header('Cache-Control: max-age=0');
+            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+            header('Cache-Control: cache, must-revalidate');
+            header('Pragma: public');
+
+            $writer->save('php://output');
+            exit();
         }
         else
         {

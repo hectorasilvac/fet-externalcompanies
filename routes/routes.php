@@ -205,3 +205,7 @@ $route['externalcompanies/find']                                                
 $route['externalcompanies/location']                                            =   'externalcompanies_controller/location';
 
 $route['externalcompanies/udrop']                                               =   'externalcompanies_controller/udrop';
+
+$route['externalcompanies/trace']                                               =   'externalcompanies_controller/trace';
+
+$route['externalcompanies/exportxlsx']                                          =   'externalcompanies_controller/export_xlsx';

@@ -42,13 +42,13 @@
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="wd-15p-force p-3 text-center text-uppercase text-secondary">Nombre</th>
-                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">NIT</th>
-                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">Tipo</th>
-                                        <th class="wd-10p-force p-3 text-center text-uppercase text-secondary">Correo</th>
-                                        <th class="wd-15p-force p-3 text-center text-uppercase text-secondary">Teléfono</th>
+                                        <th class="wd-25p-force p-3 text-center">Nombre</th>
+                                        <th class="wd-10p-force p-3 text-center">NIT</th>
+                                        <th class="wd-10p-force p-3 text-center">Tipo</th>
+                                        <th class="wd-15p-force p-3 text-center">Correo</th>
+                                        <th class="wd-15p-force p-3 text-center">Teléfono</th>
                                         {if $act_edit or $act_drop or $act_trace}
-                                            <th class="wd-15p-force p-3 text-center text-uppercase text-secondary"></th>
+                                            <th class="wd-20p-force p-3 text-center"></th>
                                         {else}
                                             <th class="d-none"></th>
                                         {/if}
@@ -90,6 +90,7 @@
                                             <label class="form-control-label">Tipo de empresa: </label>
                                             <select class="form-control" id="type_cv_ec" name="type_cv_ec">
                                                 <option value="">Selecciona tipo de empresa</option>
+                                                <option value="INDEPENDIENTE">Independiente</option>
                                                 <option value="PUBLICA">Pública</option>
                                                 <option value="PRIVADA">Privada</option>
                                             </select>
