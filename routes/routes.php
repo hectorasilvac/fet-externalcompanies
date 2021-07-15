@@ -208,4 +208,6 @@ $route['externalcompanies/udrop']                                               
 
 $route['externalcompanies/trace']                                               =   'externalcompanies_controller/trace';
 
+$route['externalcompanies/details']                                          =   'externalcompanies_controller/details';
+
 $route['externalcompanies/exportxlsx']                                          =   'externalcompanies_controller/export_xlsx';

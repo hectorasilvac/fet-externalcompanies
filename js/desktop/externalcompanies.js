@@ -127,17 +127,18 @@ function locationSelect2({
         isEmail = null,
         isText = null,
         isNumeric = null,
+        isRequired = true,
       }) {
-        if ($.trim(value) == "") return "No puede estar vacío";
+        if ($.trim(value) == "" && isRequired === true) return "No puede estar vacío";
         if (minLength !== null && value.length < minLength)
           return "Debe contener mínimo 3 letras";
         if (maxLength !== null && value.length > maxLength)
           return "Debe contener máximo 50 letras";
         if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
           return "Solo se permiten letras";
-        if (isEmail !== null && !value.match(/^\S+@\S+\.\S+$/))
+        if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+$/))
           return "El correo electrónico no es válido";
-        if (isNumeric !== null && !value.match(/^[0-9]+$/))
+        if (isNumeric !== null && value !== '' && !value.match(/^[0-9]+$/))
           return "El campo debe contener solo números";
       }
 
@@ -344,9 +345,8 @@ $(document).ready(function () {
         modal_alert(data, message);
 
         $(".select2-hidden-accessible").empty();
-      
         $("#form_add")[0].reset();
-
+        $('#view_table').addClass('d-none');
         table.ajax.reload();
       },
     });
@@ -407,7 +407,7 @@ $(document).ready(function () {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='nit_cv_ec' data-required='false' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -421,14 +421,14 @@ $(document).ready(function () {
         targets: [3],
         data: "email_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='email_cv_ec' class='text-uppercase' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='email_cv_ec' data-required='false' class='text-uppercase' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='phone_cv_ec' class='text-uppercase' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -506,12 +506,20 @@ $(document).ready(function () {
               isEmail: $(this).attr("data-type") == "email" || null,
               isNumeric: $(this).attr("data-type") == "number" || null,
               isText: $(this).attr("data-type") == "text" || null,
+              isRequired: $(this).attr("data-required") == "false" ? false : true,
             });
           },
-          emptyText: 'vacio',
-          success: function (response, newValue) {
-            response = $.parseJSON(response);
-            modal_alert(response.data, response.message);
+          success: function (response) {
+            var { data, message } = $.parseJSON(response);
+            var successful_update = data === true;
+
+            if (successful_update) {
+              modal_alert(data, message);
+              return true;
+            }
+
+            modal_alert(data, message);
+            return false;
           },
         });
 
@@ -520,7 +528,6 @@ $(document).ready(function () {
           source: [
             { value: "PRIVADA", text: "Privada" },
             { value: "PUBLICA", text: "Pública" },
-            { value: "INDEPENDIENTE", text: "Independiente" },
           ],
           validate: function (value) {
             return validate_input({
@@ -783,18 +790,17 @@ $(document).ready(function () {
     var companyId = $(this).attr("data-id");
 
     var getCompanyById = $.ajax({
-      url: $path_find,
+      url: $path_details,
       type: "POST",
       dataType: "json",
       data: {
         pk: "id_cv_ec",
         value: companyId,
-        table: "fet_cv_ec",
       },
       beforeSend: function () {
         $("#loading").removeClass("d-none");
       },
-      success: function ({ data }) {
+      success: function ({ data, message }) {
         $("#view_table").toggleClass("d-none");
         $("#view_details").removeClass("d-none");
 
@@ -803,58 +809,14 @@ $(document).ready(function () {
         $('#view_details td[data-name="type_cv_ec"]').text(data.type_cv_ec);
         $('#view_details td[data-name="phone_cv_ec"]').text(data.phone_cv_ec);
         $('#view_details td[data-name="email_cv_ec"]').text(data.email_cv_ec);
-        $('#view_details td[data-name="address_cv_ec"]').text(
-          data.address_cv_ec
-        );
+        $('#view_details td[data-name="address_cv_ec"]').text(data.address_cv_ec);
+        $('#view_details td[data-name="country_cv_ec"]').text(data.name_country);
+        $('#view_details td[data-name="department_cv_ec"]').text(data.name_department);
+        $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
 
-        $.ajax({
-          url: $path_find,
-          type: "POST",
-          dataType: "json",
-          data: {
-            pk: "id_country",
-            value: data.country_cv_ec,
-            table: "git_countries",
-          },
-          success: function ({ data }) {
-            $('#view_details td[data-name="country_cv_ec"]').text(
-              data.name_country
-            );
-          },
-        });
-
-        $.ajax({
-          url: $path_find,
-          type: "POST",
-          dataType: "json",
-          data: {
-            pk: "id_department",
-            value: data.department_cv_ec,
-            table: "git_departments",
-          },
-          success: function ({ data }) {
-            $('#view_details td[data-name="department_cv_ec"]').text(
-              data.name_department
-            );
-          },
-        });
-
-        $.ajax({
-          url: $path_find,
-          type: "POST",
-          dataType: "json",
-          data: {
-            pk: "id_city",
-            value: data.city_cv_ec,
-            table: "git_cities",
-          },
-          success: function ({ data }) {
-            $("#loading").toggleClass("d-none");
-
-            $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
-          },
-        });
-      },
+        $("#loading").toggleClass("d-none");
+      }
+      
     });
   });
 

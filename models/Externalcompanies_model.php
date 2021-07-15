@@ -51,20 +51,58 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $this->db->where('flag_drop', 0);
+        $this->db->where('fet_cv_ec.flag_drop', 0);
+        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
         $this->db->from('fet_cv_ec');
 
         $result['total']                                                        =   $this->db->count_all_results();
 
-        if ( ! empty($search))
+        if (isset($search) && !empty($search)) 
         {
-            $this->db->select('name_cv_ec');
-            $this->db->from('fet_cv_ec');
-            $this->db->where('flag_drop', 0);
+            $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
+            $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
+            $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
+            $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
 
-            $result['total_filtered']                                           =   $this->db->count_all_results();
-        }
-        else
+            if (is_array($search) && count($search) > 0) 
+            {
+                $this->db->like($search[0]['name'], $search[0]['value']);
+                $search_data                                                        = [];
+
+                $this->db->group_start();
+                foreach ($search as $element) {
+                    $name = $element['name'];
+                    $value = $element['value'];
+                    $search_data[$name] = $value;
+                }
+
+                $this->db->or_like($search_data);
+                $this->db->group_end();
+                $this->db->from('fet_cv_ec');
+                $this->db->where('fet_cv_ec.flag_drop', 0);
+
+                $result['total_filtered']                                           =   $this->db->count_all_results();
+            } 
+            else 
+            {
+                $this->db->group_start();
+                $this->db->like('fet_cv_ec.name_cv_ec', $search);
+                $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
+                $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
+                $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
+                $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
+                $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
+                $this->db->or_like('git_countries.name_country', $search);
+                $this->db->or_like('git_cities.name_city', $search);
+                $this->db->group_end();
+
+                $this->db->where('fet_cv_ec.flag_drop', 0);
+                $this->db->from('fet_cv_ec');
+
+                $result['total_filtered']                                           =   $this->db->count_all_results();
+            }
+        } 
+        else 
         {
             $result['total_filtered']                                           =   $result['total'];
         }
@@ -84,7 +122,9 @@ class Externalcompanies_model extends CI_Model
     {
         $this->db->select('id_cv_ec, name_cv_ec, nit_cv_ec, type_cv_ec, email_cv_ec, phone_cv_ec');
         $this->db->from('fet_cv_ec');
-        $this->db->where('flag_drop', 0);
+        $this->db->where('fet_cv_ec.flag_drop', 0);
+        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+
 
         if ( ! empty($search))
         {
@@ -135,6 +175,7 @@ class Externalcompanies_model extends CI_Model
 
         $this->db->select("{$table['id']} AS id, {$table['text']} AS text");
         $this->db->where('flag_drop', 0);
+        
 
         if ( ! is_null($parent_table))
         { 
@@ -180,11 +221,23 @@ class Externalcompanies_model extends CI_Model
         if (isset($params['pk'])) 
         {
             $this->db->select($params['name']);
-            $this->db->where('flag_drop', 0);
-            $this->db->where($params['name'], trim($params['value']));
-            $this->db->where('id_cv_ec !=', $params['pk']);
 
-            $params['name'] == 'type_cv_ec' ? $this->db->where('type_cv_ec !=', $params['value']) : NULL;
+            if ($params['name'] == 'nit_cv_ec' || $params['name'] == 'type_cv_ec' || $params['name'] == 'email_cv_ec' || $params['name'] == 'phone_cv_ec')
+            {
+            $params['name'] == 'nit_cv_ec' && empty($params['value'])    ?  $this->db->where('nit_cv_ec', '25513223')           :   $this->db->where('nit_cv_ec', $params['value']);
+            $params['name'] == 'email_cv_ec' && empty($params['value'])  ?  $this->db->where('email_cv_ec', '25513223')         :   $this->db->where('email_cv_ec', $params['value']);
+            $params['name'] == 'phone_cv_ec' && empty($params['value'])  ?  $this->db->where('phone_cv_ec', '25513223')         :   $this->db->where('phone_cv_ec', $params['value']);
+            $params['name'] == 'type_cv_ec'                              ?  $this->db->where('type_cv_ec !=', $params['value']) :   NULL;
+
+            }
+            else
+            {
+              $this->db->where($params['name'], trim($params['value']));
+            }
+
+            $this->db->where('flag_drop', 0);
+            $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+            $this->db->where('id_cv_ec !=', $params['pk']);
         } 
         else 
         {
@@ -218,16 +271,31 @@ class Externalcompanies_model extends CI_Model
         {
 
             $message                                                            =   '';
-            foreach ($query->row_array() as $key => $value)
-            {   
-                strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
-                strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
-                strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;
-                strtolower($value) == strtolower(trim($params['phone_cv_ec']))  ?   $message = 'este teléfono' :   NULL;
+            $error_by_field                                                     =   isset($params['name']) && strlen($params['name']) > 0;
+
+            if ($error_by_field) 
+            {
+                foreach ($query->row_array() as $key => $value) 
+                {
+                    $params['name']  === 'name_cv_ec'  && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este nombre'   :   NULL;
+                    $params['name']  === 'nit_cv_ec'   && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este NIT'      :   NULL;
+                    $params['name']  === 'email_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este email'    :   NULL;
+                    $params['name']  === 'phone_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este teléfono' :   NULL;
+                }
+            }
+            else
+            {
+                foreach ($query->row_array() as $key => $value)
+                {   
+                    isset($params['name_cv_ec'])  && strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
+                    isset($params['nit_cv_ec'])   && strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
+                    isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;
+                    isset($params['phone_cv_ec']) && strtolower($value) == strtolower(trim($params['phone_cv_ec']))  ?   $message = 'este teléfono' :   NULL;
+                }
             }
 
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Ya existe un empresa con ' . $message;
+            $result['message']                                                  =   'Ya existe una empresa con ' . $message;
         }
         else
         {
@@ -239,7 +307,7 @@ class Externalcompanies_model extends CI_Model
         exit();
     }
 
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
@@ -263,6 +331,7 @@ class Externalcompanies_model extends CI_Model
         {
             $this->db->where($params['pk'], $params['value']);
             $this->db->where('flag_drop', 0);
+
             $query                                                              =   $this->db->get($params['table']);
         }
 
@@ -374,17 +443,18 @@ class Externalcompanies_model extends CI_Model
         $this->form_validation->set_rules($entries);
 
         if ($this->form_validation->run())
+
         {
             $data                                                               =   array();
-            $data['name_cv_ec']                                                 =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec'])));
-            $data['nit_cv_ec']                                                  =   trim($params['nit_cv_ec']);
-            $data['type_cv_ec']                                                 =   trim($params['type_cv_ec']);
-            $data['email_cv_ec']                                                =   $this->_trabajandofet_model->user_name(trim($params['email_cv_ec']));
-            $data['phone_cv_ec']                                                =   trim($params['phone_cv_ec']);
-            $data['address_cv_ec']                                              =   trim($params['address_cv_ec']);
-            $data['country_cv_ec']                                              =   trim($params['country_cv_ec']);
-            $data['department_cv_ec']                                           =   trim($params['department_cv_ec']);
-            $data['city_cv_ec']                                                 =   trim($params['city_cv_ec']);
+            $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0               ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
+            $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0                ? trim($params['nit_cv_ec']) : NULL;
+            $data['type_cv_ec']                                                 =   isset($params['type_cv_ec'])       && strlen($params['type_cv_ec']) > 0               ? trim($params['type_cv_ec']) : NULL;
+            $data['email_cv_ec']                                                =   isset($params['email_cv_ec'])      && strlen($params['email_cv_ec']) > 0       ? $this->_trabajandofet_model->user_name(trim($params['email_cv_ec'])) : NULL;
+            $data['phone_cv_ec']                                                =   isset($params['phone_cv_ec'])      && strlen($params['phone_cv_ec']) > 0       ? trim($params['phone_cv_ec']) : NULL;
+            $data['address_cv_ec']                                              =   isset($params['address_cv_ec'])    && strlen($params['address_cv_ec']) > 0     ? trim($params['address_cv_ec']) : NULL;
+            $data['country_cv_ec']                                              =   isset($params['country_cv_ec'])    && strlen($params['country_cv_ec']) > 0     ? trim($params['country_cv_ec']) : NULL;
+            $data['department_cv_ec']                                           =   isset($params['department_cv_ec']) && strlen($params['department_cv_ec']) > 0  ? trim($params['department_cv_ec']) : NULL;
+            $data['city_cv_ec']                                                 =   isset($params['city_cv_ec'])       && strlen($params['city_cv_ec']) > 0              ? trim($params['city_cv_ec']) : NULL;
             $data['user_insert']                                                =   $this->session->userdata['id_user'];
             $data['date_insert']                                                =   date('Y-m-d H:i:s');
 
@@ -438,8 +508,9 @@ class Externalcompanies_model extends CI_Model
             $data['id']                                                         =   $params['pk'];
             $data['user_update']                                                =   $this->session->userdata['id_user'];
             $data['date_update']                                                =   date('Y-m-d H:i:s');
+            $value_is_valid                                                     =   isset($params['value']) ? $params['value'] != '' || $params['value'] != NULL : FALSE;
 
-            if (isset($params['value']) && $params['value'] != '' && $params['value'] != null) 
+            if ($value_is_valid) 
             {
                 $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']         =   mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
                 $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']          =   $params['value']                                                      : NULL;
@@ -448,10 +519,18 @@ class Externalcompanies_model extends CI_Model
                 $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']        =   $params['value'] : NULL;
 
                 $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
-            } 
+            }
             else 
             {
-                unset($params['pk']);
+                if (isset($params['name']))
+                {
+                    $params[$params['name']]                                    =   NULL;
+                    unset($params['name']);
+                }
+
+                if (isset($params['pk']))    unset($params['pk']);
+                if (isset($params['value'])) unset($params['value']);
+
                 $data                                                           =   array_merge($data, $params);
                 $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
             }
@@ -483,7 +562,52 @@ class Externalcompanies_model extends CI_Model
         exit();
     }
 
-        /**
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function details($params)
+    {
+        $result                                                                 =   array();
+        $valid_params                                                           =   isset($params['pk']) && isset($params['value']);
+
+        if ($valid_params)
+        {
+            $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
+            $this->db->from('fet_cv_ec');
+            $this->db->join('git_countries', 'git_countries.id_country = fet_cv_ec.country_cv_ec');
+            $this->db->join('git_departments', 'git_departments.id_department = fet_cv_ec.department_cv_ec');
+            $this->db->join('git_cities', 'git_cities.id_city = fet_cv_ec.city_cv_ec');
+            $this->db->where($params['pk'], $params['value']);
+            $this->db->where('fet_cv_ec.flag_drop', 0);
+
+            $query                                                              =   $this->db->get();
+
+            if (count($query->result_array()) > 0) 
+            {
+                $result['data']                                                 =   $query->row_array();
+                $result['message']                                              =   FALSE;
+            } 
+            else 
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Problemas al mostrar los detalles de la empresa.';
+            }
+        } 
+        else 
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Completa todos los campos.';
+        }
+
+        return $result;
+        exit();
+    }
+
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
@@ -535,6 +659,7 @@ class Externalcompanies_model extends CI_Model
     {
         $this->db->select('id_cv_ec, name_cv_ec, nit_cv_ec, type_cv_ec, email_cv_ec, phone_cv_ec');
         $this->db->where('flag_drop', 0);
+        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
 
         $this->db->like($search[0]['name'], $search[0]['value']);
 
@@ -607,19 +732,21 @@ class Externalcompanies_model extends CI_Model
         $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
         $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
         $this->db->where('fet_cv_ec.flag_drop', 0);
+        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
 
-        // if (!empty($search))
-        // {
-        //     $this->db->group_start();
-        //     $this->db->like('fu.name_user', $search);
-        //     $this->db->or_like('fu.lastname_user', $search);
-        //     $this->db->or_like('fr.name_role', $search);
-        //     $this->db->or_like('fu.user', $search);
-        //     $this->db->or_like('fu.email_user', $search);
-        //     $this->db->or_like('DATE_FORMAT(fu.date_keepalive, \'%d-%m-%Y\')', $search);
-        //     $this->db->or_like('CONCAT(fa.name_aspirant, " ", fa.first_last_name_aspirant, " ", fa.second_last_name_aspirant)', $search);
-        //     $this->db->group_end();
-        // }
+        if (!empty($search))
+        {
+            $this->db->group_start();
+            $this->db->like('fet_cv_ec.name_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
+            $this->db->or_like('git_countries.name_country', $search);
+            $this->db->or_like('git_cities.name_city', $search);
+            $this->db->group_end();
+        }
 
         $this->db->order_by('fet_cv_ec.name_cv_ec', 'ASC');
         $query                                                                  =   $this->db->get('fet_cv_ec');

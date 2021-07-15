@@ -79,7 +79,7 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('path_view',                                   site_url('externalcompanies/datatable'));
             $this->_view->assign('path_add',                                    site_url('externalcompanies/add'));
             $this->_view->assign('path_edit',                                   site_url('externalcompanies/edit'));
-            $this->_view->assign('path_userflags',                              site_url('externalcompanies/userflags'));
+            $this->_view->assign('path_details',                                site_url('externalcompanies/details'));
             $this->_view->assign('path_editflags',                              site_url('externalcompanies/editflags'));
             $this->_view->assign('path_drop',                                   site_url('externalcompanies/udrop'));
             $this->_view->assign('path_trace',                                  site_url('externalcompanies/trace'));
@@ -108,6 +108,7 @@ class Externalcompanies_controller extends CI_Controller
     **/
     public function datatable()
     {
+        
         if(in_array('VIEW', $this->actions))
         {
             if ($this->session->userdata['mobile'] == 0)
@@ -140,10 +141,10 @@ class Externalcompanies_controller extends CI_Controller
             $filtered_columns                                                   =   $this->input->post('columns');
 
             // Filter by column search
-            $data                                                                   = [];
+            $data                                                               = [];
             foreach ($filtered_columns as $column) 
             {
-                $search_value                                                       = $column['search']['value'];
+                $search_value                                                   = $column['search']['value'];
 
                 if (strlen($search_value) > 0) 
                 {
@@ -157,6 +158,7 @@ class Externalcompanies_controller extends CI_Controller
 
             if (count($data) > 0) 
             {
+
                 $count_rows                                                         = $this->_externalcompanies_model->count_rows($data);
                 $all_data                                                           = $this->_externalcompanies_model->row_by_search($data);
                 $json_data = array(
@@ -257,6 +259,54 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function details()
+    {
+        if(in_array('DETAILS', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                    $details                                                    =   $this->_externalcompanies_model->details($params);
+
+                    echo json_encode($details);
+                    exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();  
+        }
+    }
     
     /**
     * @author    Innovación y Tecnología

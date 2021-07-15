@@ -89,8 +89,7 @@
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Tipo de empresa: </label>
                                             <select class="form-control" id="type_cv_ec" name="type_cv_ec">
-                                                <option value="">Selecciona tipo de empresa</option>
-                                                <option value="INDEPENDIENTE">Independiente</option>
+                                                <option value="" disabled selected>Selecciona tipo de empresa</option>
                                                 <option value="PUBLICA">Pública</option>
                                                 <option value="PRIVADA">Privada</option>
                                             </select>
@@ -325,7 +324,7 @@
         var $path_add                                                           =   '{$path_add}';
         var $path_view                                                          =   '{$path_view}';
         var $path_edit                                                          =   '{$path_edit}';
-        var $path_userflags                                                     =   '{$path_userflags}';
+        var $path_details                                                       =   '{$path_details}';
         var $path_editflags                                                     =   '{$path_editflags}';
         var $path_display                                                       =   '{$path_display}';
         var $path_drop                                                          =   '{$path_drop}';
