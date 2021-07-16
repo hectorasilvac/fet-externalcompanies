@@ -119,6 +119,15 @@ function locationSelect2({
         },
         "Este campo no puede contener números."
       );
+
+      jQuery.validator.addMethod(
+        'notEmpty',
+        function (value, element) {
+          return this.optional(element) || $.trim(value).length > 0;
+        },
+        'Este campo no puede estar vacío.'
+      );
+
       
       function validate_input({
         value,
@@ -131,9 +140,9 @@ function locationSelect2({
       }) {
         if ($.trim(value) == "" && isRequired === true) return "No puede estar vacío";
         if (minLength !== null && value.length < minLength)
-          return "Debe contener mínimo 3 letras";
+          return `Debe contener mínimo ${minLength} caracteres`;
         if (maxLength !== null && value.length > maxLength)
-          return "Debe contener máximo 50 letras";
+          return `Debe contener máximo ${maxLength} caracteres`;
         if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
           return "Solo se permiten letras";
         if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+$/))
@@ -219,6 +228,7 @@ $(document).ready(function () {
         minlength: 3,
         maxlength: 50,
         lettersonly_es: true,
+        notEmpty: true,
       },
       nit_cv_ec: {
         digits: true,
@@ -232,10 +242,6 @@ $(document).ready(function () {
         email: true,
         minlength: 3,
         maxlength: 50,
-        // remote: {
-        //     url: window.location.href + "/check-email",
-        //     type: "post",
-        // },
       },
       phone_cv_ec: {
         digits: true,
@@ -261,7 +267,6 @@ $(document).ready(function () {
         required: "Ingrese el nombre de la empresa",
         minlength: "El nombre debe tener al menos 3 caracteres",
         maxlength: "El nombre debe tener máximo 50 caracteres",
-        lettersonly_es: "El nombre solo debe contener letras",
       },
       nit_cv_ec: {
         digits: "El NIT debe contener sólo números",
@@ -275,7 +280,6 @@ $(document).ready(function () {
         email: "El formato del correo electrónico no es válido",
         minlength: "El correo electrónico debe tener al menos 3 caracteres",
         maxlength: "El correo electrónico debe tener máximo 50 caracteres",
-        // remote: "El correo electrónico ya existe",
       },
       phone_cv_ec: {
         digits: "El número de teléfono debe contener sólo números",
@@ -308,6 +312,7 @@ $(document).ready(function () {
     },
   });
 
+
   function submit(form) {
     $(form).ajaxSubmit({
       dataType: 'json',
@@ -321,67 +326,63 @@ $(document).ready(function () {
   
           $('#loading').addClass('d-none');
           $("#error-list").empty();
-  
 
         if (data === false && typeof message == "object") {
-          Object.values(message).forEach((item) => {
-            $(`<li>${item}</li>`).appendTo("#error-list");
-          });
+          Object.entries(message).forEach(([key, value]) => {
 
-          $("#form-errors").removeClass("d-none");
+            var errorExists = $(`#${key}-error`).length;
+
+            if (errorExists) {
+              $(`#${key}-error`).text(value);
+            } else {
+              var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
+
+              $(`#${key}`).addClass("error");
+              $(errorElement).insertAfter(`#${key}`);
+            }
+          });
           return false;
         }
 
         if (data === false && typeof message == "string") {
-          $(`<li>${message}</li>`).appendTo("#error-list");
-
           modal_alert(data, message);
           
-          $("#form-errors").removeClass("d-none");
           return false;
         }
 
-        $("#form-errors").addClass("d-none");
         modal_alert(data, message);
 
         $(".select2-hidden-accessible").empty();
         $("#form_add")[0].reset();
-        $('#view_table').addClass('d-none');
+        $('#view_form_add').addClass('d-none');
         table.ajax.reload();
       },
     });
   }
 
+  $('#form_add').on('change', '.form-control', function() {
+
+    if ( $(this).valid() )
+    {
+      var id = $(this).attr('id');
+      var errorExists = $(`#${id}-error`).length;
+
+      if ( errorExists ) {
+        $(`#${id}-error`).remove();
+        return;
+      }
+      return;
+    }
+    
+  });
+
   /****************************************************************************************/
   /******************************** IMPLEMENTING DATATABLE ********************************/
   /****************************************************************************************/
 
-  // Implementing jQuery Validate in all fields.
-	$("#default_table thead tr").clone(true).appendTo("#default_table thead");
-	$("#default_table thead tr:eq(1) th").each(function (i) {
-			var title = $(this).text();
-			if (i === 5){
-				$(this).html('');
-			}
-			else {
-			$(this).html(
-				`<input type="text" class="form-control form-control-sm col-11" placeholder="Buscar por ${title}" />`
-			);
-			}
-
-			// Filter event handler
-			$("input", this).on("keyup change", function () {
-				if (table.column(i).search() !== this.value) {
-					table.column(i).search(this.value).draw();
-				}
-			});
-	});
-
   var table = $("#default_table").DataTable({
     info: true,
     orderCellsTop: true,
-    lengthChange: true,
-    fixedHeader: true,
     processing: true,
     serverSide: true,
     language: {
@@ -407,7 +408,7 @@ $(document).ready(function () {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' data-required='false' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='nit_cv_ec' data-required='false' data-maxlength='15' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -421,18 +422,19 @@ $(document).ready(function () {
         targets: [3],
         data: "email_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='email_cv_ec' data-required='false' class='text-uppercase' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='email_cv_ec' data-required='false' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' class='text-uppercase' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='phone_cv_ec' class='text-uppercase' data-maxlength='15' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
         targets: [5],
+        orderable: false,
         data: "id_cv_ec",
         render: function (data, type, row) {
           var content = '<div class="span-center">';
@@ -452,8 +454,31 @@ $(document).ready(function () {
           }
 
           if (act_assign) {
+
+            // $.ajax({
+            //   url: $path_find,
+            //   type: "POST",
+            //   dataType: "json",
+            //   data: {
+            //     pk: "id_cv_ec",
+            //     value: data,
+            //     count_aspirants: true,
+            //   },
+            //   beforeSend: function () {
+            //     $("#loading").toggleClass("d-none");
+            //   },
+            //   success: function (response)
+            //   {
+            //     if (response.data.amount != 0) 
+            //     {
+            //       $(`a.assign-row[data-id=${data}]`).attr('data-original-title', `Ver Aspirantes Pertenecientes (${response.data.amount})`);
+            //     }
+
+            //   }
+            // });
+
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (0)" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-exchange-alt"></i></a>';
           }
@@ -478,6 +503,8 @@ $(document).ready(function () {
     drawCallback: function (settings) {
       var rows = this.fnGetData();
       var inputSearch = $('.dataTables_filter input').val();
+
+      $('[data-toggle="tooltip"]').tooltip();
 
       if (rows.length == 0)
       {
@@ -526,8 +553,8 @@ $(document).ready(function () {
         $(".type_cv_ec").editable({
           type: "select",
           source: [
-            { value: "PRIVADA", text: "Privada" },
-            { value: "PUBLICA", text: "Pública" },
+            { value: "PRIVADA", text: "PRIVADA" },
+            { value: "PUBLICA", text: "PUBLICA" },
           ],
           validate: function (value) {
             return validate_input({

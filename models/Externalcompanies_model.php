@@ -128,12 +128,19 @@ class Externalcompanies_model extends CI_Model
 
         if ( ! empty($search))
         {
+            $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
+            $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
+            $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
+
             $this->db->group_start();
             $this->db->like('name_cv_ec', $search);
             $this->db->or_like('nit_cv_ec', $search);
             $this->db->or_like('type_cv_ec', $search);
             $this->db->or_like('email_cv_ec', $search);
-            $this->db->or_like('phone_cv_ec', $search);            
+            $this->db->or_like('phone_cv_ec', $search);
+            $this->db->or_like('git_countries.name_country', $search);            
+            $this->db->or_like('git_departments.name_department', $search);            
+            $this->db->or_like('git_cities.name_city', $search);            
             $this->db->group_end();
         }
 
@@ -318,15 +325,24 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true') 
+        if (isset($params['get_aspirants']) || isset($params['count_aspirants'])) 
         {
-            $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
+            if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true')
+            {
+                $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
+                $this->db->group_by('fet_cv.number_dcv');
+            }
+            elseif (isset($params['count_aspirants']) && $params['count_aspirants'] === 'true')
+            {
+                $this->db->select('COUNT(DISTINCT fet_cv.name_cv) AS amount');
+            }
+
             $this->db->from('fet_cv_we');
             $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
-            $this->db->where('id_cv_ec', $params['value']);
-            $this->db->group_by('fet_cv.number_dcv');
+            $this->db->where('fet_cv_we.id_cv_ec', $params['value']);
+
             $query = $this->db->get();
-        } 
+        }
         else 
         {
             $this->db->where($params['pk'], $params['value']);

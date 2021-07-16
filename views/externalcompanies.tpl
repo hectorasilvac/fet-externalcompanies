@@ -36,11 +36,10 @@
                         {/if}
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
-                        {* Se debe quitar el d-none para mostrar la tabla *}
                     <div class="table-wrapper">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
-                                <thead class="thead-light">
+                                <thead>
                                     <tr>
                                         <th class="wd-25p-force p-3 text-center">Nombre</th>
                                         <th class="wd-10p-force p-3 text-center">NIT</th>
@@ -64,12 +63,6 @@
                         <div class="form-layout">
                             <form id="form_add" method="post">
                                 <div class="row mg-b-25">
-                                    <div class="col-lg-12">
-                                        <div id="form-errors" class="alert alert-danger d-none">
-                                            <ul id="error-list" class="px-3 mb-0">
-                                            </ul>
-                                        </div>
-                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Nombre de la empresa: </label>
@@ -258,11 +251,11 @@
                 {/if}
                 {if $act_assign}
                     <div id="view_assign" class="mg-t-60 d-none">
-                    <table class="table table-bordered border">
-                            <thead id="assign_head" class="thead-light">
+                    <table class="table table-hover table-bordered border">
+                            <thead id="assign_head">
                                 <tr>
                                     <th scope="col">Nombre del Aspirante</th>
-                                    <th scope="col">Cédula del Aspirante</th>
+                                    <th scope="col">Número del Documento</th>
                                 </tr>
                             </thead>
                             <tbody id="assign_content">
