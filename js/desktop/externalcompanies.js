@@ -545,6 +545,15 @@ $(document).ready(function () {
             modal_alert(response.data, response.message);
           },
         });
+
+        // $('span.editable-click').on('click', function (e) {
+        //   if ( $('span.editable-open').text() == '---' )
+        //   {
+        //     $('span.editable-open').text('asassasa').trigger('change');
+        //     // console.log('saas');
+        //   }
+        // });
+
       }
 
       $('span.editable').css('border-bottom', 'none');
