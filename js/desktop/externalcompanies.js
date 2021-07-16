@@ -455,30 +455,8 @@ $(document).ready(function () {
 
           if (act_assign) {
 
-            // $.ajax({
-            //   url: $path_find,
-            //   type: "POST",
-            //   dataType: "json",
-            //   data: {
-            //     pk: "id_cv_ec",
-            //     value: data,
-            //     count_aspirants: true,
-            //   },
-            //   beforeSend: function () {
-            //     $("#loading").toggleClass("d-none");
-            //   },
-            //   success: function (response)
-            //   {
-            //     if (response.data.amount != 0) 
-            //     {
-            //       $(`a.assign-row[data-id=${data}]`).attr('data-original-title', `Ver Aspirantes Pertenecientes (${response.data.amount})`);
-            //     }
-
-            //   }
-            // });
-
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (0)" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (' + row.aspirants + ')" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-exchange-alt"></i></a>';
           }
