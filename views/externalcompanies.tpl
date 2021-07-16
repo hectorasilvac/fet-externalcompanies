@@ -314,19 +314,14 @@
 {/block}
 {block name='scripts'}
     <script type="text/javascript">
-        var $path_add                                                           =   '{$path_add}';
         var $path_view                                                          =   '{$path_view}';
+        var $path_add                                                           =   '{$path_add}';
         var $path_edit                                                          =   '{$path_edit}';
         var $path_details                                                       =   '{$path_details}';
-        var $path_editflags                                                     =   '{$path_editflags}';
-        var $path_display                                                       =   '{$path_display}';
         var $path_drop                                                          =   '{$path_drop}';
         var $path_trace                                                         =   '{$path_trace}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
-        var $path_roles                                                         =   '{$path_roles}';
-        var $path_roles                                                         =   '{$path_roles}';
         var $path_find                                                          =   '{$path_find}';
-
         var $path_location                                                      =   '{$path_location}';
 
         var act_view                                                            =   '{$act_view}';

@@ -145,7 +145,7 @@ function locationSelect2({
           return `Debe contener máximo ${maxLength} caracteres`;
         if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
           return "Solo se permiten letras";
-        if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+$/))
+        if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+\D$/))
           return "El correo electrónico no es válido";
         if (isNumeric !== null && value !== '' && !value.match(/^[0-9]+$/))
           return "El campo debe contener solo números";
@@ -233,7 +233,7 @@ $(document).ready(function () {
       nit_cv_ec: {
         digits: true,
         minlength: 3,
-        maxlength: 15,
+        maxlength: 13,
       },
       type_cv_ec: {
         required: true,
@@ -241,7 +241,7 @@ $(document).ready(function () {
       email_cv_ec: {
         email: true,
         minlength: 3,
-        maxlength: 50,
+        maxlength: 13,
       },
       phone_cv_ec: {
         digits: true,
@@ -271,7 +271,7 @@ $(document).ready(function () {
       nit_cv_ec: {
         digits: "El NIT debe contener sólo números",
         minlength: "El NIT debe tener al menos 3 caracteres",
-        maxlength: "El NIT debe tener máximo 15 caracteres",
+        maxlength: "El NIT debe tener máximo 13 caracteres",
       },
       type_cv_ec: {
         required: "Seleccione el tipo de empresa",
@@ -284,7 +284,7 @@ $(document).ready(function () {
       phone_cv_ec: {
         digits: "El número de teléfono debe contener sólo números",
         minlength: "El número de teléfono debe tener al menos 7 caracteres",
-        maxlength: "El número de teléfono debe tener máximo 10 caracteres",
+        maxlength: "El número de teléfono debe tener máximo 13 caracteres",
       },
       address_cv_ec: {
         minlength: "La dirección debe contener al menos 5 caracteres",
@@ -346,7 +346,7 @@ $(document).ready(function () {
 
         if (data === false && typeof message == "string") {
           modal_alert(data, message);
-          
+        
           return false;
         }
 
@@ -408,7 +408,7 @@ $(document).ready(function () {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' data-required='false' data-maxlength='15' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='nit_cv_ec' data-required='false' data-minlength='3' data-maxlength='13' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -429,7 +429,7 @@ $(document).ready(function () {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' class='text-uppercase' data-maxlength='15' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='phone_cv_ec' class='text-uppercase' data-minlength='7' data-maxlength='13' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
         },
       },
       {
@@ -559,7 +559,7 @@ $(document).ready(function () {
 
     $('#view_table').addClass('d-none');
     $('#view_form_edit').removeClass('d-none');
-    // validate_edit.resetForm();
+    validate_edit.resetForm();
     $('#form_edit')[0].reset();
 
     var companyId = $(this).attr("data-id");
@@ -663,8 +663,8 @@ $(document).ready(function () {
     });
   });
 
-  /***********************************************************************************************************/
-  var validateForm = $("#form_edit").validate({
+
+ var validate_edit = $("#form_edit").validate({
     onkeyup: false,
     ignore: [],
     rules: {
@@ -708,57 +708,8 @@ $(document).ready(function () {
 
       $(error).insertAfter(element);
     },
-    // submitHandler: function (form) {
-    //   submit(form);
-    //   return false;
-    // },
   });
 
-  // function submit(form) {
-  //   $(form).ajaxSubmit({
-  //     dataType: 'json',
-  //     url: $path_add,
-  //     type: 'post',
-  //     beforeSubmit: function()
-  //     {
-  //         $('#loading').removeClass('d-none');
-  //     },
-  //     success: function ({ data, message }) {
-  
-  //         $('#loading').addClass('d-none');
-  //         $("#error-list").empty();
-  
-
-  //       if (data === false && typeof message == "object") {
-  //         Object.values(message).forEach((item) => {
-  //           $(`<li>${item}</li>`).appendTo("#error-list");
-  //         });
-
-  //         $("#form-errors").removeClass("d-none");
-  //         return false;
-  //       }
-
-  //       if (data === false && typeof message == "string") {
-  //         $(`<li>${message}</li>`).appendTo("#error-list");
-
-  //         modal_alert(data, message);
-          
-  //         $("#form-errors").removeClass("d-none");
-  //         return false;
-  //       }
-
-  //       $("#form-errors").addClass("d-none");
-  //       modal_alert(data, message);
-
-  //       $(".select2-hidden-accessible").empty();
-      
-  //       $("#form_add")[0].reset();
-
-  //       table.ajax.reload();
-  //     },
-  //   });
-  // }
-  /************************************************************************************************************/
 
   $('#btn_confirm_edit').on('click', function ()
   {
@@ -781,7 +732,7 @@ $(document).ready(function () {
   $("#btn_cancel_edit").on("click", function () {
     var defaultTable = $("#default_table").DataTable();
     defaultTable.ajax.reload();
-    // validate_edit.resetForm();
+    validate_edit.resetForm();
     $("#form_edit")[0].reset();
     $("#view_form_edit").addClass("d-none");
     $("#view_table").removeClass("d-none");
@@ -904,68 +855,20 @@ $(document).ready(function () {
   $("#btn_add").on("click", function () {
     $("#view_table").addClass("d-none");
     $("#view_form_add").removeClass("d-none");
-    // $('#role').empty().trigger('change');
-    // validate.resetForm();
+    validateForm.resetForm();
     $("#form_add")[0].reset();
-    // $('.flags').prop("checked", false);
   });
-
-  // $('#btn_confirm_add').on('click', function ()
-  // {
-  //   e.preventDefault();
-  //     $('#form_add').submit();
-  // });
-
-  // $('#form_add').ajaxForm({
-  //     dataType:  'json',
-  //     success:  function({ data, message }) {
-
-  //       if (data === false) 
-  //       {
-  //         modal_alert(data, message);
-
-  //       };
-
-  //       console.log(response);
-
-  //       $('#loading').addClass('d-none');
-
-  //       // modal_alert(response.data, response.message);
-
-  //       // if (response.data) $(elementRef).addClass('d-none');
-
-  //     },
-  //     beforeSubmit: function()
-  //     {
-  //         $('#loading').removeClass('d-none');
-  //     }
-  // });
 
 
   $("#btn_cancel_add").on("click", function () {
     var defaultTable = $("#default_table").DataTable();
     defaultTable.ajax.reload();
-    // validate.resetForm();
+    validateForm.resetForm();
+    $(".select2-hidden-accessible").empty();
     $("#form_add")[0].reset();
-    // $('#role').empty().trigger("change");
-    // $('.flags').prop("checked", false);
     $("#view_form_add").addClass("d-none");
     $("#view_table").removeClass("d-none");
   });
-
-  // $('#btn_confirm_edit').on('click', function ()
-  // {
-  //     $('#form_edit').submit();
-  // });
-
-  // $('#form_edit').ajaxForm({
-  //     dataType:  'json',
-  //     success:   edit,
-  //     beforeSubmit: function()
-  //     {
-  //         $('#loading').removeClass('d-none');
-  //     }
-  // });
 
   /****************************************************************************************/
   /***************************************** DROP *****************************************/

@@ -96,6 +96,7 @@ class Externalcompanies_model extends CI_Model
                 $this->db->or_like('git_cities.name_city', $search);
                 $this->db->group_end();
 
+                $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
                 $this->db->where('fet_cv_ec.flag_drop', 0);
                 $this->db->from('fet_cv_ec');
 
@@ -240,13 +241,20 @@ class Externalcompanies_model extends CI_Model
         {
             $this->db->select($params['name']);
 
-            if ($params['name'] == 'nit_cv_ec' || $params['name'] == 'type_cv_ec' || $params['name'] == 'email_cv_ec' || $params['name'] == 'phone_cv_ec')
-            {
-            $params['name'] == 'nit_cv_ec' && empty($params['value'])    ?  $this->db->where('nit_cv_ec', '25513223')           :   $this->db->where('nit_cv_ec', $params['value']);
-            $params['name'] == 'email_cv_ec' && empty($params['value'])  ?  $this->db->where('email_cv_ec', '25513223')         :   $this->db->where('email_cv_ec', $params['value']);
-            $params['name'] == 'phone_cv_ec' && empty($params['value'])  ?  $this->db->where('phone_cv_ec', '25513223')         :   $this->db->where('phone_cv_ec', $params['value']);
-            $params['name'] == 'type_cv_ec'                              ?  $this->db->where('type_cv_ec !=', $params['value']) :   NULL;
+            $editable_single_fields                                             =   ['nit_cv_ec', 'email_cv_ec', 'phone_cv_ec', 'type_cv_ec'];
 
+            if (in_array($params['name'], $editable_single_fields))
+            {
+                if ($params['name'] == 'type_cv_ec')
+                {
+                    $this->db->where($params['name'], '25513223');
+                } 
+                else
+                {
+                    empty($params['value'])
+                        ? $this->db->where($params['name'], '25513223')
+                        : $this->db->where($params['name'], $params['value']);
+                }
             }
             else
             {

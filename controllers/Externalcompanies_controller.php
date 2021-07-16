@@ -80,12 +80,10 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('path_add',                                    site_url('externalcompanies/add'));
             $this->_view->assign('path_edit',                                   site_url('externalcompanies/edit'));
             $this->_view->assign('path_details',                                site_url('externalcompanies/details'));
-            $this->_view->assign('path_editflags',                              site_url('externalcompanies/editflags'));
             $this->_view->assign('path_drop',                                   site_url('externalcompanies/udrop'));
             $this->_view->assign('path_trace',                                  site_url('externalcompanies/trace'));
             $this->_view->assign('path_display',                                site_url('externalcompanies/display'));
             $this->_view->assign('path_export_xlsx',                            site_url('externalcompanies/exportxlsx'));
-            $this->_view->assign('path_roles',                                  site_url('externalcompanies/roles'));
             $this->_view->assign('path_location',                               site_url('externalcompanies/location'));
             $this->_view->assign('path_find',                                   site_url('externalcompanies/find'));
 
