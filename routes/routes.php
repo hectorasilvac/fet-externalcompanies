@@ -192,6 +192,7 @@ $route['users/aspirants']                                                       
 $route['users/exportxlsx']                                                      =   'users_controller/export_xlsx';
 
 // EMPRESAS EXTERNAS
+
 $route['externalcompanies']                                                     =   'externalcompanies_controller/view';
 
 $route['externalcompanies/datatable']                                           =   'externalcompanies_controller/datatable';
@@ -208,6 +209,28 @@ $route['externalcompanies/udrop']                                               
 
 $route['externalcompanies/trace']                                               =   'externalcompanies_controller/trace';
 
-$route['externalcompanies/details']                                          =   'externalcompanies_controller/details';
+$route['externalcompanies/details']                                             =   'externalcompanies_controller/details';
 
 $route['externalcompanies/exportxlsx']                                          =   'externalcompanies_controller/export_xlsx';
+
+// ENTIDADES BANCARIAS
+
+$route['bankentities']                                                          =   'bankentities_controller/view';
+
+$route['bankentities/datatable']                                                =   'bankentities_controller/datatable';
+
+$route['bankentities/add']                                                      =   'bankentities_controller/add';
+
+$route['bankentities/edit']                                                     =   'bankentities_controller/edit';
+
+$route['bankentities/find']                                                     =   'bankentities_controller/find_by_id';
+
+$route['bankentities/location']                                                 =   'bankentities_controller/location';
+
+$route['bankentities/udrop']                                                    =   'bankentities_controller/udrop';
+
+$route['bankentities/trace']                                                    =   'bankentities_controller/trace';
+
+$route['bankentities/details']                                                  =   'bankentities_controller/details';
+
+$route['bankentities/exportxlsx']                                               =   'bankentities_controller/export_xlsx';

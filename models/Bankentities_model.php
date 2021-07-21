@@ -8,7 +8,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Externalcompanies_model extends CI_Model
+class Bankentities_model extends CI_Model
 {
     public function __construct()
     {
@@ -220,7 +220,7 @@ class Externalcompanies_model extends CI_Model
      * @param     array $params
      * @return    array $result
      **/
-    public function exist_company($params)
+    public function exist_bank($params)
     {
         $result                                                                 =   array();
 
