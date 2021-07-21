@@ -702,22 +702,21 @@
     $("#btn_add").on("click", function () {
       $("#view_table").addClass("d-none");
       $("#view_form_add").removeClass("d-none");
-      validateForm.resetForm();
+      validateFormAdd.resetForm();
       $("#form_add")[0].reset();
     });
-  
-  
+
     $("#btn_cancel_add").on("click", function () {
       var defaultTable = $("#default_table").DataTable();
       defaultTable.ajax.reload();
-      validateForm.resetForm();
+      validateFormAdd.resetForm();
       $(".select2-hidden-accessible").empty();
       $("#form_add")[0].reset();
       $("#view_form_add").addClass("d-none");
       $("#view_table").removeClass("d-none");
     });
 
-        var validateFormAdd = $("#form_add").validate({
+    var validateFormAdd = $("#form_add").validate({
       onkeyup: false,
       ignore: [],
       rules: {
@@ -798,14 +797,12 @@
           digits: "Debe contener sólo números",
           minlength: "Debe tener al menos 1 carácter",
           maxlength: "Debe tener máximo 2 caracteres",
-
         },
         code_bankentity: {
           required: "Ingresa el código del banco",
           digits: "Debe contener sólo números",
           minlength: "Debe tener al menos 1 carácter",
           maxlength: "Debe tener máximo 4 caracteres",
-
         },
         address_bankentity: {
           required: "Ingresa la dirección",
@@ -822,7 +819,6 @@
           digits: "Debe contener sólo números",
           minlength: "Debe tener al menos 7 caracteres",
           maxlength: "Debe tener máximo 13 caracteres",
-
         },
         email_bankentity: {
           required: "Ingresa el correo corporativo",
@@ -833,7 +829,7 @@
       errorElement: "small",
       errorPlacement: function (error, element) {
         $(error).addClass("invalid-feedback font-weight-normal");
-  
+
         $(error).insertAfter(element);
       },
       submitHandler: function (form) {
@@ -841,69 +837,55 @@
         return false;
       },
     });
-  
-  
+
     function submit(form) {
       $(form).ajaxSubmit({
-        dataType: 'json',
+        dataType: "json",
         url: $path_add,
-        type: 'post',
-        beforeSubmit: function()
-        {
-            // $('#loading').removeClass('d-none');
+        type: "post",
+        beforeSubmit: function () {
+          $("#loading").removeClass("d-none");
         },
         success: function ({ data, message }) {
-    
-            $('#loading').addClass('d-none');
-            $("#error-list").empty();
-  
+          $("#loading").addClass("d-none");
+          $("#error-list").empty();
+
           if (data === false && typeof message == "object") {
             Object.entries(message).forEach(([key, value]) => {
-  
-              // var errorExists = $(`#${key}-error`).length;
-  
-              // if (errorExists) {
-              //   $(`#${key}-error`).text(value);
-              // } else {
-                var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
-  
-                $(`#${key}`).addClass("error");
-                $(errorElement).insertAfter(`#${key}`);
-              // }
+              var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
+
+              $(`#${key}`).addClass("error");
+              $(errorElement).insertAfter(`#${key}`);
             });
             return false;
           }
-  
+
           if (data === false && typeof message == "string") {
             modal_alert(data, message);
-          
             return false;
           }
-  
+
           modal_alert(data, message);
-  
+
           $(".select2-hidden-accessible").empty();
           $("#form_add")[0].reset();
-          $('#view_form_add').addClass('d-none');
+          $("#view_form_add").addClass("d-none");
           table.ajax.reload();
         },
       });
     }
-  
-    $('#form_add').on('change', '.form-control', function() {
-  
-      if ( $(this).valid() )
-      {
-        var id = $(this).attr('id');
+
+    $("#form_add").on("change", ".form-control", function () {
+      if ($(this).valid()) {
+        var id = $(this).attr("id");
         var errorExists = $(`#${id}-error`).length;
-  
-        if ( errorExists ) {
+
+        if (errorExists) {
           $(`#${id}-error`).remove();
           return;
         }
         return;
       }
-      
     });
   
 //     /****************************************************************************************/

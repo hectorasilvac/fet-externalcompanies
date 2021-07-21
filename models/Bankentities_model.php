@@ -449,19 +449,18 @@ class Bankentities_model extends CI_Model
         if ($this->form_validation->run()) 
         {
             $data                                                               =   array();
-            $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0        ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
-            $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0         ? trim($params['nit_cv_ec']) : NULL;
-            $data['type_cv_ec']                                                 =   isset($params['type_cv_ec'])       && strlen($params['type_cv_ec']) > 0        ? trim($params['type_cv_ec']) : NULL;
-            $data['email_cv_ec']                                                =   isset($params['email_cv_ec'])      && strlen($params['email_cv_ec']) > 0       ? $this->_trabajandofet_model->user_name(trim($params['email_cv_ec'])) : NULL;
-            $data['phone_cv_ec']                                                =   isset($params['phone_cv_ec'])      && strlen($params['phone_cv_ec']) > 0       ? trim($params['phone_cv_ec']) : NULL;
-            $data['address_cv_ec']                                              =   isset($params['address_cv_ec'])    && strlen($params['address_cv_ec']) > 0     ? trim($params['address_cv_ec']) : NULL;
-            $data['country_cv_ec']                                              =   isset($params['country_cv_ec'])    && strlen($params['country_cv_ec']) > 0     ? trim($params['country_cv_ec']) : NULL;
-            $data['department_cv_ec']                                           =   isset($params['department_cv_ec']) && strlen($params['department_cv_ec']) > 0  ? trim($params['department_cv_ec']) : NULL;
-            $data['city_cv_ec']                                                 =   isset($params['city_cv_ec'])       && strlen($params['city_cv_ec']) > 0        ? trim($params['city_cv_ec']) : NULL;
+            $data['name_bankentity']                                            =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
+            $data['nit_bankentity']                                             =   trim($params['nit_bankentity']);
+            $data['digit_bankentity']                                           =   trim($params['digit_bankentity']);
+            $data['code_bankentity']                                            =   trim($params['code_bankentity']);
+            $data['contact_bankentity']                                         =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
+            $data['phone_bankentity']                                           =   trim($params['phone_bankentity']);
+            $data['email_bankentity']                                           =   trim($params['email_bankentity']);
+            $data['address_bankentity']                                         =   trim($params['address_bankentity']);
             $data['user_insert']                                                =   $this->session->userdata['id_user'];
             $data['date_insert']                                                =   date('Y-m-d H:i:s');
 
-            $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_cv_ec');
+            $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_bankentities');
 
             if ($query) 
             {

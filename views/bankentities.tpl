@@ -36,8 +36,7 @@
                         {/if}
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
-                    {* Eliminar clase d-none *}
-                    <div class="table-wrapper d-none">
+                    <div class="table-wrapper">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead>
@@ -60,8 +59,7 @@
                 </div>
                 {if $mobile}<br />{/if}
                 {if $act_add}
-                    {* Agregar clase d-none *}
-                    <div id="view_form_add" class="mg-t-60">
+                    <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
                             <form id="form_add" method="post">
                                 <div class="row mg-b-25">
