@@ -36,12 +36,13 @@
                         {/if}
                     </div>
                     {if $mobile}<br /><br /><br />{/if}
-                    <div class="table-wrapper">
+                    {* Eliminar clase d-none *}
+                    <div class="table-wrapper d-none">
                         {if $act_view}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead>
                                     <tr>
-                                {if !$mobile}<th class="wd-10p-force p-2">No</th>{/if}
+                                        {if !$mobile}<th class="wd-10p-force p-2">No</th>{/if}
                                         <th class="wd-25p-force p-3 text-center">Nombre</th>
                                         <th class="wd-10p-force p-3 text-center">NIT</th>
                                         <th class="wd-15p-force p-3 text-center">Contacto</th>
@@ -59,80 +60,68 @@
                 </div>
                 {if $mobile}<br />{/if}
                 {if $act_add}
-                    <div id="view_form_add" class="mg-t-60 d-none">
+                    {* Agregar clase d-none *}
+                    <div id="view_form_add" class="mg-t-60">
                         <div class="form-layout">
                             <form id="form_add" method="post">
                                 <div class="row mg-b-25">
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Nombre de la empresa: </label>
-                                            <input class="form-control" type="text" id="name_cv_ec" name="name_cv_ec"
-                                                placeholder="Ingresa el nombre de la empresa" autocomplete="off">
+                                            <label class="form-control-label">Nombre del banco: </label>
+                                            <input class="form-control" type="text" id="name_bankentity" name="name_bankentity"
+                                                placeholder="Ingresa el nombre del banco" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">NIT de la empresa: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" id="nit_cv_ec" name="nit_cv_ec"
-                                                placeholder="Ingresa el NIT de la empresa" autocomplete="off">
+                                            <label class="form-control-label">NIT del banco: </label>
+                                            <input class="form-control" type="number" id="nit_bankentity" name="nit_bankentity"
+                                                placeholder="Ingresa el NIT del banco" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Tipo de empresa: </label>
-                                            <select class="form-control" id="type_cv_ec" name="type_cv_ec">
-                                                <option value="" disabled selected>Selecciona tipo de empresa</option>
-                                                <option value="PUBLICA">Pública</option>
-                                                <option value="PRIVADA">Privada</option>
-                                            </select>
+                                            <label class="form-control-label">Dígito de verificación: </label>
+                                            <input class="form-control" type="number" id="nit_bankentity" name="nit_bankentity"
+                                                placeholder="Ingresa el dígito de verificación" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">Código del banco: </label>
+                                        <input class="form-control" type="number" id="code_bankentity" name="code_bankentity"
+                                            placeholder="Ingresa el código del banco" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                <div class="form-group pos-relative">
+                                    <label class="form-control-label">Contacto: </label>
+                                    <input class="form-control" type="text" id="contact_bankentity" name="contact_bankentity"
+                                        placeholder="Ingresa el contacto del banco" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                            <div class="form-group pos-relative">
+                                <label class="form-control-label">Teléfono del contacto:</label>
+                                <input class="form-control" type="number" id="phone_bankentity" name="phone_bankentity"
+                                    placeholder="Ingresa el teléfono del contacto" autocomplete="off">
+                            </div>
+                        </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Correo corporativo:</label>
+                                            <input class="form-control" type="email" id="email_bankentity"
+                                                name="email_bankentity" placeholder="Ingresa el correo corporativo"
+                                                autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Correo electrónico: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" id="email_cv_ec" name="email_cv_ec"
-                                                placeholder="Ingresa el correo electrónico" autocomplete="off">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Teléfono: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" id="phone_cv_ec" name="phone_cv_ec"
-                                                placeholder="Ingresa el teléfono" autocomplete="off">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Dirección: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" id="add_address_cv_ec" name="address_cv_ec"
+                                            <label class="form-control-label">Dirección:</label>
+                                            <input class="form-control" type="text" id="address_bankentity" name="address_bankentity"
                                                 placeholder="Ingresa la dirección" autocomplete="off">
                                         </div>
                                     </div>
-                                    <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">País: </label>
-                                        <select class="form-control" id="country_cv_ec" name="country_cv_ec">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Departamento: </label>
-                                        <select class="form-control" id="department_cv_ec" name="department_cv_ec">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Ciudad: </label>
-                                        <select class="form-control" id="city_cv_ec" name="city_cv_ec">
-                                        </select>
-                                    </div>
-                                </div>
                                 </div>
                                 <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
                                 <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
@@ -150,9 +139,8 @@
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Dirección: <span
                                                     class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text"
-                                                name="address_cv_ec" placeholder="Ingresa la dirección"
-                                                autocomplete="off">
+                                            <input class="form-control" type="text" name="address_cv_ec"
+                                                placeholder="Ingresa la dirección" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
@@ -251,7 +239,7 @@
                 {/if}
                 {if $act_assign}
                     <div id="view_assign" class="mg-t-60 d-none">
-                    <table class="table table-hover table-bordered border">
+                        <table class="table table-hover table-bordered border">
                             <thead id="assign_head">
                                 <tr>
                                     <th scope="col">Nombre del Aspirante</th>
@@ -264,7 +252,7 @@
                         <button id="btn_cancel_assign" class="btn btn-secondary">Cerrar</button>
                     </div>
                 {/if}
-                </div>
+            </div>
         </div>
     </div>
     <footer class="br-footer">

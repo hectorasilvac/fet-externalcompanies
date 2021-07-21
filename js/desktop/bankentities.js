@@ -853,23 +853,23 @@
 //     /***************************************** ADD ******************************************/
 //     /****************************************************************************************/
   
-//     $("#btn_add").on("click", function () {
-//       $("#view_table").addClass("d-none");
-//       $("#view_form_add").removeClass("d-none");
-//       validateForm.resetForm();
-//       $("#form_add")[0].reset();
-//     });
+    $("#btn_add").on("click", function () {
+      $("#view_table").addClass("d-none");
+      $("#view_form_add").removeClass("d-none");
+      validateForm.resetForm();
+      $("#form_add")[0].reset();
+    });
   
   
-//     $("#btn_cancel_add").on("click", function () {
-//       var defaultTable = $("#default_table").DataTable();
-//       defaultTable.ajax.reload();
-//       validateForm.resetForm();
-//       $(".select2-hidden-accessible").empty();
-//       $("#form_add")[0].reset();
-//       $("#view_form_add").addClass("d-none");
-//       $("#view_table").removeClass("d-none");
-//     });
+    $("#btn_cancel_add").on("click", function () {
+      var defaultTable = $("#default_table").DataTable();
+      defaultTable.ajax.reload();
+      validateForm.resetForm();
+      $(".select2-hidden-accessible").empty();
+      $("#form_add")[0].reset();
+      $("#view_form_add").addClass("d-none");
+      $("#view_table").removeClass("d-none");
+    });
   
 //     /****************************************************************************************/
 //     /***************************************** DROP *****************************************/

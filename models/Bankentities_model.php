@@ -116,7 +116,7 @@ class Bankentities_model extends CI_Model
      **/
     public function all_rows($limit, $start, $search, $col, $dir)
     {
-        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity'); // Falta agregar campo de correo
+        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity'); // Falta agregar campo de correo
         $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
 
@@ -128,8 +128,9 @@ class Bankentities_model extends CI_Model
             $this->db->or_like('digit_bankentity', $search);
             $this->db->or_like('code_bankentity', $search);
             $this->db->or_like('address_bankentity', $search);
+            $this->db->or_like('contact_bankentity', $search);
             $this->db->or_like('phone_bankentity', $search);
-            // $this->db->or_like('email_bankentity', $search); Descomentar cuando se arregle el campo de correo
+            $this->db->or_like('email_bankentity', $search);
             $this->db->group_end();
         }
 
