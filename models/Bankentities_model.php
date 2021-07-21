@@ -215,88 +215,88 @@ class Bankentities_model extends CI_Model
      * @param     array $params
      * @return    array $result
      **/
-    public function exist_bank($params)
-    {
-        $result                                                                 =   array();
+    // public function exist_bank($params)
+    // {
+    //     $result                                                                 =   array();
 
-        if (isset($params['pk'])) {
-            $this->db->select($params['name']);
+    //     if (isset($params['pk'])) {
+    //         $this->db->select($params['name']);
 
-            $editable_single_fields                                             =   ['nit_cv_ec', 'email_cv_ec', 'phone_cv_ec', 'type_cv_ec'];
+    //         $editable_single_fields                                             =   ['nit_cv_ec', 'email_cv_ec', 'phone_cv_ec', 'type_cv_ec'];
 
-            if (in_array($params['name'], $editable_single_fields)) {
-                if ($params['name'] == 'type_cv_ec') {
-                    $this->db->where($params['name'], '25513223');
-                } else {
-                    empty($params['value'])
-                        ? $this->db->where($params['name'], '25513223')
-                        : $this->db->where($params['name'], $params['value']);
-                }
-            } else {
-                $this->db->where($params['name'], trim($params['value']));
-            }
+    //         if (in_array($params['name'], $editable_single_fields)) {
+    //             if ($params['name'] == 'type_cv_ec') {
+    //                 $this->db->where($params['name'], '25513223');
+    //             } else {
+    //                 empty($params['value'])
+    //                     ? $this->db->where($params['name'], '25513223')
+    //                     : $this->db->where($params['name'], $params['value']);
+    //             }
+    //         } else {
+    //             $this->db->where($params['name'], trim($params['value']));
+    //         }
 
-            $this->db->where('flag_drop', 0);
-            $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
-            $this->db->where('id_cv_ec !=', $params['pk']);
-        } else {
-            $name_is_set                                                        =   isset($params['name_cv_ec'])  && strlen($params['name_cv_ec']) > 0;
-            $nit_is_set                                                         =   isset($params['nit_cv_ec'])   && strlen($params['nit_cv_ec']) > 0   && is_numeric($params['nit_cv_ec']);
-            $email_is_set                                                       =   isset($params['email_cv_ec']) && strlen($params['email_cv_ec']) > 0;
-            $phone_is_set                                                       =   isset($params['phone_cv_ec']) && strlen($params['phone_cv_ec']) > 0 && is_numeric($params['phone_cv_ec']);
+    //         $this->db->where('flag_drop', 0);
+    //         $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+    //         $this->db->where('id_cv_ec !=', $params['pk']);
+    //     } else {
+    //         $name_is_set                                                        =   isset($params['name_cv_ec'])  && strlen($params['name_cv_ec']) > 0;
+    //         $nit_is_set                                                         =   isset($params['nit_cv_ec'])   && strlen($params['nit_cv_ec']) > 0   && is_numeric($params['nit_cv_ec']);
+    //         $email_is_set                                                       =   isset($params['email_cv_ec']) && strlen($params['email_cv_ec']) > 0;
+    //         $phone_is_set                                                       =   isset($params['phone_cv_ec']) && strlen($params['phone_cv_ec']) > 0 && is_numeric($params['phone_cv_ec']);
 
-            $select_query                                                       =   '';
+    //         $select_query                                                       =   '';
 
-            $name_is_set  ?   $select_query .=  'name_cv_ec, '  : NULL;
-            $nit_is_set   ?   $select_query .=  'nit_cv_ec, '   : NULL;
-            $email_is_set ?   $select_query .=  'email_cv_ec, ' : NULL;
-            $phone_is_set ?   $select_query .=  'phone_cv_ec, ' : NULL;
+    //         $name_is_set  ?   $select_query .=  'name_cv_ec, '  : NULL;
+    //         $nit_is_set   ?   $select_query .=  'nit_cv_ec, '   : NULL;
+    //         $email_is_set ?   $select_query .=  'email_cv_ec, ' : NULL;
+    //         $phone_is_set ?   $select_query .=  'phone_cv_ec, ' : NULL;
 
-            $select_query                                                       =  rtrim(trim($select_query), ',');
-            $this->db->select($select_query);
-            $this->db->where('flag_drop', 0);
+    //         $select_query                                                       =  rtrim(trim($select_query), ',');
+    //         $this->db->select($select_query);
+    //         $this->db->where('flag_drop', 0);
 
-            $this->db->group_start();
-            $name_is_set  ?   $this->db->where('name_cv_ec', $params['name_cv_ec'])       :   NULL;
-            $nit_is_set   ?   $this->db->or_where('nit_cv_ec', $params['nit_cv_ec'])      :   NULL;
-            $email_is_set ?   $this->db->or_where('email_cv_ec', $params['email_cv_ec'])  :   NULL;
-            $phone_is_set ?   $this->db->or_where('phone_cv_ec', $params['phone_cv_ec'])  :   NULL;
-            $this->db->group_end();
-        }
+    //         $this->db->group_start();
+    //         $name_is_set  ?   $this->db->where('name_cv_ec', $params['name_cv_ec'])       :   NULL;
+    //         $nit_is_set   ?   $this->db->or_where('nit_cv_ec', $params['nit_cv_ec'])      :   NULL;
+    //         $email_is_set ?   $this->db->or_where('email_cv_ec', $params['email_cv_ec'])  :   NULL;
+    //         $phone_is_set ?   $this->db->or_where('phone_cv_ec', $params['phone_cv_ec'])  :   NULL;
+    //         $this->db->group_end();
+    //     }
 
-        $query                                                                  =   $this->db->get('fet_cv_ec');
+    //     $query                                                                  =   $this->db->get('fet_cv_ec');
 
-        if (count($query->result_array()) > 0) {
+    //     if (count($query->result_array()) > 0) {
 
-            $message                                                            =   '';
-            $error_by_field                                                     =   isset($params['name']) && strlen($params['name']) > 0;
+    //         $message                                                            =   '';
+    //         $error_by_field                                                     =   isset($params['name']) && strlen($params['name']) > 0;
 
-            if ($error_by_field) {
-                foreach ($query->row_array() as $key => $value) {
-                    $params['name']  === 'name_cv_ec'  && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este nombre'   :   NULL;
-                    $params['name']  === 'nit_cv_ec'   && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este NIT'      :   NULL;
-                    $params['name']  === 'email_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este email'    :   NULL;
-                    $params['name']  === 'phone_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este teléfono' :   NULL;
-                }
-            } else {
-                foreach ($query->row_array() as $key => $value) {
-                    isset($params['name_cv_ec'])  && strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
-                    isset($params['nit_cv_ec'])   && strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
-                    isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;
-                    isset($params['phone_cv_ec']) && strtolower($value) == strtolower(trim($params['phone_cv_ec']))  ?   $message = 'este teléfono' :   NULL;
-                }
-            }
+    //         if ($error_by_field) {
+    //             foreach ($query->row_array() as $key => $value) {
+    //                 $params['name']  === 'name_cv_ec'  && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este nombre'   :   NULL;
+    //                 $params['name']  === 'nit_cv_ec'   && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este NIT'      :   NULL;
+    //                 $params['name']  === 'email_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este email'    :   NULL;
+    //                 $params['name']  === 'phone_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este teléfono' :   NULL;
+    //             }
+    //         } else {
+    //             foreach ($query->row_array() as $key => $value) {
+    //                 isset($params['name_cv_ec'])  && strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
+    //                 isset($params['nit_cv_ec'])   && strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
+    //                 isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;
+    //                 isset($params['phone_cv_ec']) && strtolower($value) == strtolower(trim($params['phone_cv_ec']))  ?   $message = 'este teléfono' :   NULL;
+    //             }
+    //         }
 
-            $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Ya existe una empresa con ' . $message;
-        } else {
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   FALSE;
-        }
+    //         $result['data']                                                     =   FALSE;
+    //         $result['message']                                                  =   'Ya existe una empresa con ' . $message;
+    //     } else {
+    //         $result['data']                                                     =   TRUE;
+    //         $result['message']                                                  =   FALSE;
+    //     }
 
-        return $result;
-        exit();
-    }
+    //     return $result;
+    //     exit();
+    // }
 
     /**
      * @author    Innovación y Tecnología
@@ -351,86 +351,103 @@ class Bankentities_model extends CI_Model
 
         $entries = [
             [
-                'field' => 'name_cv_ec',
-                'label' => 'nombre de la empresa',
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'El %s no puede quedar en blanco.',
-                ]
-            ],
-            [
-                'field' => 'nit_cv_ec',
-                'label' => 'NIT de la empresa',
-                'rules' => 'numeric',
-                'errors' => [
-                    'numeric' => 'El %s solo puede contener números.',
-                ]
-            ],
-            [
-                'field' => 'type_cv_ec',
-                'label' => 'tipo de empresa',
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'Por favor seleccione el %s',
-                ]
-            ],
-            [
-                'field' => 'email_cv_ec',
-                'label' => 'correo electrónico',
-                'rules' => 'is_unique[fet_cv_ec.email_cv_ec]|valid_email',
+                'field' => 'name_bankentity',
+                'label' => 'nombre del banco',
+                'rules' => 'is_unique[fet_bankentities.name_bankentity]|required|min_length[3]|max_length[50]',
                 'errors' => [
                     'is_unique' => 'El %s ya existe',
-                    'valid_email' => 'El %s no tiene un formato válido',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
                 ]
             ],
             [
-                'field' => 'phone_cv_ec',
-                'label' =>   'teléfono',
-                'rules' => 'numeric|min_length[7]|max_length[10]',
+                'field' => 'nit_bankentity',
+                'label' => 'NIT del banco',
+                'rules' => 'is_unique[fet_bankentities.nit_bankentity]|required|numeric|min_length[3]|max_length[9]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 9 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'digit_bankentity',
+                'label' => 'dígito de verificación',
+                'rules' => 'required|numeric|min_length[1]|max_length[2]',
+                'errors' => [
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 2 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'code_bankentity',
+                'label' => 'código del banco',
+                'rules' => 'is_unique[fet_bankentities.code_bankentity]|required|numeric|min_length[1]|max_length[4]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 4 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'address_bankentity',
+                'label' =>   'dirección',
+                'rules' => 'is_unique[fet_bankentities.address_bankentity]|required|min_length[5]|max_length[70]',
                 'errors' =>  [
+                    'is_unique' => 'La %s ya existe',
+                    'required' => 'La %s no puede quedar en blanco.',
+                    'min_length' => 'La %s debe contener al menos 5 caracteres.',
+                    'max_length' => 'La %s debe contener máximo 70 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'contact_bankentity',
+                'label' =>   'contacto',
+                'rules' => 'is_unique[fet_bankentities.contact_bankentity]|required|min_length[3]|max_length[50]',
+                'errors' =>  [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'phone_bankentity',
+                'label' => 'número del contacto',
+                'rules' => 'is_unique[fet_bankentities.phone_bankentity]|required|numeric|min_length[7]|max_length[13]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
                     'numeric' => 'El %s solo puede contener números.',
                     'min_length' => 'El %s debe contener al menos 7 caracteres.',
-                    'max_length' => 'El %s debe contener máximo 10 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 13 caracteres.',
                 ]
             ],
             [
-                'field' => 'address_cv_ec',
-                'label' =>   'dirección',
-                'rules' => 'min_length[5]|max_length[80]',
+                'field' => 'email_bankentity',
+                'label' =>   'correo corporativo',
+                'rules' => 'is_unique[fet_bankentities.email_bankentity]|required|min_length[3]|max_length[50]|valid_email',
                 'errors' =>  [
-                    'min_length' => 'La %s debe contener al menos 5 caracteres.',
-                    'max_length' => 'La %s debe contener máximo 80 caracteres.',
-                ]
-            ],
-            [
-                'field' => 'country_cv_ec',
-                'label' =>   'país',
-                'rules' => 'required',
-                'errors' =>  [
-                    'required' => 'Por favor seleccione el %s',
-                ]
-            ],
-            [
-                'field' => 'department_cv_ec',
-                'label' =>   'departamento',
-                'rules' => 'required',
-                'errors' =>  [
-                    'required' => 'Por favor seleccione el %s',
-                ]
-            ],
-            [
-                'field' => 'city_cv_ec',
-                'label' =>   'ciudad',
-                'rules' => 'required',
-                'errors' =>  [
-                    'required' => 'Por favor seleccione la %s',
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
+                    'valid_email' => 'El %s no tiene un formato válido.'
                 ]
             ],
         ];
 
         $this->form_validation->set_rules($entries);
 
-        if ($this->form_validation->run()) {
+        if ($this->form_validation->run()) 
+        {
             $data                                                               =   array();
             $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0        ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
             $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0         ? trim($params['nit_cv_ec']) : NULL;
@@ -446,23 +463,28 @@ class Bankentities_model extends CI_Model
 
             $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_cv_ec');
 
-            if ($query) {
-                $data_history                                                   =   $data;
-                $data_history['id_cv_ec']                                       =   $query;
-                $data_history['user_update']                                    =   $data['user_insert'];
-                $data['date_update']                                            =   date('Y-m-d H:i:s');
-                unset($data_history['date_insert']);
-                unset($data_history['user_insert']);
+            if ($query) 
+            {
+                // $data_history                                                   =   $data;
+                // $data_history['id_cv_ec']                                       =   $query;
+                // $data_history['user_update']                                    =   $data['user_insert'];
+                // $data['date_update']                                            =   date('Y-m-d H:i:s');
+                // unset($data_history['date_insert']);
+                // unset($data_history['user_insert']);
 
-                $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+                // $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
 
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'La empresa se ha registrado correctamente';
-            } else {
+            } 
+            else 
+            {
                 $result['data']                                                 =   FALSE;
                 $result['message']                                              =   'Error al registrar la empresa';
             }
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   $this->form_validation->error_array();
         }

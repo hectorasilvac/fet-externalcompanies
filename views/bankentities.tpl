@@ -82,7 +82,7 @@
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Dígito de verificación: </label>
-                                            <input class="form-control" type="number" id="nit_bankentity" name="nit_bankentity"
+                                            <input class="form-control" type="number" id="digit_bankentity" name="digit_bankentity"
                                                 placeholder="Ingresa el dígito de verificación" autocomplete="off">
                                         </div>
                                     </div>

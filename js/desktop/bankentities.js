@@ -111,22 +111,30 @@
 //           }
 //         }
         
-//         // Method for validating letters of the Spanish alphabet
-//         jQuery.validator.addMethod(
-//           "lettersonly_es",
-//           function (value, element) {
-//             return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1]*$/.test(value);
-//           },
-//           "Este campo no puede contener números."
-//         );
+        // Method for validating letters of the Spanish alphabet
+        jQuery.validator.addMethod(
+          "lettersonly_es",
+          function (value, element) {
+            return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1]*$/.test(value);
+          },
+          "Este campo no puede contener números."
+        );
   
-//         jQuery.validator.addMethod(
-//           'notEmpty',
-//           function (value, element) {
-//             return this.optional(element) || $.trim(value).length > 0;
-//           },
-//           'Este campo no puede estar vacío.'
-//         );
+        jQuery.validator.addMethod(
+          'notEmpty',
+          function (value, element) {
+            return this.optional(element) || $.trim(value).length > 0;
+          },
+          'Este campo no puede estar vacío.'
+        );
+
+        jQuery.validator.addMethod(
+          'isEmail',
+          function (value, element) {
+            return this.optional(element) || (/^\S+@\S+\.\S+\D$/).test(value);
+          },
+          'El formato del correo electrónico no es válido.'
+        );
   
         
 //         function validate_input({
@@ -146,7 +154,7 @@
 //           if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
 //             return "Solo se permiten letras";
 //           if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+\D$/))
-//             return "El correo electrónico no es válido";
+//             return " ";
 //           if (isNumeric !== null && value !== '' && !value.match(/^[0-9]+$/))
 //             return "El campo debe contener solo números";
 //         }
@@ -213,168 +221,7 @@
 //       width: "100%",
 //     });
   
-//     var validateForm = $("#form_add").validate({
-//       onkeyup: false,
-//       ignore: [],
-//       rules: {
-//         normalizer: function (value) {
-//           return $.trim(value);
-//         },
-//         onkeyup: false,
-//         focusCleanup: true,
-//         name_cv_ec: {
-//           required: true,
-//           minlength: 3,
-//           maxlength: 50,
-//           lettersonly_es: true,
-//           notEmpty: true,
-//         },
-//         nit_cv_ec: {
-//           digits: true,
-//           minlength: 3,
-//           maxlength: 13,
-//         },
-//         type_cv_ec: {
-//           required: true,
-//         },
-//         email_cv_ec: {
-//           email: true,
-//           minlength: 3,
-//           maxlength: 13,
-//         },
-//         phone_cv_ec: {
-//           digits: true,
-//           minlength: 7,
-//           maxlength: 10,
-//         },
-//         address_cv_ec: {
-//           minlength: 5,
-//           maxlength: 80,
-//         },
-//         country_cv_ec: {
-//           required: true,
-//         },
-//         department_cv_ec: {
-//           required: true,
-//         },
-//         city_cv_ec: {
-//           required: true,
-//         },
-//       },
-//       messages: {
-//         name_cv_ec: {
-//           required: "Ingrese el nombre de la empresa",
-//           minlength: "El nombre debe tener al menos 3 caracteres",
-//           maxlength: "El nombre debe tener máximo 50 caracteres",
-//         },
-//         nit_cv_ec: {
-//           digits: "El NIT debe contener sólo números",
-//           minlength: "El NIT debe tener al menos 3 caracteres",
-//           maxlength: "El NIT debe tener máximo 13 caracteres",
-//         },
-//         type_cv_ec: {
-//           required: "Seleccione el tipo de empresa",
-//         },
-//         email_cv_ec: {
-//           email: "El formato del correo electrónico no es válido",
-//           minlength: "El correo electrónico debe tener al menos 3 caracteres",
-//           maxlength: "El correo electrónico debe tener máximo 50 caracteres",
-//         },
-//         phone_cv_ec: {
-//           digits: "El número de teléfono debe contener sólo números",
-//           minlength: "El número de teléfono debe tener al menos 7 caracteres",
-//           maxlength: "El número de teléfono debe tener máximo 13 caracteres",
-//         },
-//         address_cv_ec: {
-//           minlength: "La dirección debe contener al menos 5 caracteres",
-//           maxlength: "La dirección debe contener máximo 60 caracteres",
-//         },
-//         country_cv_ec: {
-//           required: "Seleccione el país",
-//         },
-//         department_cv_ec: {
-//           required: "Seleccione el departamento",
-//         },
-//         city_cv_ec: {
-//           required: "Seleccione la ciudad",
-//         },
-//       },
-//       errorElement: "small",
-//       errorPlacement: function (error, element) {
-//         $(error).addClass("invalid-feedback font-weight-normal");
-  
-//         $(error).insertAfter(element);
-//       },
-//       submitHandler: function (form) {
-//         submit(form);
-//         return false;
-//       },
-//     });
-  
-  
-//     function submit(form) {
-//       $(form).ajaxSubmit({
-//         dataType: 'json',
-//         url: $path_add,
-//         type: 'post',
-//         beforeSubmit: function()
-//         {
-//             $('#loading').removeClass('d-none');
-//         },
-//         success: function ({ data, message }) {
-    
-//             $('#loading').addClass('d-none');
-//             $("#error-list").empty();
-  
-//           if (data === false && typeof message == "object") {
-//             Object.entries(message).forEach(([key, value]) => {
-  
-//               var errorExists = $(`#${key}-error`).length;
-  
-//               if (errorExists) {
-//                 $(`#${key}-error`).text(value);
-//               } else {
-//                 var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
-  
-//                 $(`#${key}`).addClass("error");
-//                 $(errorElement).insertAfter(`#${key}`);
-//               }
-//             });
-//             return false;
-//           }
-  
-//           if (data === false && typeof message == "string") {
-//             modal_alert(data, message);
-          
-//             return false;
-//           }
-  
-//           modal_alert(data, message);
-  
-//           $(".select2-hidden-accessible").empty();
-//           $("#form_add")[0].reset();
-//           $('#view_form_add').addClass('d-none');
-//           table.ajax.reload();
-//         },
-//       });
-//     }
-  
-//     $('#form_add').on('change', '.form-control', function() {
-  
-//       if ( $(this).valid() )
-//       {
-//         var id = $(this).attr('id');
-//         var errorExists = $(`#${id}-error`).length;
-  
-//         if ( errorExists ) {
-//           $(`#${id}-error`).remove();
-//           return;
-//         }
-//         return;
-//       }
-      
-//     });
-  
+
     /****************************************************************************************/
     /******************************** IMPLEMENTING DATATABLE ********************************/
     /****************************************************************************************/
@@ -421,7 +268,6 @@
           targets: [3],
           data: "contact_bankentity",
           render: function (data, type, row) {
-            console.log(row);
             return `<span>${data}</span>`;
           },
         },
@@ -869,6 +715,195 @@
       $("#form_add")[0].reset();
       $("#view_form_add").addClass("d-none");
       $("#view_table").removeClass("d-none");
+    });
+
+        var validateFormAdd = $("#form_add").validate({
+      onkeyup: false,
+      ignore: [],
+      rules: {
+        normalizer: function (value) {
+          return $.trim(value);
+        },
+        onkeyup: false,
+        focusCleanup: true,
+        name_bankentity: {
+          required: true,
+          minlength: 3,
+          maxlength: 50,
+          lettersonly_es: true,
+          notEmpty: true,
+        },
+        nit_bankentity: {
+          required: true,
+          digits: true,
+          minlength: 3,
+          maxlength: 9,
+          notEmpty: true,
+        },
+        digit_bankentity: {
+          required: true,
+          digits: true,
+          minlength: 1,
+          maxlength: 2,
+          notEmpty: true,
+        },
+        code_bankentity: {
+          required: true,
+          digits: true,
+          minlength: 1,
+          maxlength: 4,
+          notEmpty: true,
+        },
+        address_bankentity: {
+          required: true,
+          minlength: 5,
+          maxlength: 70,
+          notEmpty: true,
+        },
+        contact_bankentity: {
+          required: true,
+          lettersonly_es: true,
+          minlength: 3,
+          maxlength: 50,
+          notEmpty: true,
+        },
+        phone_bankentity: {
+          required: true,
+          digits: true,
+          minlength: 7,
+          maxlength: 13,
+          notEmpty: true,
+        },
+        email_bankentity: {
+          required: true,
+          isEmail: true,
+          minlength: 5,
+          maxlength: 50,
+        },
+      },
+      messages: {
+        name_bankentity: {
+          required: "Ingrese el nombre del banco",
+          minlength: "Debe tener al menos 3 caracteres",
+          maxlength: "Debe tener máximo 50 caracteres",
+        },
+        nit_bankentity: {
+          required: "Ingresa el NIT del banco",
+          digits: "Debe contener sólo números",
+          minlength: "Debe tener al menos 3 caracteres",
+          maxlength: "Debe tener máximo 9 caracteres",
+        },
+        digit_bankentity: {
+          required: "Ingresa el dígito de verificación",
+          digits: "Debe contener sólo números",
+          minlength: "Debe tener al menos 1 carácter",
+          maxlength: "Debe tener máximo 2 caracteres",
+
+        },
+        code_bankentity: {
+          required: "Ingresa el código del banco",
+          digits: "Debe contener sólo números",
+          minlength: "Debe tener al menos 1 carácter",
+          maxlength: "Debe tener máximo 4 caracteres",
+
+        },
+        address_bankentity: {
+          required: "Ingresa la dirección",
+          minlength: "Debe contener al menos 5 caracteres",
+          maxlength: "Debe contener máximo 70 caracteres",
+        },
+        contact_bankentity: {
+          required: "Ingresa el contacto",
+          minlength: "Debe contener al menos 3 caracteres",
+          maxlength: "Debe contener máximo 50 caracteres",
+        },
+        phone_bankentity: {
+          required: "Ingresa el número del contacto",
+          digits: "Debe contener sólo números",
+          minlength: "Debe tener al menos 7 caracteres",
+          maxlength: "Debe tener máximo 13 caracteres",
+
+        },
+        email_bankentity: {
+          required: "Ingresa el correo corporativo",
+          minlength: "Debe tener al menos 3 caracteres",
+          maxlength: "Debe tener máximo 50 caracteres",
+        },
+      },
+      errorElement: "small",
+      errorPlacement: function (error, element) {
+        $(error).addClass("invalid-feedback font-weight-normal");
+  
+        $(error).insertAfter(element);
+      },
+      submitHandler: function (form) {
+        submit(form);
+        return false;
+      },
+    });
+  
+  
+    function submit(form) {
+      $(form).ajaxSubmit({
+        dataType: 'json',
+        url: $path_add,
+        type: 'post',
+        beforeSubmit: function()
+        {
+            // $('#loading').removeClass('d-none');
+        },
+        success: function ({ data, message }) {
+    
+            $('#loading').addClass('d-none');
+            $("#error-list").empty();
+  
+          if (data === false && typeof message == "object") {
+            Object.entries(message).forEach(([key, value]) => {
+  
+              // var errorExists = $(`#${key}-error`).length;
+  
+              // if (errorExists) {
+              //   $(`#${key}-error`).text(value);
+              // } else {
+                var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
+  
+                $(`#${key}`).addClass("error");
+                $(errorElement).insertAfter(`#${key}`);
+              // }
+            });
+            return false;
+          }
+  
+          if (data === false && typeof message == "string") {
+            modal_alert(data, message);
+          
+            return false;
+          }
+  
+          modal_alert(data, message);
+  
+          $(".select2-hidden-accessible").empty();
+          $("#form_add")[0].reset();
+          $('#view_form_add').addClass('d-none');
+          table.ajax.reload();
+        },
+      });
+    }
+  
+    $('#form_add').on('change', '.form-control', function() {
+  
+      if ( $(this).valid() )
+      {
+        var id = $(this).attr('id');
+        var errorExists = $(`#${id}-error`).length;
+  
+        if ( errorExists ) {
+          $(`#${id}-error`).remove();
+          return;
+        }
+        return;
+      }
+      
     });
   
 //     /****************************************************************************************/
