@@ -76,16 +76,16 @@ class Bankentities_controller extends CI_Controller
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
             $this->_view->assign('act_export_xlsx',                             in_array('EXPORTXLSX', $this->actions));
 
-            $this->_view->assign('path_view',                                   site_url('backentities/datatable'));
-            $this->_view->assign('path_add',                                    site_url('backentities/add'));
-            $this->_view->assign('path_edit',                                   site_url('backentities/edit'));
-            $this->_view->assign('path_details',                                site_url('backentities/details'));
-            $this->_view->assign('path_drop',                                   site_url('backentities/udrop'));
-            $this->_view->assign('path_trace',                                  site_url('backentities/trace'));
-            $this->_view->assign('path_display',                                site_url('backentities/display'));
-            $this->_view->assign('path_export_xlsx',                            site_url('backentities/exportxlsx'));
-            $this->_view->assign('path_location',                               site_url('backentities/location'));
-            $this->_view->assign('path_find',                                   site_url('backentities/find'));
+            $this->_view->assign('path_view',                                   site_url('bankentities/datatable'));
+            $this->_view->assign('path_add',                                    site_url('bankentities/add'));
+            $this->_view->assign('path_edit',                                   site_url('bankentities/edit'));
+            $this->_view->assign('path_details',                                site_url('bankentities/details'));
+            $this->_view->assign('path_drop',                                   site_url('bankentities/udrop'));
+            $this->_view->assign('path_trace',                                  site_url('bankentities/trace'));
+            $this->_view->assign('path_display',                                site_url('bankentities/display'));
+            $this->_view->assign('path_export_xlsx',                            site_url('bankentities/exportxlsx'));
+            $this->_view->assign('path_location',                               site_url('bankentities/location'));
+            $this->_view->assign('path_find',                                   site_url('bankentities/find'));
 
 
             $this->_view->display('admin/bankentities.tpl');
@@ -112,21 +112,18 @@ class Bankentities_controller extends CI_Controller
             if ($this->session->userdata['mobile'] == 0)
             {
                 $columns                                                        =   array(
-                    0                                                                   =>  'name_cv_ec',
-                    1                                                                   =>  'nit_cv_ec',
-                    2                                                                   =>  'type_cv_ec',
-                    3                                                                   =>  'email_cv_ec',
-                    4                                                                   =>  'phone_cv_ec'
-                                                                                    );
+                    0                                                                   =>  'name_bankentity',
+                    1                                                                   =>  'nit_bankentity',
+                    2                                                                   =>  'contact_bankentity',
+                    3                                                                   =>  'phone_bankentity',                                                                                    );
             }
             else
             {
                 $columns                                                        =   array(
-                    0                                                                   =>  'name_cv_ec',
-                    1                                                                   =>  'nit_cv_ec',
-                    2                                                                   =>  'type_cv_ec',
-                    3                                                                   =>  'email_cv_ec',
-                    4                                                                   =>  'phone_cv_ec'
+                    0                                                                   =>  'name_bankentity',
+                    1                                                                   =>  'nit_bankentity',
+                    2                                                                   =>  'contact_bankentity',
+                    3                                                                   =>  'phone_bankentity',  
                                                                                     );
             }
 

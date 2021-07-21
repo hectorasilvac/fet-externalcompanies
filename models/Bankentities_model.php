@@ -116,26 +116,20 @@ class Bankentities_model extends CI_Model
      **/
     public function all_rows($limit, $start, $search, $col, $dir)
     {
-        $this->db->select('fet_cv_ec.id_cv_ec, fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec');
-        $this->db->from('fet_cv_ec');
-        $this->db->where('fet_cv_ec.flag_drop', 0);
-        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity'); // Falta agregar campo de correo
+        $this->db->from('fet_bankentities');
+        $this->db->where('flag_drop', 0);
 
-        if (!empty($search)) {
-            $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
-            $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
-            $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
-
+        if (!empty($search))
+        {
             $this->db->group_start();
-            $this->db->like('name_cv_ec', $search);
-            $this->db->or_like('nit_cv_ec', $search);
-            $this->db->or_like('type_cv_ec', $search);
-            $this->db->or_like('email_cv_ec', $search);
-            $this->db->or_like('phone_cv_ec', $search);
-            $this->db->or_like('address_cv_ec', $search);
-            $this->db->or_like('git_countries.name_country', $search);
-            $this->db->or_like('git_departments.name_department', $search);
-            $this->db->or_like('git_cities.name_city', $search);
+            $this->db->like('name_bankentity', $search);
+            $this->db->or_like('nit_bankentity', $search);
+            $this->db->or_like('digit_bankentity', $search);
+            $this->db->or_like('code_bankentity', $search);
+            $this->db->or_like('address_bankentity', $search);
+            $this->db->or_like('phone_bankentity', $search);
+            // $this->db->or_like('email_bankentity', $search); Descomentar cuando se arregle el campo de correo
             $this->db->group_end();
         }
 
@@ -155,15 +149,15 @@ class Bankentities_model extends CI_Model
         }
 
 
-        foreach ($companies as $key => $company) {
-            $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as aspirants');
-            $this->db->from('fet_cv_we');
-            $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
-            $this->db->where('fet_cv_we.id_cv_ec', $company['id_cv_ec']);
-            $query = $this->db->get();
+        // foreach ($companies as $key => $company) {
+        //     $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as aspirants');
+        //     $this->db->from('fet_cv_we');
+        //     $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
+        //     $this->db->where('fet_cv_we.id_cv_ec', $company['id_cv_ec']);
+        //     $query = $this->db->get();
 
-            $companies[$key]['aspirants'] = $query->row_array()['aspirants'];
-        }
+        //     $companies[$key]['aspirants'] = $query->row_array()['aspirants'];
+        // }
 
         return $companies;
         exit();

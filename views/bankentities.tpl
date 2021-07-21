@@ -41,11 +41,11 @@
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead>
                                     <tr>
+                                {if !$mobile}<th class="wd-10p-force p-2">No</th>{/if}
                                         <th class="wd-25p-force p-3 text-center">Nombre</th>
                                         <th class="wd-10p-force p-3 text-center">NIT</th>
-                                        <th class="wd-10p-force p-3 text-center">Tipo</th>
-                                        <th class="wd-15p-force p-3 text-center">Correo</th>
-                                        <th class="wd-15p-force p-3 text-center">Teléfono</th>
+                                        <th class="wd-15p-force p-3 text-center">Contacto</th>
+                                        <th class="wd-10p-force p-3 text-center">Teléfono</th>
                                         {if $act_edit or $act_drop or $act_trace}
                                             <th class="wd-20p-force p-3 text-center"></th>
                                         {else}
