@@ -138,38 +138,6 @@ class Externalcompanies_controller extends CI_Controller
             $dir                                                                =   $this->input->post('order')[0]['dir'];
             $filtered_columns                                                   =   $this->input->post('columns');
 
-            // Filter by column search
-            $data                                                               = [];
-            foreach ($filtered_columns as $column) 
-            {
-                $search_value                                                   = $column['search']['value'];
-
-                if (strlen($search_value) > 0) 
-                {
-                    $search_data = [
-                        'name' => $column['data'],
-                        'value' => $search_value
-                    ];
-                    array_push($data, $search_data);
-                }
-            }
-
-            if (count($data) > 0) 
-            {
-
-                $count_rows                                                         = $this->_externalcompanies_model->count_rows($data);
-                $all_data                                                           = $this->_externalcompanies_model->row_by_search($data);
-                $json_data = array(
-                    "draw"                                                          => intval($draw),
-                    "recordsTotal"                                                  => intval($count_rows['total']),
-                    "recordsFiltered"                                               => intval($count_rows['total_filtered']),
-                    "data"                                                          => $all_data,
-                );
-
-                echo json_encode($json_data);
-                exit();
-            }
-
             $count_rows                                                         =   $this->_externalcompanies_model->count_rows($search);
             $all_rows                                                           =   $this->_externalcompanies_model->all_rows($limit, $start, $search, $order, $dir);
 
