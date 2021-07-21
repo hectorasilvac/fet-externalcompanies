@@ -346,11 +346,13 @@ class Externalcompanies_model extends CI_Model
 
         if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true') 
         {
+            $this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
-            $this->db->group_by('fet_cv.number_dcv');
             $this->db->from('fet_cv_we');
             $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
             $this->db->where('fet_cv_we.id_cv_ec', $params['value']);
+            $this->db->group_by('fet_cv.number_dcv');
+
 
             $query = $this->db->get();
         }
@@ -473,15 +475,15 @@ class Externalcompanies_model extends CI_Model
 
         {
             $data                                                               =   array();
-            $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0               ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
-            $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0                ? trim($params['nit_cv_ec']) : NULL;
-            $data['type_cv_ec']                                                 =   isset($params['type_cv_ec'])       && strlen($params['type_cv_ec']) > 0               ? trim($params['type_cv_ec']) : NULL;
+            $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0        ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
+            $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0         ? trim($params['nit_cv_ec']) : NULL;
+            $data['type_cv_ec']                                                 =   isset($params['type_cv_ec'])       && strlen($params['type_cv_ec']) > 0        ? trim($params['type_cv_ec']) : NULL;
             $data['email_cv_ec']                                                =   isset($params['email_cv_ec'])      && strlen($params['email_cv_ec']) > 0       ? $this->_trabajandofet_model->user_name(trim($params['email_cv_ec'])) : NULL;
             $data['phone_cv_ec']                                                =   isset($params['phone_cv_ec'])      && strlen($params['phone_cv_ec']) > 0       ? trim($params['phone_cv_ec']) : NULL;
             $data['address_cv_ec']                                              =   isset($params['address_cv_ec'])    && strlen($params['address_cv_ec']) > 0     ? trim($params['address_cv_ec']) : NULL;
             $data['country_cv_ec']                                              =   isset($params['country_cv_ec'])    && strlen($params['country_cv_ec']) > 0     ? trim($params['country_cv_ec']) : NULL;
             $data['department_cv_ec']                                           =   isset($params['department_cv_ec']) && strlen($params['department_cv_ec']) > 0  ? trim($params['department_cv_ec']) : NULL;
-            $data['city_cv_ec']                                                 =   isset($params['city_cv_ec'])       && strlen($params['city_cv_ec']) > 0              ? trim($params['city_cv_ec']) : NULL;
+            $data['city_cv_ec']                                                 =   isset($params['city_cv_ec'])       && strlen($params['city_cv_ec']) > 0        ? trim($params['city_cv_ec']) : NULL;
             $data['user_insert']                                                =   $this->session->userdata['id_user'];
             $data['date_insert']                                                =   date('Y-m-d H:i:s');
 

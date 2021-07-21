@@ -401,35 +401,35 @@ $(document).ready(function () {
         targets: [0],
         data: "name_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='name_cv_ec' class='text-uppercase' data-type='text' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='name_cv_ec' class='text-uppercase' data-type='text' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' data-required='false' data-minlength='3' data-maxlength='13' class='text-uppercase' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='nit_cv_ec' data-required='false' data-minlength='3' data-maxlength='13' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
         targets: [2],
         data: "type_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='type_cv_ec' class='type_cv_ec text-uppercase' data-value='${data}' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='type_cv_ec' class='type_cv_ec text-uppercase' data-value='${data}' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
         targets: [3],
         data: "email_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='email_cv_ec' data-required='false' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='email_cv_ec' data-required='false' data-type='email' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' class='text-uppercase' data-minlength='7' data-maxlength='13' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data ?? '---'}</span>`;
+          return `<span data-name='phone_cv_ec' data-minlength='7' data-maxlength='13' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
@@ -502,6 +502,7 @@ $(document).ready(function () {
 
       if (act_edit) {
         $("#default_table td span[data-type]").editable({
+          emptytext: 'Vacío',
           inputclass: 'py-2 pl-2 pr-3 mw-50',
           validate: function (value) {
             return validate_input({
@@ -545,15 +546,6 @@ $(document).ready(function () {
             modal_alert(response.data, response.message);
           },
         });
-
-        // $('span.editable-click').on('click', function (e) {
-        //   if ( $('span.editable-open').text() == '---' )
-        //   {
-        //     $('span.editable-open').text('asassasa').trigger('change');
-        //     // console.log('saas');
-        //   }
-        // });
-
       }
 
       $('span.editable').css('border-bottom', 'none');
