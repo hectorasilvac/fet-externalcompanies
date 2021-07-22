@@ -568,27 +568,25 @@ class Bankentities_controller extends CI_Controller
             $sheet->setCellValue('A1', 'No')
                   ->setCellValue('B1', 'Nombre')
                   ->setCellValue('C1', 'NIT')
-                  ->setCellValue('D1', 'Tipo')
-                  ->setCellValue('E1', 'Correo')
-                  ->setCellValue('F1', 'Telefono')
-                  ->setCellValue('G1', 'Dirección')
-                  ->setCellValue('H1', 'País')
-                  ->setCellValue('I1', 'Departamento')
-                  ->setCellValue('J1', 'Ciudad');
+                  ->setCellValue('D1', 'Dígito de verificación')
+                  ->setCellValue('E1', 'Código del banco')
+                  ->setCellValue('F1', 'Contacto')
+                  ->setCellValue('G1', 'Teléfono')
+                  ->setCellValue('H1', 'Correo corporativo')
+                  ->setCellValue('I1', 'Dirección');
 
 
-            $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+            $sheet->getStyle('A1:I1')->getFont()->setBold(true);
 
-            $sheet->getColumnDimension('A')->setWidth(10);
-            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(40);
             $sheet->getColumnDimension('C')->setWidth(20);
             $sheet->getColumnDimension('D')->setWidth(20);
-            $sheet->getColumnDimension('E')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(20);
             $sheet->getColumnDimension('F')->setWidth(20);
-            $sheet->getColumnDimension('G')->setWidth(50);
-            $sheet->getColumnDimension('H')->setWidth(20);
-            $sheet->getColumnDimension('I')->setWidth(30);
-            $sheet->getColumnDimension('J')->setWidth(30);
+            $sheet->getColumnDimension('G')->setWidth(20);
+            $sheet->getColumnDimension('H')->setWidth(30);
+            $sheet->getColumnDimension('I')->setWidth(40);
 
 
 
@@ -610,10 +608,10 @@ class Bankentities_controller extends CI_Controller
             }
 
             $writer                                                             =   new Xlsx($spreadsheet);
-            $sheet->setTitle('Empresas Externas');
+            $sheet->setTitle('Entidades Bancarias');
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="trabajandofet_empresas_externas_' . date('dmY') . '.xlsx"');
+            header('Content-Disposition: attachment;filename="trabajandofet_entidades_bancarias_' . date('dmY') . '.xlsx"');
             header('Cache-Control: max-age=0');
             header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -768,7 +766,8 @@ class Bankentities_controller extends CI_Controller
 
         $this->db->select($column);
         $this->db->where($column, $value);
-        $this->db->where("id_bankentity !=", $id);
+        $this->db->where('id_bankentity !=', $id);
+        $this->db->where('flag_drop', 0);
 
         $query                                                                  =   $this->db->get('fet_bankentities');
 

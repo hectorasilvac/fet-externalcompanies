@@ -52,24 +52,23 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $this->db->where('fet_cv_ec.flag_drop', 0);
-        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
-        $this->db->from('fet_cv_ec');
+        $this->db->where('flag_drop', 0);
+        $this->db->from('fet_bankentities');
 
         $result['total']                                                        =   $this->db->count_all_results();
 
-        if (isset($search) && !empty($search)) {
-            $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
-            $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
-            $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
-            $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
+        if (isset($search) && !empty($search)) 
+        {
+            $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
 
-            if (is_array($search) && count($search) > 0) {
+            if (is_array($search) && count($search) > 0) 
+            {
                 $this->db->like($search[0]['name'], $search[0]['value']);
-                $search_data                                                        = [];
+                $search_data                                                    = [];
 
                 $this->db->group_start();
-                foreach ($search as $element) {
+                foreach ($search as $element) 
+                {
                     $name = $element['name'];
                     $value = $element['value'];
                     $search_data[$name] = $value;
@@ -77,29 +76,32 @@ class Bankentities_model extends CI_Model
 
                 $this->db->or_like($search_data);
                 $this->db->group_end();
-                $this->db->from('fet_cv_ec');
-                $this->db->where('fet_cv_ec.flag_drop', 0);
+                $this->db->from('fet_bankentities');
+                $this->db->where('flag_drop', 0);
 
-                $result['total_filtered']                                           =   $this->db->count_all_results();
-            } else {
+                $result['total_filtered']                                       =   $this->db->count_all_results();
+            } 
+            else 
+            {
                 $this->db->group_start();
-                $this->db->like('fet_cv_ec.name_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
-                $this->db->or_like('git_countries.name_country', $search);
-                $this->db->or_like('git_cities.name_city', $search);
+                $this->db->like('name_bankentity', $search);
+                $this->db->or_like('nit_bankentity', $search);
+                $this->db->or_like('digit_bankentity', $search);
+                $this->db->or_like('code_bankentity', $search);
+                $this->db->or_like('address_bankentity', $search);
+                $this->db->or_like('contact_bankentity', $search);
+                $this->db->or_like('phone_bankentity', $search);
+                $this->db->or_like('email_bankentity', $search);
                 $this->db->group_end();
 
-                $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
-                $this->db->where('fet_cv_ec.flag_drop', 0);
-                $this->db->from('fet_cv_ec');
+                $this->db->where('flag_drop', 0);
+                $this->db->from('fet_bankentities');
 
                 $result['total_filtered']                                           =   $this->db->count_all_results();
             }
-        } else {
+        } 
+        else 
+        {
             $result['total_filtered']                                           =   $result['total'];
         }
 
@@ -399,7 +401,7 @@ class Bankentities_model extends CI_Model
     public function udrop($param)
     {
         $data                                                                   =   array(
-            'id'                                                                        =>  $param['id_cv_ec'],
+            'id'                                                                        =>  $param['id_bankentity'],
             'flag_drop'                                                                 =>  1,
             'user_update'                                                               =>  $this->session->userdata['id_user'],
             'date_update'                                                               =>  date('Y-m-d H:i:s')
@@ -407,18 +409,21 @@ class Bankentities_model extends CI_Model
 
         $result                                                                 =   array();
 
-        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_bankentity', 'fet_bankentities');
 
-        if ($answer) {
-            $data_history                                                       =   $data;
-            $data_history['id_cv_ec']                                           =   $data_history['id'];
-            unset($data_history['id']);
+        if ($answer)
+        {
+            // $data_history                                                       =   $data;
+            // $data_history['id_bankentity']                                      =   $data_history['id'];
+            // unset($data_history['id']);
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+            // $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Problemas al eliminar la empresa.';
         }
@@ -466,39 +471,38 @@ class Bankentities_model extends CI_Model
      **/
     public function export_xlsx($search)
     {
-        $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
-        $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
-        $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
-        $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
-        $this->db->where('fet_cv_ec.flag_drop', 0);
-        $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, contact_bankentity, phone_bankentity, email_bankentity, address_bankentity');
+        $this->db->where('flag_drop', 0);
 
         if (!empty($search))
         {
             $this->db->group_start();
-            $this->db->like('fet_cv_ec.name_cv_ec', $search);
-            $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
-            $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
-            $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
-            $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
-            $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
-            $this->db->or_like('git_countries.name_country', $search);
-            $this->db->or_like('git_cities.name_city', $search);
+            $this->db->like('name_bankentity', $search);
+            $this->db->or_like('nit_bankentity', $search);
+            $this->db->or_like('digit_bankentity', $search);
+            $this->db->or_like('code_bankentity', $search);
+            $this->db->or_like('address_bankentity', $search);
+            $this->db->or_like('contact_bankentity', $search);
+            $this->db->or_like('phone_bankentity', $search);
+            $this->db->or_like('email_bankentity', $search);
             $this->db->group_end();
         }
 
-        $this->db->order_by('fet_cv_ec.name_cv_ec', 'ASC');
-        $query                                                                  =   $this->db->get('fet_cv_ec');
+        $this->db->order_by('name_bankentity', 'ASC');
+        $query                                                                  =   $this->db->get('fet_bankentities');
 
         $result                                                                 =   array();
 
         $result['data']                                                         =   $query->result_array();
 
-        if (count($result['data']) > 0) {
+        if (count($result['data']) > 0)
+        {
             $result['message']                                                  =   FALSE;
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'No hay usuarios para exportar.';
+            $result['message']                                                  =   'No hay entidades bancarias para exportar.';
         }
 
         return $result;

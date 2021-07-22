@@ -235,11 +235,11 @@
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Contacto</th>
-                                    <td class="col-10" data-name="contact_bankentity">grupoaw@gmail.com</td>
+                                    <td class="col-10" data-name="contact_bankentity"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Teléfono de contacto</th>
-                                    <td class="col-10" data-name="phone_bankentity">Calle 45 #34-56</td>
+                                    <td class="col-10" data-name="phone_bankentity"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Correo corporativo</th>
@@ -283,7 +283,7 @@
                 <div class="card bd-0">
                     <div class="card-body bd bd-t-0 rounded-bottom-0">
                         <br />
-                        <p class="mg-b-0"> Seguro que deseas eliminar esta empresa?</p>
+                        <p class="mg-b-0"> ¿Seguro que deseas eliminar esta entidad bancaria?</p>
                         <br />
                     </div>
                     <div class="card-footer bd bd-t-0 d-flex justify-content-between">
