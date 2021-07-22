@@ -61,7 +61,7 @@
                 {if $act_add}
                     <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
-                            <form id="form_add" method="post">
+                            <form id="form_add" method="post" data-form>
                                 <div class="row mg-b-25">
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
@@ -132,7 +132,7 @@
                     </div>
                 {/if}
                 {if $act_edit}
-                    <div id="view_form_edit" class="mg-t-60 d-none">
+                    <div id="view_form_edit" class="mg-t-60 d-none" data-form>
                         <div class="form-layout">
                             <form id="form_edit" method="post" action="{$path_edit}">
                                 <div class="row mg-b-25">
@@ -219,39 +219,35 @@
                             <tbody>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Nombre</th>
-                                    <td class="col-10" data-name="name_cv_ec"></td>
+                                    <td class="col-10" data-name="name_bankentity"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">NIT</th>
-                                    <td class="col-10" data-name="nit_cv_ec"></td>
+                                    <td class="col-10" data-name="nit_bankentity"></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="col-2 bg-light">Tipo</th>
-                                    <td class="col-10" data-name="type_cv_ec"></td>
+                                    <th scope="row" class="col-2 bg-light">Dígito de verificación</th>
+                                    <td class="col-10" data-name="digit_bankentity"></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="col-2 bg-light">Teléfono</th>
-                                    <td class="col-10" data-name="phone_cv_ec"></td>
+                                    <th scope="row" class="col-2 bg-light">Código de banco</th>
+                                    <td class="col-10" data-name="code_bankentity"></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row" class="col-2 bg-light">Correo</th>
-                                    <td class="col-10" data-name="email_cv_ec">grupoaw@gmail.com</td>
+                                    <th scope="row" class="col-2 bg-light">Contacto</th>
+                                    <td class="col-10" data-name="contact_bankentity">grupoaw@gmail.com</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Teléfono de contacto</th>
+                                    <td class="col-10" data-name="phone_bankentity">Calle 45 #34-56</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="col-2 bg-light">Correo corporativo</th>
+                                    <td class="col-10" data-name="email_bankentity"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Dirección</th>
-                                    <td class="col-10" data-name="address_cv_ec">Calle 45 #34-56</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="col-2 bg-light">País</th>
-                                    <td class="col-10" data-name="country_cv_ec"></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="col-2 bg-light">Departamento</th>
-                                    <td class="col-10" data-name="department_cv_ec"></td>
-                                </tr>
-                                <tr>
-                                    <th scope="row" class="col-2 bg-light">Ciudad</th>
-                                    <td class="col-10" data-name="city_cv_ec"></td>
+                                    <td class="col-10" data-name="address_bankentity"></td>
                                 </tr>
                             </tbody>
                         </table>

@@ -229,15 +229,21 @@ class Externalcompanies_model extends CI_Model
 
             $editable_single_fields                                             =   ['nit_cv_ec', 'email_cv_ec', 'phone_cv_ec', 'type_cv_ec'];
 
-            if (in_array($params['name'], $editable_single_fields)) {
-                if ($params['name'] == 'type_cv_ec') {
+            if (in_array($params['name'], $editable_single_fields))
+            {
+                if ($params['name'] == 'type_cv_ec')
+                {
                     $this->db->where($params['name'], '25513223');
-                } else {
+                } 
+                else 
+                {
                     empty($params['value'])
                         ? $this->db->where($params['name'], '25513223')
                         : $this->db->where($params['name'], $params['value']);
                 }
-            } else {
+            } 
+            else 
+            {
                 $this->db->where($params['name'], trim($params['value']));
             }
 
@@ -271,20 +277,25 @@ class Externalcompanies_model extends CI_Model
 
         $query                                                                  =   $this->db->get('fet_cv_ec');
 
-        if (count($query->result_array()) > 0) {
+        if (count($query->result_array()) > 0)
+        {
 
             $message                                                            =   '';
             $error_by_field                                                     =   isset($params['name']) && strlen($params['name']) > 0;
 
-            if ($error_by_field) {
+            if ($error_by_field) 
+            {
                 foreach ($query->row_array() as $key => $value) {
                     $params['name']  === 'name_cv_ec'  && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este nombre'   :   NULL;
                     $params['name']  === 'nit_cv_ec'   && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este NIT'      :   NULL;
                     $params['name']  === 'email_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este email'    :   NULL;
                     $params['name']  === 'phone_cv_ec' && strtolower($value) == strtolower(trim($params['value']))  ?   $message = 'este teléfono' :   NULL;
                 }
-            } else {
-                foreach ($query->row_array() as $key => $value) {
+            } 
+            else
+            {
+                foreach ($query->row_array() as $key => $value)
+                {
                     isset($params['name_cv_ec'])  && strtolower($value) == strtolower(trim($params['name_cv_ec']))   ?   $message = 'este nombre'   :   NULL;
                     isset($params['nit_cv_ec'])   && strtolower($value) == strtolower(trim($params['nit_cv_ec']))    ?   $message = 'este NIT'      :   NULL;
                     isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))  ?   $message = 'este email'    :   NULL;

@@ -178,20 +178,24 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                // $exist_bank                                                     =   $this->_bankentities_model->exist_bank($params);
+                $entries                                                        =   $this->form_rules();
+                $this->form_validation->set_rules($entries);
 
-                // if ($exist_bank['data'])
-                // {
+                if ($this->form_validation->run()) 
+                {
                     $add                                                        =   $this->_bankentities_model->add($params);
-
+                    
                     echo json_encode($add);
                     exit();
-                // }
-                // else
-                // {
-                //     echo json_encode($exist_bank);
-                //     exit();
-                // }
+                } 
+                else 
+                {
+                    $result['data']                                             =   FALSE;
+                    $result['message']                                          =   $this->form_validation->error_array();
+
+                    echo json_encode($result);
+                    exit();
+                }
             }
             else
             {
@@ -219,6 +223,69 @@ class Bankentities_controller extends CI_Controller
             }
 
             exit();  
+        }
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function edit()
+    {
+        if (in_array('EDIT', $this->actions)) 
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params) 
+            {
+                $entries                                                        =   $this->form_rules(TRUE, $params['pk']);
+                $this->form_validation->set_rules($entries);
+
+                if ($this->form_validation->run()) 
+                {
+                    $edit                                                       =   $this->_bankentities_model->edit($params);
+                    
+                    echo json_encode($edit);
+                    exit();
+                } 
+                else 
+                {
+                    $result['data']                                             =   FALSE;
+                    $result['message']                                          =   $this->form_validation->error_array();
+
+                    echo json_encode($result);
+                    exit();
+                }
+            } 
+            else 
+            {
+                if ($this->input->method(TRUE) == 'GET') 
+                {
+                    header("Location: " . site_url('bankentities'));
+                } 
+                else 
+                {
+                    echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        } 
+        else 
+        {
+            if ($this->input->method(TRUE) == 'GET') 
+            {
+                header("Location: " . site_url('bankentities'));
+            } 
+            else 
+            {
+                echo json_encode(array('data' => FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
         }
     }
 
@@ -314,74 +381,6 @@ class Bankentities_controller extends CI_Controller
             else
             {
                 echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
-            }
-
-            exit();
-        }
-    }
-
-    /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fabrica de Desarrollo
-    * @since     v2.0.1
-    * @param     array $params
-    * @return    json array
-    **/
-    public function edit()
-    {
-        if (in_array('EDIT', $this->actions)) 
-        {
-            $params                                                             =   $this->security->xss_clean($_POST);
-
-            if ($params) {
-                if (isset($params['name']) && $params['name'] != '' && $params['name'] != null) 
-                {
-                    $exist_company                                              =   $this->_bankentities_model->exist_company($params);
-
-                    if ($exist_company['data']) 
-                    {
-                        $edit                                                   =   $this->_bankentities_model->edit($params);
-
-                        echo json_encode($edit);
-                        exit();
-                    } 
-                    else 
-                    {
-                        echo json_encode($exist_company);
-                        exit();
-                    }
-                } 
-                else 
-                {
-                    $edit                                                       =   $this->_bankentities_model->edit($params);
-
-                    echo json_encode($edit);
-                    exit();
-                }
-            } 
-            else 
-            {
-                if ($this->input->method(TRUE) == 'GET') 
-                {
-                    header("Location: " . site_url('bankentities'));
-                } 
-                else 
-                {
-                    echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
-                }
-
-                exit();
-            }
-        } 
-        else 
-        {
-            if ($this->input->method(TRUE) == 'GET') 
-            {
-                header("Location: " . site_url('bankentities'));
-            } 
-            else 
-            {
-                echo json_encode(array('data' => FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
             }
 
             exit();
@@ -637,5 +636,150 @@ class Bankentities_controller extends CI_Controller
 
             exit();
         }
+    }
+
+        /**
+     * @author    Innovación y Tecnología
+     * @copyright 2021 Fábrica de Desarrollo
+     * @since     v2.0.1
+     * @param     
+     * @return    array $entries
+     **/
+    public function form_rules($editForm = FALSE, $editFormId = 0)
+    {
+        $entries = [
+            [
+                'field' => 'name_bankentity',
+                'label' => 'nombre del banco',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},name_bankentity]]|required|min_length[3]|max_length[50]" 
+                                     : 'is_unique[fet_bankentities.name_bankentity]|required|min_length[3]|max_length[50]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'nit_bankentity',
+                'label' => 'NIT del banco',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},nit_bankentity]]|required|numeric|min_length[3]|max_length[9]" 
+                                     : 'is_unique[fet_bankentities.nit_bankentity]|required|numeric|min_length[3]|max_length[9]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 9 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'digit_bankentity',
+                'label' => 'dígito de verificación',
+                'rules' => 'required|numeric|min_length[1]|max_length[2]',
+                'errors' => [
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 2 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'code_bankentity',
+                'label' => 'código del banco',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},code_bankentity]]|required|numeric|min_length[1]|max_length[4]" 
+                                     : 'is_unique[fet_bankentities.code_bankentity]|required|numeric|min_length[1]|max_length[4]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 4 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'address_bankentity',
+                'label' =>   'dirección',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},address_bankentity]]|required|min_length[5]|max_length[70]" 
+                                     : 'is_unique[fet_bankentities.address_bankentity]|required|min_length[5]|max_length[70]',
+                'errors' =>  [
+                    'is_unique' => 'La %s ya existe',
+                    'required' => 'La %s no puede quedar en blanco.',
+                    'min_length' => 'La %s debe contener al menos 5 caracteres.',
+                    'max_length' => 'La %s debe contener máximo 70 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'contact_bankentity',
+                'label' =>   'contacto',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},contact_bankentity]]|required|min_length[3]|max_length[50]" 
+                                     : 'is_unique[fet_bankentities.contact_bankentity]|required|min_length[3]|max_length[50]',
+                'errors' =>  [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'phone_bankentity',
+                'label' => 'número del contacto',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},phone_bankentity]]|required|numeric|min_length[7]|max_length[13]" 
+                                     : 'is_unique[fet_bankentities.phone_bankentity]|required|numeric|min_length[7]|max_length[13]',
+                'errors' => [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'numeric' => 'El %s solo puede contener números.',
+                    'min_length' => 'El %s debe contener al menos 7 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 13 caracteres.',
+                ]
+            ],
+            [
+                'field' => 'email_bankentity',
+                'label' =>   'correo corporativo',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},email_bankentity]]|required|min_length[3]|max_length[50]|valid_email" 
+                                     : 'is_unique[fet_bankentities.email_bankentity]|required|min_length[3]|max_length[50]|valid_email',
+                'errors' =>  [
+                    'is_unique' => 'El %s ya existe',
+                    'required' => 'El %s no puede quedar en blanco.',
+                    'min_length' => 'El %s debe contener al menos 3 caracteres.',
+                    'max_length' => 'El %s debe contener máximo 50 caracteres.',
+                    'valid_email' => 'El %s no tiene un formato válido.'
+                ]
+            ],
+        ];
+
+        return $entries;
+        exit();
+    }
+
+    /**
+     * @author    Innovación y Tecnología
+     * @copyright 2021 Fábrica de Desarrollo
+     * @since     v2.0.1
+     * @param     
+     * @return    bool $result
+     **/
+    public function value_exists($value, $params)
+    {
+        $sanitized_params = trim($params, ' \t[]');
+        $params = preg_split('/,/', $sanitized_params);
+        list($id, $column) = $params;
+
+        $this->db->select($column);
+        $this->db->where($column, $value);
+        $this->db->where("id_bankentity !=", $id);
+
+        $query                                                                  =   $this->db->get('fet_bankentities');
+
+        if (count($query->result_array()) > 0)
+        {
+            $this->form_validation->set_message('value_exists', 'El {field} ya existe.');
+            return FALSE;
+            exit();
+        }
+
+        return TRUE;
+        exit();
     }
 }

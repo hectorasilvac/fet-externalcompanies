@@ -1,3 +1,183 @@
+function formValidation(formId, path) {
+  return $(formId).validate({
+    onkeyup: false,
+    ignore: [],
+    rules: {
+      normalizer: function (value) {
+        return $.trim(value);
+      },
+      onkeyup: false,
+      focusCleanup: true,
+      name_bankentity: {
+        required: true,
+        minlength: 3,
+        maxlength: 50,
+        lettersonly_es: true,
+        notEmpty: true,
+      },
+      nit_bankentity: {
+        required: true,
+        digits: true,
+        minlength: 3,
+        maxlength: 9,
+        notEmpty: true,
+      },
+      digit_bankentity: {
+        required: true,
+        digits: true,
+        minlength: 1,
+        maxlength: 2,
+        notEmpty: true,
+      },
+      code_bankentity: {
+        required: true,
+        digits: true,
+        minlength: 1,
+        maxlength: 4,
+        notEmpty: true,
+      },
+      address_bankentity: {
+        required: true,
+        minlength: 5,
+        maxlength: 70,
+        notEmpty: true,
+      },
+      contact_bankentity: {
+        required: true,
+        lettersonly_es: true,
+        minlength: 3,
+        maxlength: 50,
+        notEmpty: true,
+      },
+      phone_bankentity: {
+        required: true,
+        digits: true,
+        minlength: 7,
+        maxlength: 13,
+        notEmpty: true,
+      },
+      email_bankentity: {
+        required: true,
+        isEmail: true,
+        minlength: 5,
+        maxlength: 50,
+      },
+    },
+    messages: {
+      name_bankentity: {
+        required: "Ingrese el nombre del banco",
+        minlength: "Debe tener al menos 3 caracteres",
+        maxlength: "Debe tener máximo 50 caracteres",
+      },
+      nit_bankentity: {
+        required: "Ingresa el NIT del banco",
+        digits: "Debe contener sólo números",
+        minlength: "Debe tener al menos 3 caracteres",
+        maxlength: "Debe tener máximo 9 caracteres",
+      },
+      digit_bankentity: {
+        required: "Ingresa el dígito de verificación",
+        digits: "Debe contener sólo números",
+        minlength: "Debe tener al menos 1 carácter",
+        maxlength: "Debe tener máximo 2 caracteres",
+      },
+      code_bankentity: {
+        required: "Ingresa el código del banco",
+        digits: "Debe contener sólo números",
+        minlength: "Debe tener al menos 1 carácter",
+        maxlength: "Debe tener máximo 4 caracteres",
+      },
+      address_bankentity: {
+        required: "Ingresa la dirección",
+        minlength: "Debe contener al menos 5 caracteres",
+        maxlength: "Debe contener máximo 70 caracteres",
+      },
+      contact_bankentity: {
+        required: "Ingresa el contacto",
+        minlength: "Debe contener al menos 3 caracteres",
+        maxlength: "Debe contener máximo 50 caracteres",
+      },
+      phone_bankentity: {
+        required: "Ingresa el número del contacto",
+        digits: "Debe contener sólo números",
+        minlength: "Debe tener al menos 7 caracteres",
+        maxlength: "Debe tener máximo 13 caracteres",
+      },
+      email_bankentity: {
+        required: "Ingresa el correo corporativo",
+        minlength: "Debe tener al menos 3 caracteres",
+        maxlength: "Debe tener máximo 50 caracteres",
+      },
+    },
+    errorElement: "small",
+    errorPlacement: function (error, element) {
+      $(error).addClass("invalid-feedback font-weight-normal");
+
+      $(error).insertAfter(element);
+    },
+    submitHandler: function (form) {
+      customSubmit(form, formId, path );
+      return false;
+    },
+  });
+}
+
+function customSubmit(form, formId, path) {
+    $(form).ajaxSubmit({
+      dataType: "json",
+      url: path,
+      type: "post",
+      beforeSubmit: function () {
+        $("#loading").removeClass("d-none");
+      },
+      success: function ({ data, message }) {
+        $("#loading").addClass("d-none");
+        $("#error-list").empty();
+
+        if (data === false && typeof message == "object") {
+          Object.entries(message).forEach(([key, value]) => {
+            modal_alert(data, value);
+
+            var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
+
+            $(`${formId} input[name=${key}]`).addClass("error");
+            $(errorElement).insertAfter(`${formId} input[name=${key}]`);
+          });
+          return false;
+        }
+
+        if (data === false && typeof message == "string") {
+          modal_alert(data, message);
+          return false;
+        }
+
+        modal_alert(data, message);
+
+        $(formId)[0].reset();
+
+        var formName = $(formId).closest('form')[0].id;
+
+        $(`#view_${formName}`).addClass("d-none");
+        table.ajax.reload();
+      },
+    });
+}
+
+function removeFormErrors(formId, event = "change") {
+  $(formId).on(event, ".form-control", function () {
+    if ( $(this).valid() )
+    {
+      var name = $(this).attr('name');
+      var errorExists = $(`#${name}-error`).length;
+
+      if ( errorExists ) {
+        $(`#${name}-error`).remove();
+        return;
+      }
+      return;
+    }
+});
+}
 // function appendTwoColumns({ firstCol, secondCol, elementRef }) {
 
 //     $(elementRef).append(`
@@ -397,161 +577,51 @@
         $('span.editable').css('border-bottom', 'none');
       },
     });
+
   
     /****************************************************************************************/
-    /***************************************** EDIT *****************************************/
+    /**************************************** DETAILS ***************************************/
     /****************************************************************************************/
-  
-    $("#default_table").on("click", "a.edit-row", function () {  
-      $('#view_table').addClass('d-none');
-      $('#view_form_edit').removeClass('d-none');
-      validateFormEdit.resetForm();
-      $('#form_edit')[0].reset();
-  
-      var bankId = $(this).attr("data-id");
+    $("#default_table").on("click", "a.detail-row", function () {
+      var bankById = $(this).attr("data-id");
   
       $.ajax({
-        url: $path_find,
+        url: $path_details,
         type: "POST",
         dataType: "json",
         data: {
           pk: "id_bankentity",
-          value: bankId,
-          table: "fet_bankentities",
+          value: bankById,
         },
         beforeSend: function () {
           $("#loading").removeClass("d-none");
         },
-        success: function ({ data }) {
+        success: function ({ data, message }) {
+          $("#view_table").toggleClass("d-none");
+          $("#view_details").removeClass("d-none");
 
-          $('#form_edit input[name="pk"]').attr("value", data.id_bankentity);
-
-          $.each(data, function (index, value) {
-            $(`#form_edit input[name="${index}"]`).attr("value", value);
-          });
-
-          $("#loading").addClass("d-none");
-       }
+          console.log(data);
+  
+          // $('#view_details td[data-name="name_cv_ec"]').text(data.name_cv_ec);
+          // $('#view_details td[data-name="nit_cv_ec"]').text(data.nit_cv_ec);
+          // $('#view_details td[data-name="type_cv_ec"]').text(data.type_cv_ec);
+          // $('#view_details td[data-name="phone_cv_ec"]').text(data.phone_cv_ec);
+          // $('#view_details td[data-name="email_cv_ec"]').text(data.email_cv_ec);
+          // $('#view_details td[data-name="address_cv_ec"]').text(data.address_cv_ec);
+          // $('#view_details td[data-name="country_cv_ec"]').text(data.name_country);
+          // $('#view_details td[data-name="department_cv_ec"]').text(data.name_department);
+          // $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
+  
+          $("#loading").toggleClass("d-none");
+        }
+        
       });
     });
   
-  
-   var validateFormEdit = $("#form_edit").validate({
-      onkeyup: false,
-      ignore: [],
-      rules: {
-        normalizer: function (value) {
-          return $.trim(value);
-        },
-        onkeyup: false,
-        focusCleanup: true,
-        address_cv_ec: {
-          minlength: 5,
-          maxlength: 80,
-        },
-        country_cv_ec: {
-          required: true,
-        },
-        department_cv_ec: {
-          required: true,
-        },
-        city_cv_ec: {
-          required: true,
-        },
-      },
-      messages: {
-        address_cv_ec: {
-          minlength: "La dirección debe contener al menos 5 caracteres",
-          maxlength: "La dirección debe contener máximo 60 caracteres",
-        },
-        country_cv_ec: {
-          required: "Seleccione el país",
-        },
-        department_cv_ec: {
-          required: "Seleccione el departamento",
-        },
-        city_cv_ec: {
-          required: "Seleccione la ciudad",
-        },
-      },
-      errorElement: "small",
-      errorPlacement: function (error, element) {
-        $(error).addClass("invalid-feedback font-weight-normal");
-  
-        $(error).insertAfter(element);
-      },
+    $("#btn_cancel_details").on("click", function () {
+      $("#view_details").addClass("d-none");
+      $("#view_table").toggleClass("d-none");
     });
-  
-  
-    $('#btn_confirm_edit').on('click', function ()
-    {
-        $('#form_edit').submit();
-    });
-  
-    $('#form_edit').ajaxForm({
-        dataType:  'json',
-        success:  function(response) {
-          modal_alert(response.data, response.message);
-  
-          if (response.data) $('#view_form_edit').addClass('d-none');      
-        },
-        beforeSubmit: function()
-        {
-            $('#loading').removeClass('d-none');
-        }
-    });
-  
-    $("#btn_cancel_edit").on("click", function () {
-      var defaultTable = $("#default_table").DataTable();
-      defaultTable.ajax.reload();
-      validateFormEdit.resetForm();
-      $("#form_edit")[0].reset();
-      $("#view_form_edit").addClass("d-none");
-      $("#view_table").removeClass("d-none");
-  
-    });
-  
-//     /****************************************************************************************/
-//     /**************************************** DETAILS ***************************************/
-//     /****************************************************************************************/
-//     $("#default_table").on("click", "a.detail-row", function () {
-//       var companyId = $(this).attr("data-id");
-  
-//       var getCompanyById = $.ajax({
-//         url: $path_details,
-//         type: "POST",
-//         dataType: "json",
-//         data: {
-//           pk: "id_cv_ec",
-//           value: companyId,
-//         },
-//         beforeSend: function () {
-//           $("#loading").removeClass("d-none");
-//         },
-//         success: function ({ data, message }) {
-//           $("#view_table").toggleClass("d-none");
-//           $("#view_details").removeClass("d-none");
-  
-//           $('#view_details td[data-name="name_cv_ec"]').text(data.name_cv_ec);
-//           $('#view_details td[data-name="nit_cv_ec"]').text(data.nit_cv_ec);
-//           $('#view_details td[data-name="type_cv_ec"]').text(data.type_cv_ec);
-//           $('#view_details td[data-name="phone_cv_ec"]').text(data.phone_cv_ec);
-//           $('#view_details td[data-name="email_cv_ec"]').text(data.email_cv_ec);
-//           $('#view_details td[data-name="address_cv_ec"]').text(data.address_cv_ec);
-//           $('#view_details td[data-name="country_cv_ec"]').text(data.name_country);
-//           $('#view_details td[data-name="department_cv_ec"]').text(data.name_department);
-//           $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
-  
-//           $("#loading").toggleClass("d-none");
-//         }
-        
-//       });
-//     });
-  
-//     $("#btn_cancel_details").on("click", function () {
-//       $("#view_details").addClass("d-none");
-//       $("#view_table").toggleClass("d-none");
-//     });
   
 //     /****************************************************************************************/
 //     /***************************************** ASSIGN ***************************************/
@@ -619,199 +689,91 @@
 //         $("#view_assign").toggleClass("d-none");
 //         $("#view_table").toggleClass("d-none");
 //       });
+
   
-//     /****************************************************************************************/
-//     /***************************************** ADD ******************************************/
-//     /****************************************************************************************/
+    /****************************************************************************************/
+    /***************************************** ADD ******************************************/
+    /****************************************************************************************/
+var validationAddForm = formValidation("#form_add", $path_add);
+removeFormErrors("#form_add", "keypress");
+
+$("#btn_add").on("click", function () {
+  $("#view_table").addClass("d-none");
+  $("#view_form_add").removeClass("d-none");
+  validationAddForm.resetForm();
+  $("#form_add")[0].reset();
+});
+
+$("#btn_confirm_edit").on("click", function () {
+  $("#form_add").submit();
+});
+
+$("#btn_cancel_add").on("click", function () {
+  var defaultTable = $("#default_table").DataTable();
+  defaultTable.ajax.reload();
+  validationAddForm.resetForm();
+  $(".select2-hidden-accessible").empty();
+  $("#form_add")[0].reset();
+  $("#view_form_add").addClass("d-none");
+  $("#view_table").removeClass("d-none");
+});
+
+    /****************************************************************************************/
+    /***************************************** EDIT *****************************************/
+    /****************************************************************************************/
+
+    var validationeEditForm = formValidation('#form_edit', $path_edit);
+    removeFormErrors('#form_edit', 'keypress');
+
+    $("#default_table").on("click", "a.edit-row", function () {  
+      $('#view_table').addClass('d-none');
+      $('#view_form_edit').removeClass('d-none');
+      validationeEditForm.resetForm();
+      $('#form_edit')[0].reset();
   
-    $("#btn_add").on("click", function () {
-      $("#view_table").addClass("d-none");
-      $("#view_form_add").removeClass("d-none");
-      validateFormAdd.resetForm();
-      $("#form_add")[0].reset();
+      var bankId = $(this).attr("data-id");
+
+      // Display information retrieved from the database
+      $.ajax({
+        url: $path_find,
+        type: "POST",
+        dataType: "json",
+        data: {
+          pk: "id_bankentity",
+          value: bankId,
+          table: "fet_bankentities",
+        },
+        beforeSend: function () {
+          $("#loading").removeClass("d-none");
+        },
+        success: function ({ data }) {
+
+          $('#form_edit input[name="pk"]').attr("value", data.id_bankentity);
+
+          $.each(data, function (index, value) {
+            $(`#form_edit input[name="${index}"]`).attr("value", value);
+          });
+
+          $("#loading").addClass("d-none");
+       }
+      });
+    });
+  
+    $('#btn_confirm_edit').on('click', function ()
+    {
+        $('#form_edit').submit();
     });
 
-    $("#btn_cancel_add").on("click", function () {
+    $("#btn_cancel_edit").on("click", function () {
       var defaultTable = $("#default_table").DataTable();
       defaultTable.ajax.reload();
-      validateFormAdd.resetForm();
-      $(".select2-hidden-accessible").empty();
-      $("#form_add")[0].reset();
-      $("#view_form_add").addClass("d-none");
+      validationeEditForm.resetForm();
+      $("#form_edit")[0].reset();
+      $("#view_form_edit").addClass("d-none");
       $("#view_table").removeClass("d-none");
     });
 
-    var validateFormAdd = $("#form_add").validate({
-      onkeyup: false,
-      ignore: [],
-      rules: {
-        normalizer: function (value) {
-          return $.trim(value);
-        },
-        onkeyup: false,
-        focusCleanup: true,
-        name_bankentity: {
-          required: true,
-          minlength: 3,
-          maxlength: 50,
-          lettersonly_es: true,
-          notEmpty: true,
-        },
-        nit_bankentity: {
-          required: true,
-          digits: true,
-          minlength: 3,
-          maxlength: 9,
-          notEmpty: true,
-        },
-        digit_bankentity: {
-          required: true,
-          digits: true,
-          minlength: 1,
-          maxlength: 2,
-          notEmpty: true,
-        },
-        code_bankentity: {
-          required: true,
-          digits: true,
-          minlength: 1,
-          maxlength: 4,
-          notEmpty: true,
-        },
-        address_bankentity: {
-          required: true,
-          minlength: 5,
-          maxlength: 70,
-          notEmpty: true,
-        },
-        contact_bankentity: {
-          required: true,
-          lettersonly_es: true,
-          minlength: 3,
-          maxlength: 50,
-          notEmpty: true,
-        },
-        phone_bankentity: {
-          required: true,
-          digits: true,
-          minlength: 7,
-          maxlength: 13,
-          notEmpty: true,
-        },
-        email_bankentity: {
-          required: true,
-          isEmail: true,
-          minlength: 5,
-          maxlength: 50,
-        },
-      },
-      messages: {
-        name_bankentity: {
-          required: "Ingrese el nombre del banco",
-          minlength: "Debe tener al menos 3 caracteres",
-          maxlength: "Debe tener máximo 50 caracteres",
-        },
-        nit_bankentity: {
-          required: "Ingresa el NIT del banco",
-          digits: "Debe contener sólo números",
-          minlength: "Debe tener al menos 3 caracteres",
-          maxlength: "Debe tener máximo 9 caracteres",
-        },
-        digit_bankentity: {
-          required: "Ingresa el dígito de verificación",
-          digits: "Debe contener sólo números",
-          minlength: "Debe tener al menos 1 carácter",
-          maxlength: "Debe tener máximo 2 caracteres",
-        },
-        code_bankentity: {
-          required: "Ingresa el código del banco",
-          digits: "Debe contener sólo números",
-          minlength: "Debe tener al menos 1 carácter",
-          maxlength: "Debe tener máximo 4 caracteres",
-        },
-        address_bankentity: {
-          required: "Ingresa la dirección",
-          minlength: "Debe contener al menos 5 caracteres",
-          maxlength: "Debe contener máximo 70 caracteres",
-        },
-        contact_bankentity: {
-          required: "Ingresa el contacto",
-          minlength: "Debe contener al menos 3 caracteres",
-          maxlength: "Debe contener máximo 50 caracteres",
-        },
-        phone_bankentity: {
-          required: "Ingresa el número del contacto",
-          digits: "Debe contener sólo números",
-          minlength: "Debe tener al menos 7 caracteres",
-          maxlength: "Debe tener máximo 13 caracteres",
-        },
-        email_bankentity: {
-          required: "Ingresa el correo corporativo",
-          minlength: "Debe tener al menos 3 caracteres",
-          maxlength: "Debe tener máximo 50 caracteres",
-        },
-      },
-      errorElement: "small",
-      errorPlacement: function (error, element) {
-        $(error).addClass("invalid-feedback font-weight-normal");
 
-        $(error).insertAfter(element);
-      },
-      submitHandler: function (form) {
-        submit(form);
-        return false;
-      },
-    });
-
-    function submit(form) {
-      $(form).ajaxSubmit({
-        dataType: "json",
-        url: $path_add,
-        type: "post",
-        beforeSubmit: function () {
-          $("#loading").removeClass("d-none");
-        },
-        success: function ({ data, message }) {
-          $("#loading").addClass("d-none");
-          $("#error-list").empty();
-
-          if (data === false && typeof message == "object") {
-            Object.entries(message).forEach(([key, value]) => {
-              var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
-
-              $(`#${key}`).addClass("error");
-              $(errorElement).insertAfter(`#${key}`);
-            });
-            return false;
-          }
-
-          if (data === false && typeof message == "string") {
-            modal_alert(data, message);
-            return false;
-          }
-
-          modal_alert(data, message);
-
-          $(".select2-hidden-accessible").empty();
-          $("#form_add")[0].reset();
-          $("#view_form_add").addClass("d-none");
-          table.ajax.reload();
-        },
-      });
-    }
-
-    $("#form_add").on("change", ".form-control", function () {
-      if ($(this).valid()) {
-        var id = $(this).attr("id");
-        var errorExists = $(`#${id}-error`).length;
-
-        if (errorExists) {
-          $(`#${id}-error`).remove();
-          return;
-        }
-        return;
-      }
-    });
   
 //     /****************************************************************************************/
 //     /***************************************** DROP *****************************************/
