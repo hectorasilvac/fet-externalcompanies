@@ -179,8 +179,7 @@ function removeFormErrors(formId, event = "change") {
 }
 
 function appendTwoColumns({ firstCol, secondCol, elementRef }) {
-
-    $(elementRef).append(`
+  $(elementRef).append(`
     <tr>
       <td>
         ${firstCol}
@@ -189,109 +188,8 @@ function appendTwoColumns({ firstCol, secondCol, elementRef }) {
         ${secondCol}
       </td>
     </tr>`);
-  }
+}
 
-//   function locationSelect2({
-//           selectRef,
-//           dataName,
-//           placeholder,
-//           parentId = null,
-//           parentName = null,
-//           disabled = false,
-//         }) {
-//           return $(selectRef)
-//             .select2({
-//               disabled: disabled,
-//               theme: "bootstrap4",
-//               width: "100%",
-//               language: "es",
-//               placeholder: placeholder,
-//               allowClear: true,
-//               ajax: {
-//                 url: $path_location,
-//                 dataType: "json",
-//                 delay: 250,
-//                 data: function (params) {
-//                   var id = $(`${selectRef} option:selected`).val();
-
-//                   return {
-//                     name: dataName,
-//                     q: params.term,
-//                     page: params.page || 1,
-//                     id: id,
-//                     parentId: parentId,
-//                     parentName: parentName,
-//                   };
-//                 },
-//                 processResults: function (data, params) {
-//                   var page = params.page || 1;
-//                   return {
-//                     results: $.map(data.items, function (item) {
-//                       return {
-//                         id: item.id,
-//                         text: item.text,
-//                       };
-//                     }),
-//                     pagination: {
-//                       more: page * 10 <= data.total_count,
-//                     },
-//                   };
-//                 },
-//               },
-//               escapeMarkup: function (markup) {
-//                 return markup;
-//               },
-//             })
-//             .on("change", function (e) {
-//               $(this).valid();
-//             });
-//         }
-
-//         function retrieveLocationSelect2({
-//           selectRef,
-//           dataName,
-//           placeholder,
-//           pk,
-//           value,
-//           table,
-//           parentId = null,
-//           parentName = null,
-//           optionText,
-//           optionValue,
-//           count = null,
-//         }) {
-//           locationSelect2({
-//             selectRef: selectRef,
-//             dataName: dataName,
-//             placeholder: placeholder,
-//             parentId: parentId,
-//             parentName: parentName,
-//           });
-
-//           if (count === 1) {
-//             $.ajax({
-//               type: "POST",
-//               dataType: "json",
-//               url: $path_find,
-//               data: {
-//                 pk: pk,
-//                 value: value,
-//                 table: table,
-//               },
-//             }).then(function ({ data }) {
-//               var selectInput = selectRef;
-//               var option = new Option(
-//                 data[optionText],
-//                 data[optionValue],
-//                 true,
-//                 true
-//               );
-//               $(selectInput).append(option).trigger("change");
-//             });
-//           }
-//         }
-
-// Method for validating letters of the Spanish alphabet
 jQuery.validator.addMethod(
   "lettersonly_es",
   function (value, element) {
@@ -316,92 +214,11 @@ jQuery.validator.addMethod(
   "El formato del correo electrónico no es válido."
 );
 
-//         function validate_input({
-//           value,
-//           minLength = null,
-//           maxLength = null,
-//           isEmail = null,
-//           isText = null,
-//           isNumeric = null,
-//           isRequired = true,
-//         }) {
-//           if ($.trim(value) == "" && isRequired === true) return "No puede estar vacío";
-//           if (minLength !== null && value.length < minLength)
-//             return `Debe contener mínimo ${minLength} caracteres`;
-//           if (maxLength !== null && value.length > maxLength)
-//             return `Debe contener máximo ${maxLength} caracteres`;
-//           if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
-//             return "Solo se permiten letras";
-//           if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+\D$/))
-//             return " ";
-//           if (isNumeric !== null && value !== '' && !value.match(/^[0-9]+$/))
-//             return "El campo debe contener solo números";
-//         }
+// Document is ready
 
-/****************************************************************************************/
-/*********************************** DOCUMENT IS READY **********************************/
-/****************************************************************************************/
 $(document).ready(function () {
-  //     $.fn.editable.defaults.mode = "inline";
 
-  //     locationSelect2({
-  //       selectRef: "#country_cv_ec",
-  //       dataName: "countries",
-  //       placeholder: "Selecciona un país",
-  //     }).on("change", function (e) {
-  //       var countryParent = $("#country_cv_ec option:selected").val();
-
-  //       if (typeof countryParent !== "undefined") {
-  //         locationSelect2({
-  //           selectRef: "#department_cv_ec",
-  //           dataName: "departments",
-  //           placeholder: "Selecciona un departamento",
-  //           parentId: countryParent,
-  //           parentName: "countries",
-  //         });
-  //       } else {
-  //         $("#department_cv_ec").prop("disabled", true);
-  //         $("#department_cv_ec").empty();
-
-  //         $("#city_cv_ec").prop("disabled", true);
-  //         $("#city_cv_ec").empty();
-  //       }
-  //     });
-
-  //     $("#department_cv_ec")
-  //       .select2({
-  //         placeholder: "Seleccione un departamento",
-  //         theme: "bootstrap4",
-  //         disabled: true,
-  //         width: "100%",
-  //       })
-  //       .on("change", function (e) {
-  //         var departmentParent = $("#department_cv_ec option:selected").val();
-
-  //         if (typeof departmentParent !== "undefined") {
-  //           locationSelect2({
-  //             selectRef: "#city_cv_ec",
-  //             dataName: "cities",
-  //             placeholder: "Selecciona una ciudad",
-  //             parentId: departmentParent,
-  //             parentName: "departments",
-  //           });
-  //         } else {
-  //           $("#city_cv_ec").prop("disabled", true);
-  //           $("#city_cv_ec").empty();
-  //         }
-  //       });
-
-  //     $("#city_cv_ec").select2({
-  //       placeholder: "Seleccione una ciudad",
-  //       theme: "bootstrap4",
-  //       disabled: true,
-  //       width: "100%",
-  //     });
-
-  /****************************************************************************************/
-  /******************************** IMPLEMENTING DATATABLE ********************************/
-  /****************************************************************************************/
+  // Implementing datatable
 
   var table = $("#default_table").DataTable({
     info: true,
@@ -478,7 +295,7 @@ $(document).ready(function () {
 
           if (act_assign) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Trabajadores Afiliados (' +
               row.workers +
               ')" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
@@ -525,63 +342,11 @@ $(document).ready(function () {
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
       }
-
-      if (act_edit) {
-        $("#default_table td span[data-type]").editable({
-          emptytext: "Vacío",
-          inputclass: "py-2 pl-2 pr-3 mw-50",
-          validate: function (value) {
-            return validate_input({
-              value: value,
-              minLength: $(this).attr("data-minlength") || null,
-              maxLength: $(this).attr("data-maxlength") || null,
-              isEmail: $(this).attr("data-type") == "email" || null,
-              isNumeric: $(this).attr("data-type") == "number" || null,
-              isText: $(this).attr("data-type") == "text" || null,
-              isRequired:
-                $(this).attr("data-required") == "false" ? false : true,
-            });
-          },
-          success: function (response) {
-            var { data, message } = $.parseJSON(response);
-            var successful_update = data === true;
-
-            if (successful_update) {
-              modal_alert(data, message);
-              return true;
-            }
-
-            modal_alert(data, message);
-            return false;
-          },
-        });
-
-        $(".type_cv_ec").editable({
-          type: "select",
-          source: [
-            { value: "PRIVADA", text: "PRIVADA" },
-            { value: "PUBLICA", text: "PUBLICA" },
-          ],
-          validate: function (value) {
-            return validate_input({
-              value: value,
-              isText: true,
-            });
-          },
-          success: function (response, newValue) {
-            response = $.parseJSON(response);
-            modal_alert(response.data, response.message);
-          },
-        });
-      }
-
-      $("span.editable").css("border-bottom", "none");
     },
   });
 
-  /****************************************************************************************/
-  /**************************************** DETAILS ***************************************/
-  /****************************************************************************************/
+  // Details
+
   $("#default_table").on("click", "a.detail-row", function () {
     var bankById = $(this).attr("data-id");
 
@@ -614,76 +379,66 @@ $(document).ready(function () {
     $("#view_table").toggleClass("d-none");
   });
 
-      /****************************************************************************************/
-      /***************************************** ASSIGN ***************************************/
-      /****************************************************************************************/
-      $("#default_table").on("click", "a.assign-row", function () {
+  // Assign
 
-        $("#view_assign").toggleClass("d-none");
-        $("#view_table").toggleClass("d-none");
+  $("#default_table").on("click", "a.assign-row", function () {
+    $("#view_assign").toggleClass("d-none");
+    $("#view_table").toggleClass("d-none");
 
-        var bankId = $(this).attr("data-id");
+    var bankId = $(this).attr("data-id");
 
-        var getWorkers = $.ajax({
-          url: $path_find,
-          type: "POST",
-          dataType: "json",
-          data: {
-            pk: "id_bankentity",
-            value: bankId,
-            get_workers: true,
-          },
-          beforeSend: function () {
-            $("#loading").toggleClass("d-none");
-          },
-          success: function ({ data, message })
-          {
-            $("#loading").toggleClass("d-none");
-            $('tbody#assign_content').empty();
-            $('thead#assign_head').removeClass('d-none');
+    var getWorkers = $.ajax({
+      url: $path_find,
+      type: "POST",
+      dataType: "json",
+      data: {
+        pk: "id_bankentity",
+        value: bankId,
+        get_workers: true,
+      },
+      beforeSend: function () {
+        $("#loading").toggleClass("d-none");
+      },
+      success: function ({ data, message }) {
+        $("#loading").toggleClass("d-none");
+        $("tbody#assign_content").empty();
+        $("thead#assign_head").removeClass("d-none");
 
-            if (data)
-            {
-              if (data.length > 1)
-              {
-                $.each(data, function(index, item) {
-                  appendTwoColumns({
-                    firstCol: item.full_name,
-                    secondCol: item.number_dcv,
-                    elementRef: 'tbody#assign_content'
-                  });
-                });
-              }
-              else
-              {
-                appendTwoColumns({
-                  firstCol: data.full_name,
-                  secondCol: data.number_dcv,
-                  elementRef: 'tbody#assign_content'
-                });
-              }
-            }
-            else
-            {
-              $('thead#assign_head').addClass('d-none');
-              $('tbody#assign_content').append(`
+        if (data) {
+          if (data.length > 1) {
+            $.each(data, function (index, item) {
+              appendTwoColumns({
+                firstCol: item.full_name,
+                secondCol: item.number_dcv,
+                elementRef: "tbody#assign_content",
+              });
+            });
+          } else {
+            appendTwoColumns({
+              firstCol: data.full_name,
+              secondCol: data.number_dcv,
+              elementRef: "tbody#assign_content",
+            });
+          }
+        } else {
+          $("thead#assign_head").addClass("d-none");
+          $("tbody#assign_content").append(`
               <tr>
-                <td colspan="2">No hay aspirantes asignados a esta empresa.</td>
+                <td colspan="2">No hay trabajadores afiliados a esta entidad bancaria.</td>
               </tr>
               `);
-            }
-          },
-        });
-      });
+        }
+      },
+    });
+  });
 
-        $("#btn_cancel_assign").on("click", function () {
-          $("#view_assign").toggleClass("d-none");
-          $("#view_table").toggleClass("d-none");
-        });
+  $("#btn_cancel_assign").on("click", function () {
+    $("#view_assign").toggleClass("d-none");
+    $("#view_table").toggleClass("d-none");
+  });
 
-  /****************************************************************************************/
-  /***************************************** ADD ******************************************/
-  /****************************************************************************************/
+  // Add
+
   var validationAddForm = formValidation("#form_add", $path_add, table);
   removeFormErrors("#form_add", "keypress");
 
@@ -708,9 +463,7 @@ $(document).ready(function () {
     $("#view_table").removeClass("d-none");
   });
 
-  /****************************************************************************************/
-  /***************************************** EDIT *****************************************/
-  /****************************************************************************************/
+  // Edit
 
   var validationeEditForm = formValidation("#form_edit", $path_edit, table);
   removeFormErrors("#form_edit", "keypress");
@@ -723,7 +476,6 @@ $(document).ready(function () {
 
     var bankId = $(this).attr("data-id");
 
-    // Display information retrieved from the database
     $.ajax({
       url: $path_find,
       type: "POST",
@@ -761,9 +513,7 @@ $(document).ready(function () {
     $("#view_table").removeClass("d-none");
   });
 
-  /****************************************************************************************/
-  /***************************************** DROP *****************************************/
-  /****************************************************************************************/
+  // Drop
 
   $("#default_table").on("click", "a.remove-row", function () {
     var bankId = $(this).attr("data-id");
