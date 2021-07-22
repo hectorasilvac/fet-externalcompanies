@@ -259,7 +259,7 @@
                         <table class="table table-hover table-bordered border">
                             <thead id="assign_head">
                                 <tr>
-                                    <th scope="col">Nombre del Aspirante</th>
+                                    <th scope="col">Nombre del Trabajador</th>
                                     <th scope="col">Número del Documento</th>
                                 </tr>
                             </thead>

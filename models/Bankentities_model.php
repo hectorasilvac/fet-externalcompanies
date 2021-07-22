@@ -282,20 +282,21 @@ class Bankentities_model extends CI_Model
         $query                                                                  =   $this->_trabajandofet_model->insert_data($data, 'fet_bankentities');
 
         if ($query) {
-            // $data_history                                                   =   $data;
-            // $data_history['id_cv_ec']                                       =   $query;
-            // $data_history['user_update']                                    =   $data['user_insert'];
-            // $data['date_update']                                            =   date('Y-m-d H:i:s');
-            // unset($data_history['date_insert']);
-            // unset($data_history['user_insert']);
+            $data_history                                                       =   $data;
+            $data_history['id_bankentity']                                      =   $query;
+            $data_history['user_update']                                        =   $data['user_insert'];
+            $data_history['date_update']                                        =   date('Y-m-d H:i:s');
+            unset($data_history['date_insert'], $data_history['user_insert']);
 
-            // $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
-            $result['data']                                                 =   TRUE;
-            $result['message']                                              =   'La entidad bancaria se ha registrado correctamente';
-        } else {
-            $result['data']                                                 =   FALSE;
-            $result['message']                                              =   'Error al registrar la entidad bancaria';
+            $result['data']                                                     =   TRUE;
+            $result['message']                                                  =   'La entidad bancaria se ha registrado correctamente';
+        } 
+        else 
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Error al registrar la entidad bancaria';
         }
 
 
@@ -331,11 +332,11 @@ class Bankentities_model extends CI_Model
 
         if ($query) 
         {
-            // $data_history                                                       =   $data;
-            // $data_history['id_cv_ec']                                           =   $data_history['id'];
-            // unset($data_history['id']);
+            $data_history                                                       =   $data;
+            $data_history['id_bankentity']                                      =   $data_history['id'];
+            unset($data_history['id']);
 
-            // $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
@@ -413,11 +414,11 @@ class Bankentities_model extends CI_Model
 
         if ($answer)
         {
-            // $data_history                                                       =   $data;
-            // $data_history['id_bankentity']                                      =   $data_history['id'];
-            // unset($data_history['id']);
+            $data_history                                                       =   $data;
+            $data_history['id_bankentity']                                      =   $data_history['id'];
+            unset($data_history['id']);
 
-            // $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
@@ -443,16 +444,20 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $result['data']                                                         =   $this->_trabajandofet_model->trace_register('fet_cv_ec', 'id_cv_ec', $param['id_cv_ec']);
-        $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('fet_cv_ec_history', 'id_cv_ec', $param['id_cv_ec']);
+        $result['data']                                                         =   $this->_trabajandofet_model->trace_register('fet_bankentities', 'id_bankentity', $param['id_bankentity']);
+        $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('fet_bankentities_history', 'id_bankentity', $param['id_bankentity']);
 
-        if (count($result['data']) > 0) {
+        if (count($result['data']) > 0) 
+        {
             $result['message']                                                  =   FALSE;
 
-            if (count($result['data_global']) == 0) {
+            if (count($result['data_global']) == 0) 
+            {
                 $result['data_global']                                          =   FALSE;
             }
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['data_global']                                              =   FALSE;
             $result['message']                                                  =   'No hay histórico de este registro.';

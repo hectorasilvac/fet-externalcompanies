@@ -1,4 +1,4 @@
-function formValidation(formId, path) {
+function formValidation(formId, path, mainTable) {
   return $(formId).validate({
     onkeyup: false,
     ignore: [],
@@ -116,13 +116,13 @@ function formValidation(formId, path) {
       $(error).insertAfter(element);
     },
     submitHandler: function (form) {
-      customSubmit(form, formId, path);
+      customSubmit(form, formId, path, mainTable);
       return false;
     },
   });
 }
 
-function customSubmit(form, formId, path) {
+function customSubmit(form, formId, path, mainTable) {
   $(form).ajaxSubmit({
     dataType: "json",
     url: path,
@@ -158,7 +158,7 @@ function customSubmit(form, formId, path) {
       var formName = $(formId).closest("form")[0].id;
 
       $(`#view_${formName}`).addClass("d-none");
-      table.ajax.reload();
+      mainTable.ajax.reload();
     },
   });
 }
@@ -497,7 +497,7 @@ $(document).ready(function () {
               data +
               '" onclick="trace(\'' +
               $path_trace +
-              "', 'id_cv_ec'," +
+              "', 'id_bankentity'," +
               data +
               ')"><i class="fas fa-history"></i></a>';
           }
@@ -683,7 +683,7 @@ $(document).ready(function () {
   /****************************************************************************************/
   /***************************************** ADD ******************************************/
   /****************************************************************************************/
-  var validationAddForm = formValidation("#form_add", $path_add);
+  var validationAddForm = formValidation("#form_add", $path_add, table);
   removeFormErrors("#form_add", "keypress");
 
   $("#btn_add").on("click", function () {
@@ -711,7 +711,7 @@ $(document).ready(function () {
   /***************************************** EDIT *****************************************/
   /****************************************************************************************/
 
-  var validationeEditForm = formValidation("#form_edit", $path_edit);
+  var validationeEditForm = formValidation("#form_edit", $path_edit, table);
   removeFormErrors("#form_edit", "keypress");
 
   $("#default_table").on("click", "a.edit-row", function () {
