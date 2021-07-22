@@ -141,28 +141,28 @@ class Bankentities_model extends CI_Model
 
         $query                                                                  =   $this->db->get();
 
-        $companies                                                              =   $query->result_array();
+        $banks                                                                  =   $query->result_array();
 
         if ($this->session->userdata['mobile'] == 0) {
             $count                                                              =   $start;
-            foreach ($companies as $key => $action) {
+            foreach ($banks as $key => $action) {
                 $count++;
-                $companies[$key]['number']                                      =   $count;
+                $banks[$key]['number']                                          =   $count;
             }
         }
 
+        foreach ($banks as $key => $bank) {
+            $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as workers');
+            $this->db->from('fet_workers');
+            $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+            $this->db->where('fet_workers.id_bankentity', $bank['id_bankentity']);
+            
+            $query                                                              = $this->db->get();
 
-        // foreach ($companies as $key => $company) {
-        //     $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as aspirants');
-        //     $this->db->from('fet_cv_we');
-        //     $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
-        //     $this->db->where('fet_cv_we.id_cv_ec', $company['id_cv_ec']);
-        //     $query = $this->db->get();
+            $banks[$key]['workers'] = $query->row_array()['workers'];
+        }
 
-        //     $companies[$key]['aspirants'] = $query->row_array()['aspirants'];
-        // }
-
-        return $companies;
+        return $banks;
         exit();
     }
 
@@ -221,13 +221,13 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true')
+        if (isset($params['get_workers']) && $params['get_workers'] === 'true')
         {
             $this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
-            $this->db->from('fet_cv_we');
-            $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
-            $this->db->where('fet_cv_we.id_cv_ec', $params['value']);
+            $this->db->from('fet_workers');
+            $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+            $this->db->where('fet_workers.id_bankentity', $params['value']);
             $this->db->group_by('fet_cv.number_dcv');
 
 

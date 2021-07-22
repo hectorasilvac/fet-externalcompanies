@@ -177,18 +177,19 @@ function removeFormErrors(formId, event = "change") {
     }
   });
 }
-// function appendTwoColumns({ firstCol, secondCol, elementRef }) {
 
-//     $(elementRef).append(`
-//     <tr>
-//       <td>
-//         ${firstCol}
-//       </td>
-//       <td>
-//         ${secondCol}
-//       </td>
-//     </tr>`);
-//   }
+function appendTwoColumns({ firstCol, secondCol, elementRef }) {
+
+    $(elementRef).append(`
+    <tr>
+      <td>
+        ${firstCol}
+      </td>
+      <td>
+        ${secondCol}
+      </td>
+    </tr>`);
+  }
 
 //   function locationSelect2({
 //           selectRef,
@@ -478,7 +479,7 @@ $(document).ready(function () {
           if (act_assign) {
             content +=
               '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (' +
-              row.aspirants +
+              row.workers +
               ')" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-exchange-alt"></i></a>';
@@ -613,72 +614,72 @@ $(document).ready(function () {
     $("#view_table").toggleClass("d-none");
   });
 
-  //     /****************************************************************************************/
-  //     /***************************************** ASSIGN ***************************************/
-  //     /****************************************************************************************/
-  //     $("#default_table").on("click", "a.assign-row", function () {
+      /****************************************************************************************/
+      /***************************************** ASSIGN ***************************************/
+      /****************************************************************************************/
+      $("#default_table").on("click", "a.assign-row", function () {
 
-  //       $("#view_assign").toggleClass("d-none");
-  //       $("#view_table").toggleClass("d-none");
+        $("#view_assign").toggleClass("d-none");
+        $("#view_table").toggleClass("d-none");
 
-  //       var companyId = $(this).attr("data-id");
+        var bankId = $(this).attr("data-id");
 
-  //       var getAspirants = $.ajax({
-  //         url: $path_find,
-  //         type: "POST",
-  //         dataType: "json",
-  //         data: {
-  //           pk: "id_cv_ec",
-  //           value: companyId,
-  //           get_aspirants: true,
-  //         },
-  //         beforeSend: function () {
-  //           $("#loading").toggleClass("d-none");
-  //         },
-  //         success: function ({ data, message })
-  //         {
-  //           $("#loading").toggleClass("d-none");
-  //           $('tbody#assign_content').empty();
-  //           $('thead#assign_head').removeClass('d-none');
+        var getWorkers = $.ajax({
+          url: $path_find,
+          type: "POST",
+          dataType: "json",
+          data: {
+            pk: "id_bankentity",
+            value: bankId,
+            get_workers: true,
+          },
+          beforeSend: function () {
+            $("#loading").toggleClass("d-none");
+          },
+          success: function ({ data, message })
+          {
+            $("#loading").toggleClass("d-none");
+            $('tbody#assign_content').empty();
+            $('thead#assign_head').removeClass('d-none');
 
-  //           if (data)
-  //           {
-  //             if (data.length > 1)
-  //             {
-  //               $.each(data, function(index, item) {
-  //                 appendTwoColumns({
-  //                   firstCol: item.full_name,
-  //                   secondCol: item.number_dcv,
-  //                   elementRef: 'tbody#assign_content'
-  //                 });
-  //               });
-  //             }
-  //             else
-  //             {
-  //               appendTwoColumns({
-  //                 firstCol: data.full_name,
-  //                 secondCol: data.number_dcv,
-  //                 elementRef: 'tbody#assign_content'
-  //               });
-  //             }
-  //           }
-  //           else
-  //           {
-  //             $('thead#assign_head').addClass('d-none');
-  //             $('tbody#assign_content').append(`
-  //             <tr>
-  //               <td colspan="2">No hay aspirantes asignados a esta empresa.</td>
-  //             </tr>
-  //             `);
-  //           }
-  //         },
-  //       });
-  //     });
+            if (data)
+            {
+              if (data.length > 1)
+              {
+                $.each(data, function(index, item) {
+                  appendTwoColumns({
+                    firstCol: item.full_name,
+                    secondCol: item.number_dcv,
+                    elementRef: 'tbody#assign_content'
+                  });
+                });
+              }
+              else
+              {
+                appendTwoColumns({
+                  firstCol: data.full_name,
+                  secondCol: data.number_dcv,
+                  elementRef: 'tbody#assign_content'
+                });
+              }
+            }
+            else
+            {
+              $('thead#assign_head').addClass('d-none');
+              $('tbody#assign_content').append(`
+              <tr>
+                <td colspan="2">No hay aspirantes asignados a esta empresa.</td>
+              </tr>
+              `);
+            }
+          },
+        });
+      });
 
-  //       $("#btn_cancel_assign").on("click", function () {
-  //         $("#view_assign").toggleClass("d-none");
-  //         $("#view_table").toggleClass("d-none");
-  //       });
+        $("#btn_cancel_assign").on("click", function () {
+          $("#view_assign").toggleClass("d-none");
+          $("#view_table").toggleClass("d-none");
+        });
 
   /****************************************************************************************/
   /***************************************** ADD ******************************************/
