@@ -116,7 +116,7 @@ class Bankentities_model extends CI_Model
      **/
     public function all_rows($limit, $start, $search, $col, $dir)
     {
-        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity'); // Falta agregar campo de correo
+        $this->db->select('id_bankentity, name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity'); // Falta agregar campo de correo
         $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
 
@@ -309,7 +309,8 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true') {
+        if (isset($params['get_aspirants']) && $params['get_aspirants'] === 'true')
+        {
             $this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
             $this->db->from('fet_cv_we');
@@ -319,18 +320,23 @@ class Bankentities_model extends CI_Model
 
 
             $query = $this->db->get();
-        } else {
+        } 
+        else 
+        {
             $this->db->where($params['pk'], $params['value']);
             $this->db->where('flag_drop', 0);
 
             $query                                                              =   $this->db->get($params['table']);
         }
 
-        if (count($query->result_array()) > 0) {
+        if (count($query->result_array()) > 0) 
+        {
             count($query->result_array()) === 1 ? $result['data']               =   $query->row_array()     : NULL;
             count($query->result_array()) > 1   ? $result['data']               =   $query->result_array()  : NULL;
             $result['message']                                                  =   FALSE;
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'No se podido realizar la operación.';
         }

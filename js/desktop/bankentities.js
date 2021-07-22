@@ -281,7 +281,7 @@
         {
           targets: [5],
           orderable: false,
-          data: "id_cv_ec",
+          data: "id_bankentity",
           render: function (data, type, row) {
             var content = '<div class="span-center">';
   
@@ -398,193 +398,118 @@
       },
     });
   
-//     /****************************************************************************************/
-//     /***************************************** EDIT *****************************************/
-//     /****************************************************************************************/
+    /****************************************************************************************/
+    /***************************************** EDIT *****************************************/
+    /****************************************************************************************/
   
-//     $("#default_table").on("click", "a.edit-row", function () {
+    $("#default_table").on("click", "a.edit-row", function () {  
+      $('#view_table').addClass('d-none');
+      $('#view_form_edit').removeClass('d-none');
+      validateFormEdit.resetForm();
+      $('#form_edit')[0].reset();
   
-//       $('#view_table').addClass('d-none');
-//       $('#view_form_edit').removeClass('d-none');
-//       validate_edit.resetForm();
-//       $('#form_edit')[0].reset();
+      var bankId = $(this).attr("data-id");
   
-//       var companyId = $(this).attr("data-id");
-  
-//       var getCompanyById = $.ajax({
-//         url: $path_find,
-//         type: "POST",
-//         dataType: "json",
-//         data: {
-//           pk: "id_cv_ec",
-//           value: companyId,
-//           table: "fet_cv_ec",
-//         },
-//         beforeSend: function () {
-//           $("#loading").removeClass("d-none");
-//         },
-//         success: function ({ data }) {
-//           $('#form_edit input[name="pk"]').attr("value", data.id_cv_ec);
-//           $('#form_edit input[name="address_cv_ec"]').attr(
-//             "value",
-//             data.address_cv_ec
-//           );
-  
-//           retrieveLocationSelect2({
-//             selectRef: '#form_edit select[name="country_cv_ec"]',
-//             dataName: "countries",
-//             placeholder: "Selecciona un país",
-//             pk: "id_country",
-//             value: data.country_cv_ec,
-//             table: "git_countries",
-//             optionText: "name_country",
-//             optionValue: "id_country",
-//             count: 1,
-//           });
-  
-//           var countryCount = 1;
-//           $('#form_edit select[name="country_cv_ec"]').on("change", function (e) {
-//             var country = $(
-//               '#form_edit select[name="country_cv_ec"] option:selected'
-//             ).val();
-  
-//             if (typeof country !== "undefined") {
-//               retrieveLocationSelect2({
-//                 selectRef: '#form_edit select[name="department_cv_ec"]',
-//                 dataName: "departments",
-//                 placeholder: "Selecciona un departamento",
-//                 parentId: country,
-//                 parentName: "countries",
-//                 pk: "id_department",
-//                 value: data.department_cv_ec,
-//                 table: "git_departments",
-//                 optionText: "name_department",
-//                 optionValue: "id_department",
-//                 count: countryCount,
-//               });
-//             } else {
-//               $('#form_edit select[name="department_cv_ec"]').prop(
-//                 "disabled",
-//                 true
-//               );
-//               $('#form_edit select[name="department_cv_ec"]').empty();
-  
-//               $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
-//               $('#form_edit select[name="city_cv_ec"]').empty();
-//             }
-  
-//             countryCount++;
-//           });
-  
-//           var departmentCount = 1;
-//           $('#form_edit select[name="department_cv_ec"]').on(
-//             "change",
-//             function (e) {
-//               var department = $(
-//                 '#form_edit select[name="department_cv_ec"] option:selected'
-//               ).val();
-  
-//               if (typeof department !== "undefined") {
-//                 retrieveLocationSelect2({
-//                   selectRef: '#form_edit select[name="city_cv_ec"]',
-//                   dataName: "cities",
-//                   placeholder: "Selecciona una ciudad",
-//                   parentId: department,
-//                   parentName: "departments",
-//                   pk: "id_city",
-//                   value: data.city_cv_ec,
-//                   table: "git_cities",
-//                   optionText: "name_city",
-//                   optionValue: "id_city",
-//                   count: departmentCount,
-//                 });
-//               } else {
-//                 $('#form_edit select[name="city_cv_ec"]').prop("disabled", true);
-//                 $('#form_edit select[name="city_cv_ec"]').empty();
-//               }
-//               departmentCount++;
-//               $("#loading").addClass("d-none");
-//             }
-//           );
-//        }
-//       });
-//     });
+      $.ajax({
+        url: $path_find,
+        type: "POST",
+        dataType: "json",
+        data: {
+          pk: "id_bankentity",
+          value: bankId,
+          table: "fet_bankentities",
+        },
+        beforeSend: function () {
+          $("#loading").removeClass("d-none");
+        },
+        success: function ({ data }) {
+
+          $('#form_edit input[name="pk"]').attr("value", data.id_bankentity);
+
+          $.each(data, function (index, value) {
+            $(`#form_edit input[name="${index}"]`).attr("value", value);
+          });
+
+          $("#loading").addClass("d-none");
+       }
+      });
+    });
   
   
-//    var validate_edit = $("#form_edit").validate({
-//       onkeyup: false,
-//       ignore: [],
-//       rules: {
-//         normalizer: function (value) {
-//           return $.trim(value);
-//         },
-//         onkeyup: false,
-//         focusCleanup: true,
-//         address_cv_ec: {
-//           minlength: 5,
-//           maxlength: 80,
-//         },
-//         country_cv_ec: {
-//           required: true,
-//         },
-//         department_cv_ec: {
-//           required: true,
-//         },
-//         city_cv_ec: {
-//           required: true,
-//         },
-//       },
-//       messages: {
-//         address_cv_ec: {
-//           minlength: "La dirección debe contener al menos 5 caracteres",
-//           maxlength: "La dirección debe contener máximo 60 caracteres",
-//         },
-//         country_cv_ec: {
-//           required: "Seleccione el país",
-//         },
-//         department_cv_ec: {
-//           required: "Seleccione el departamento",
-//         },
-//         city_cv_ec: {
-//           required: "Seleccione la ciudad",
-//         },
-//       },
-//       errorElement: "small",
-//       errorPlacement: function (error, element) {
-//         $(error).addClass("invalid-feedback font-weight-normal");
+   var validateFormEdit = $("#form_edit").validate({
+      onkeyup: false,
+      ignore: [],
+      rules: {
+        normalizer: function (value) {
+          return $.trim(value);
+        },
+        onkeyup: false,
+        focusCleanup: true,
+        address_cv_ec: {
+          minlength: 5,
+          maxlength: 80,
+        },
+        country_cv_ec: {
+          required: true,
+        },
+        department_cv_ec: {
+          required: true,
+        },
+        city_cv_ec: {
+          required: true,
+        },
+      },
+      messages: {
+        address_cv_ec: {
+          minlength: "La dirección debe contener al menos 5 caracteres",
+          maxlength: "La dirección debe contener máximo 60 caracteres",
+        },
+        country_cv_ec: {
+          required: "Seleccione el país",
+        },
+        department_cv_ec: {
+          required: "Seleccione el departamento",
+        },
+        city_cv_ec: {
+          required: "Seleccione la ciudad",
+        },
+      },
+      errorElement: "small",
+      errorPlacement: function (error, element) {
+        $(error).addClass("invalid-feedback font-weight-normal");
   
-//         $(error).insertAfter(element);
-//       },
-//     });
+        $(error).insertAfter(element);
+      },
+    });
   
   
-//     $('#btn_confirm_edit').on('click', function ()
-//     {
-//         $('#form_edit').submit();
-//     });
+    $('#btn_confirm_edit').on('click', function ()
+    {
+        $('#form_edit').submit();
+    });
   
-//     $('#form_edit').ajaxForm({
-//         dataType:  'json',
-//         success:  function(response) {
-//           modal_alert(response.data, response.message);
+    $('#form_edit').ajaxForm({
+        dataType:  'json',
+        success:  function(response) {
+          modal_alert(response.data, response.message);
   
-//           if (response.data) $('#view_form_edit').addClass('d-none');      
-//         },
-//         beforeSubmit: function()
-//         {
-//             $('#loading').removeClass('d-none');
-//         }
-//     });
+          if (response.data) $('#view_form_edit').addClass('d-none');      
+        },
+        beforeSubmit: function()
+        {
+            $('#loading').removeClass('d-none');
+        }
+    });
   
-//     $("#btn_cancel_edit").on("click", function () {
-//       var defaultTable = $("#default_table").DataTable();
-//       defaultTable.ajax.reload();
-//       validate_edit.resetForm();
-//       $("#form_edit")[0].reset();
-//       $("#view_form_edit").addClass("d-none");
-//       $("#view_table").removeClass("d-none");
+    $("#btn_cancel_edit").on("click", function () {
+      var defaultTable = $("#default_table").DataTable();
+      defaultTable.ajax.reload();
+      validateFormEdit.resetForm();
+      $("#form_edit")[0].reset();
+      $("#view_form_edit").addClass("d-none");
+      $("#view_table").removeClass("d-none");
   
-//     });
+    });
   
 //     /****************************************************************************************/
 //     /**************************************** DETAILS ***************************************/

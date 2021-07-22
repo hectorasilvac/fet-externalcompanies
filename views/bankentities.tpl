@@ -80,31 +80,35 @@
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Dígito de verificación: </label>
-                                            <input class="form-control" type="number" id="digit_bankentity" name="digit_bankentity"
-                                                placeholder="Ingresa el dígito de verificación" autocomplete="off">
+                                            <input class="form-control" type="number" id="digit_bankentity"
+                                                name="digit_bankentity" placeholder="Ingresa el dígito de verificación"
+                                                autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
-                                    <div class="form-group pos-relative">
-                                        <label class="form-control-label">Código del banco: </label>
-                                        <input class="form-control" type="number" id="code_bankentity" name="code_bankentity"
-                                            placeholder="Ingresa el código del banco" autocomplete="off">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Código del banco: </label>
+                                            <input class="form-control" type="number" id="code_bankentity"
+                                                name="code_bankentity" placeholder="Ingresa el código del banco"
+                                                autocomplete="off">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-12">
-                                <div class="form-group pos-relative">
-                                    <label class="form-control-label">Contacto: </label>
-                                    <input class="form-control" type="text" id="contact_bankentity" name="contact_bankentity"
-                                        placeholder="Ingresa el contacto del banco" autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-lg-12">
-                            <div class="form-group pos-relative">
-                                <label class="form-control-label">Teléfono del contacto:</label>
-                                <input class="form-control" type="number" id="phone_bankentity" name="phone_bankentity"
-                                    placeholder="Ingresa el teléfono del contacto" autocomplete="off">
-                            </div>
-                        </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Contacto: </label>
+                                            <input class="form-control" type="text" id="contact_bankentity"
+                                                name="contact_bankentity" placeholder="Ingresa el contacto del banco"
+                                                autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Teléfono del contacto:</label>
+                                            <input class="form-control" type="number" id="phone_bankentity"
+                                                name="phone_bankentity" placeholder="Ingresa el teléfono del contacto"
+                                                autocomplete="off">
+                                        </div>
+                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Correo corporativo:</label>
@@ -116,8 +120,8 @@
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Dirección:</label>
-                                            <input class="form-control" type="text" id="address_bankentity" name="address_bankentity"
-                                                placeholder="Ingresa la dirección" autocomplete="off">
+                                            <input class="form-control" type="text" id="address_bankentity"
+                                                name="address_bankentity" placeholder="Ingresa la dirección" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -133,33 +137,52 @@
                             <form id="form_edit" method="post" action="{$path_edit}">
                                 <div class="row mg-b-25">
                                     <input class="form-control" type="hidden" name="pk">
-                                    <div class="col-lg-12">
+                                                                        <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Dirección: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
-                                            <input class="form-control" type="text" name="address_cv_ec"
-                                                placeholder="Ingresa la dirección" autocomplete="off">
+                                            <label class="form-control-label">Nombre del banco: </label>
+                                            <input class="form-control" type="text" name="name_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">País: </label>
-                                            <select class="form-control" name="country_cv_ec">
-                                            </select>
+                                            <label class="form-control-label">NIT del banco: </label>
+                                            <input class="form-control" type="number" name="nit_bankentity" placeholder="Ingresa el NIT del banco" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Departamento: </label>
-                                            <select class="form-control" name="department_cv_ec">
-                                            </select>
+                                            <label class="form-control-label">Dígito de verificación: </label>
+                                            <input class="form-control" type="number" name="digit_bankentity" placeholder="Ingresa el dígito de verificación" autocomplete="off">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">Ciudad: </label>
-                                            <select class="form-control" name="city_cv_ec">
-                                            </select>
+                                            <label class="form-control-label">Código del banco: </label>
+                                            <input class="form-control" type="number" name="code_bankentity" placeholder="Ingresa el código del banco" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Contacto: </label>
+                                            <input class="form-control" type="text" name="contact_bankentity" placeholder="Ingresa el contacto del banco" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Teléfono del contacto:</label>
+                                            <input class="form-control" type="number" name="phone_bankentity" placeholder="Ingresa el teléfono del contacto" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Correo corporativo:</label>
+                                            <input class="form-control" type="email" name="email_bankentity" placeholder="Ingresa el correo corporativo" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="form-control-label">Dirección:</label>
+                                            <input class="form-control" type="text" name="address_bankentity" placeholder="Ingresa la dirección" autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
