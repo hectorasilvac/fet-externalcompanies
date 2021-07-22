@@ -82,9 +82,7 @@ class Bankentities_controller extends CI_Controller
             $this->_view->assign('path_details',                                site_url('bankentities/details'));
             $this->_view->assign('path_drop',                                   site_url('bankentities/udrop'));
             $this->_view->assign('path_trace',                                  site_url('bankentities/trace'));
-            $this->_view->assign('path_display',                                site_url('bankentities/display'));
             $this->_view->assign('path_export_xlsx',                            site_url('bankentities/exportxlsx'));
-            $this->_view->assign('path_location',                               site_url('bankentities/location'));
             $this->_view->assign('path_find',                                   site_url('bankentities/find'));
 
 
@@ -391,63 +389,6 @@ class Bankentities_controller extends CI_Controller
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
     * @since     v2.0.1
-    * @param     
-    * @return    json array
-    **/
-    public function location()
-    {
-        $params                                                                 =   $this->security->xss_clean($_GET);
-        $table_name                                                             =   $params['name'];
-
-        $tables = [
-            'countries' => [
-                'name'                                                          =>  'git_countries',
-                'id'                                                            =>  'id_country',
-                'text'                                                          =>  'name_country',
-            ],
-            'departments' => [
-                'name'                                                          =>  'git_departments',
-                'id'                                                            =>  'id_department',
-                'text'                                                          =>  'name_department',
-            ],
-            'cities' => [
-                'name'                                                          =>  'git_cities',
-                'id'                                                            =>  'id_city',
-                'text'                                                          =>  'name_city',
-            ],
-        ];
-
-        if (count($tables[$table_name]) > 0 && $params['parentId'] != 0 && strlen($params['parentName']) > 0)
-        {
-            $parent_table_name                                                  =   $params['parentName'];
-            $location                                                           =   $this->_bankentities_model->location_select($params, $tables[$table_name], $tables[$parent_table_name]);
-            
-            echo json_encode($location);
-            exit();
-        }
-
-        if (count($tables[$table_name]) > 0) {
-            $location                                                           =   $this->_bankentities_model->location_select($params, $tables[$table_name]);
-
-            echo json_encode($location);
-            exit();
-        } 
-        else 
-        {
-            if ($this->input->method(TRUE) == 'GET') {
-                header("Location: " . site_url('bankentities'));
-            } else {
-                echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
-            }
-
-            exit();
-        }
-    }
-
-    /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fabrica de Desarrollo
-    * @since     v2.0.1
     * @param     array $param
     * @return    json array
     **/
@@ -640,7 +581,7 @@ class Bankentities_controller extends CI_Controller
      * @author    Innovación y Tecnología
      * @copyright 2021 Fábrica de Desarrollo
      * @since     v2.0.1
-     * @param     
+     * @param     bool $editForm, int $editFormId
      * @return    array $entries
      **/
     public function form_rules($editForm = FALSE, $editFormId = 0)
@@ -755,7 +696,7 @@ class Bankentities_controller extends CI_Controller
      * @author    Innovación y Tecnología
      * @copyright 2021 Fábrica de Desarrollo
      * @since     v2.0.1
-     * @param     
+     * @param     string $value, array $params
      * @return    bool $result
      **/
     public function value_exists($value, $params)

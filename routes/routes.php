@@ -225,8 +225,6 @@ $route['bankentities/edit']                                                     
 
 $route['bankentities/find']                                                     =   'bankentities_controller/find_by_id';
 
-$route['bankentities/location']                                                 =   'bankentities_controller/location';
-
 $route['bankentities/udrop']                                                    =   'bankentities_controller/udrop';
 
 $route['bankentities/trace']                                                    =   'bankentities_controller/trace';

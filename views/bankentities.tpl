@@ -327,7 +327,6 @@
         var $path_trace                                                         =   '{$path_trace}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
         var $path_find                                                          =   '{$path_find}';
-        var $path_location                                                      =   '{$path_location}';
 
         var act_view                                                            =   '{$act_view}';
         var act_edit                                                            =   '{$act_edit}';
