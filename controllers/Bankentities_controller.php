@@ -111,9 +111,10 @@ class Bankentities_controller extends CI_Controller
             {
                 $columns                                                        =   array(
                     0                                                                   =>  'name_bankentity',
-                    1                                                                   =>  'nit_bankentity',
-                    2                                                                   =>  'contact_bankentity',
-                    3                                                                   =>  'phone_bankentity',                                                                                    );
+                    1                                                                   =>  'name_bankentity',
+                    2                                                                   =>  'nit_bankentity',
+                    3                                                                   =>  'contact_bankentity',
+                    4                                                                   =>  'phone_bankentity',                                                                                    );
             }
             else
             {
