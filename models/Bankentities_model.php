@@ -118,7 +118,7 @@ class Bankentities_model extends CI_Model
      **/
     public function all_rows($limit, $start, $search, $col, $dir)
     {
-        $this->db->select('id_bankentity, name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity'); // Falta agregar campo de correo
+        $this->db->select('id_bankentity, name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
         $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
 
@@ -151,7 +151,8 @@ class Bankentities_model extends CI_Model
             }
         }
 
-        foreach ($banks as $key => $bank) {
+        foreach ($banks as $key => $bank) 
+        {
             $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as workers');
             $this->db->from('fet_workers');
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
@@ -237,7 +238,8 @@ class Bankentities_model extends CI_Model
 
         $query                                                                  =   $this->_trabajandofet_model->insert_data($data, 'fet_bankentities');
 
-        if ($query) {
+        if ($query) 
+        {
             $data_history                                                       =   $data;
             $data_history['id_bankentity']                                      =   $query;
             $data_history['user_update']                                        =   $data['user_insert'];
@@ -357,32 +359,45 @@ class Bankentities_model extends CI_Model
      **/
     public function udrop($param)
     {
-        $data                                                                   =   array(
-            'id'                                                                        =>  $param['id_bankentity'],
-            'flag_drop'                                                                 =>  1,
-            'user_update'                                                               =>  $this->session->userdata['id_user'],
-            'date_update'                                                               =>  date('Y-m-d H:i:s')
-        );
+        $this->db->select('id_bankentity');
+        $this->db->where('id_bankentity', $param['id_bankentity']);
+        $query                                                                  =   $this->db->get('fet_workers');
+        $affiliated_workers                                                     =   count($query->result_array()) > 0;
 
-        $result                                                                 =   array();
-
-        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_bankentity', 'fet_bankentities');
-
-        if ($answer)
+        if ( ! $affiliated_workers) 
         {
-            $data_history                                                       =   $data;
-            $data_history['id_bankentity']                                      =   $data_history['id'];
-            unset($data_history['id']);
+            $data                                                               =   array(
+                'id'                                                                     =>  $param['id_bankentity'],
+                'flag_drop'                                                              =>  1,
+                'user_update'                                                            =>  $this->session->userdata['id_user'],
+                'date_update'                                                            =>  date('Y-m-d H:i:s')
+            );
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+            $result                                                             =   array();
 
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   'Acción realizada con éxito!';
+            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_bankentity', 'fet_bankentities');
+
+            if ($answer) 
+            {
+                $data_history                                                   =   $data;
+                $data_history['id_bankentity']                                  =   $data_history['id'];
+                unset($data_history['id']);
+
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'Acción realizada con éxito!';
+            } 
+            else 
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Problemas al eliminar la entidad bancaria.';
+            }
         } 
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Problemas al eliminar la empresa.';
+            $result['message']                                                  =   'No es posible eliminar la entidad bancaria porque tiene trabajadores afiliados.';
         }
 
         return $result;
