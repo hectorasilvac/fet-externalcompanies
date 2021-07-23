@@ -165,14 +165,11 @@ function customSubmit(form, formId, path, mainTable) {
 
 function removeFormErrors(formId, event = "change") {
   $(formId).on(event, ".form-control", function () {
-    if ($(this).valid()) {
+    
+    if ($(this).valid()){
       var name = $(this).attr("name");
-      var errorExists = $(`#${name}-error`).length;
+      var errorExists = $(this).next()[0]?.id == `${name}-error` ? $(this).next()[0].remove() : null;
 
-      if (errorExists) {
-        $(`#${name}-error`).remove();
-        return;
-      }
       return;
     }
   });
@@ -440,7 +437,7 @@ $(document).ready(function () {
   // Add
 
   var validationAddForm = formValidation("#form_add", $path_add, table);
-  removeFormErrors("#form_add", "keypress");
+  removeFormErrors("#form_add", "input");
 
   $("#btn_add").on("click", function () {
     $("#view_table").addClass("d-none");
@@ -466,7 +463,7 @@ $(document).ready(function () {
   // Edit
 
   var validationeEditForm = formValidation("#form_edit", $path_edit, table);
-  removeFormErrors("#form_edit", "keypress");
+  removeFormErrors("#form_edit", "input");
 
   $("#default_table").on("click", "a.edit-row", function () {
     $("#view_table").addClass("d-none");
