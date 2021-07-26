@@ -256,29 +256,6 @@ $(document).ready(function()
         $(this).closest('.panel').toggleClass('panel-fullscreen');
 
     });
-
-    $.ajax({
-    type: 'POST',
-    url: $path_notifications,
-    dataType: 'json',
-    success: function (response) 
-    {
-        if (response.data)
-        {
-            $('.notifications').removeClass('d-none-force');
-            $('#notifications_list').append(response.html);
-        }
-        else
-        {
-            $('.notifications').addClass('d-none-force');
-        }
-
-    },
-    error: function () 
-    {
-        modal_alert(false, 'Error de conexión.');
-    }
-});
 });
 
 function trace($path_trace, idname, id)

@@ -509,16 +509,17 @@ class Bankentities_controller extends CI_Controller
 
             $sheet->setCellValue('A1', 'No')
                   ->setCellValue('B1', 'Nombre')
-                  ->setCellValue('C1', 'NIT')
-                  ->setCellValue('D1', 'Dígito de verificación')
-                  ->setCellValue('E1', 'Código del banco')
-                  ->setCellValue('F1', 'Contacto')
-                  ->setCellValue('G1', 'Teléfono')
-                  ->setCellValue('H1', 'Correo corporativo')
-                  ->setCellValue('I1', 'Dirección');
+                  ->setCellValue('C1', 'Abreviatura')
+                  ->setCellValue('D1', 'NIT')
+                  ->setCellValue('E1', 'Dígito de verificación')
+                  ->setCellValue('F1', 'Código del banco')
+                  ->setCellValue('G1', 'Contacto')
+                  ->setCellValue('H1', 'Teléfono')
+                  ->setCellValue('I1', 'Correo corporativo')
+                  ->setCellValue('J1', 'Dirección');
 
 
-            $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+            $sheet->getStyle('A1:J1')->getFont()->setBold(true);
 
             $sheet->getColumnDimension('A')->setWidth(5);
             $sheet->getColumnDimension('B')->setWidth(40);
@@ -527,8 +528,9 @@ class Bankentities_controller extends CI_Controller
             $sheet->getColumnDimension('E')->setWidth(20);
             $sheet->getColumnDimension('F')->setWidth(20);
             $sheet->getColumnDimension('G')->setWidth(20);
-            $sheet->getColumnDimension('H')->setWidth(30);
-            $sheet->getColumnDimension('I')->setWidth(40);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(30);
+            $sheet->getColumnDimension('J')->setWidth(40);
 
 
 
@@ -585,28 +587,37 @@ class Bankentities_controller extends CI_Controller
      * @param     bool $editForm, int $editFormId
      * @return    array $entries
      **/
-    public function form_rules($editForm = FALSE, $editFormId = 0)
+    public function form_rules($editForm = FALSE, $editFormId = NULL)
     {
         $entries = [
             [
                 'field' => 'name_bankentity',
                 'label' => 'nombre del banco',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},name_bankentity]]|required|min_length[3]|max_length[50]" 
-                                     : 'is_unique[fet_bankentities.name_bankentity]|required|min_length[3]|max_length[50]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},name_bankentity,true]]|required|min_length[3]|max_length[50]" 
+                                     : 'callback_value_exists[[0,name_bankentity,false]]|required|min_length[3]|max_length[50]',
                 'errors' => [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'min_length' => 'El %s debe contener al menos 3 caracteres.',
                     'max_length' => 'El %s debe contener máximo 50 caracteres.',
                 ]
             ],
             [
+                'field' => 'abbreviation_bankentity',
+                'label' => 'abreviatura del banco',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},abbreviation_bankentity,true]]|required|min_length[2]|max_length[15]" 
+                                     : 'callback_value_exists[[0,abbreviation_bankentity,false]]|required|min_length[2]|max_length[15]',
+                'errors' => [
+                    'required' => 'La %s no puede quedar en blanco.',
+                    'min_length' => 'La %s debe contener al menos 2 caracteres.',
+                    'max_length' => 'La %s debe contener máximo 15 caracteres.',
+                ]
+            ],
+            [
                 'field' => 'nit_bankentity',
                 'label' => 'NIT del banco',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},nit_bankentity]]|required|numeric|min_length[3]|max_length[9]" 
-                                     : 'is_unique[fet_bankentities.nit_bankentity]|required|numeric|min_length[3]|max_length[9]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},nit_bankentity,true]]|required|numeric|min_length[3]|max_length[9]" 
+                                     : 'callback_value_exists[[0,nit_bankentity,false]]|required|numeric|min_length[3]|max_length[9]',
                 'errors' => [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'numeric' => 'El %s solo puede contener números.',
                     'min_length' => 'El %s debe contener al menos 3 caracteres.',
@@ -616,34 +627,32 @@ class Bankentities_controller extends CI_Controller
             [
                 'field' => 'digit_bankentity',
                 'label' => 'dígito de verificación',
-                'rules' => 'required|numeric|min_length[1]|max_length[2]',
+                'rules' => 'required|numeric|min_length[1]|max_length[1]',
                 'errors' => [
                     'required' => 'El %s no puede quedar en blanco.',
                     'numeric' => 'El %s solo puede contener números.',
-                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
-                    'max_length' => 'El %s debe contener máximo 2 caracteres.',
+                    'min_length' => 'El %s debe contener al menos 1 carácter.',
+                    'max_length' => 'El %s debe contener máximo 1 carácter.',
                 ]
             ],
             [
                 'field' => 'code_bankentity',
                 'label' => 'código del banco',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},code_bankentity]]|required|numeric|min_length[1]|max_length[4]" 
-                                     : 'is_unique[fet_bankentities.code_bankentity]|required|numeric|min_length[1]|max_length[4]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},code_bankentity,true]]|required|numeric|min_length[1]|max_length[4]" 
+                                     : 'callback_value_exists[[0,code_bankentity,false]]|required|numeric|min_length[1]|max_length[4]',
                 'errors' => [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'numeric' => 'El %s solo puede contener números.',
-                    'min_length' => 'El %s debe contener al menos 1 caracteres.',
+                    'min_length' => 'El %s debe contener al menos 1 carácter.',
                     'max_length' => 'El %s debe contener máximo 4 caracteres.',
                 ]
             ],
             [
                 'field' => 'address_bankentity',
                 'label' =>   'dirección',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},address_bankentity]]|required|min_length[5]|max_length[70]" 
-                                     : 'is_unique[fet_bankentities.address_bankentity]|required|min_length[5]|max_length[70]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},address_bankentity,true]]|required|min_length[5]|max_length[70]" 
+                                     : 'callback_value_exists[[0,address_bankentity,false]]|required|min_length[5]|max_length[70]',
                 'errors' =>  [
-                    'is_unique' => 'La %s ya existe',
                     'required' => 'La %s no puede quedar en blanco.',
                     'min_length' => 'La %s debe contener al menos 5 caracteres.',
                     'max_length' => 'La %s debe contener máximo 70 caracteres.',
@@ -652,10 +661,9 @@ class Bankentities_controller extends CI_Controller
             [
                 'field' => 'contact_bankentity',
                 'label' =>   'contacto',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},contact_bankentity]]|required|min_length[3]|max_length[50]" 
-                                     : 'is_unique[fet_bankentities.contact_bankentity]|required|min_length[3]|max_length[50]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},contact_bankentity,true]]|required|min_length[3]|max_length[50]" 
+                                     : 'callback_value_exists[[0,contact_bankentity,false]]|required|min_length[3]|max_length[50]',
                 'errors' =>  [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'min_length' => 'El %s debe contener al menos 3 caracteres.',
                     'max_length' => 'El %s debe contener máximo 50 caracteres.',
@@ -664,10 +672,9 @@ class Bankentities_controller extends CI_Controller
             [
                 'field' => 'phone_bankentity',
                 'label' => 'número del contacto',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},phone_bankentity]]|required|numeric|min_length[7]|max_length[13]" 
-                                     : 'is_unique[fet_bankentities.phone_bankentity]|required|numeric|min_length[7]|max_length[13]',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},phone_bankentity,true]]|required|numeric|min_length[7]|max_length[13]" 
+                                     : 'callback_value_exists[[0,phone_bankentity,false]]|required|numeric|min_length[7]|max_length[13]',
                 'errors' => [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'numeric' => 'El %s solo puede contener números.',
                     'min_length' => 'El %s debe contener al menos 7 caracteres.',
@@ -677,10 +684,9 @@ class Bankentities_controller extends CI_Controller
             [
                 'field' => 'email_bankentity',
                 'label' =>   'correo corporativo',
-                'rules' => $editForm ? "callback_value_exists[[{$editFormId},email_bankentity]]|required|min_length[3]|max_length[50]|valid_email" 
-                                     : 'is_unique[fet_bankentities.email_bankentity]|required|min_length[3]|max_length[50]|valid_email',
+                'rules' => $editForm ? "callback_value_exists[[{$editFormId},email_bankentity,true]]|required|min_length[3]|max_length[50]|valid_email" 
+                                     : 'callback_value_exists[[0,email_bankentity,false]]|required|min_length[3]|max_length[50]|valid_email',
                 'errors' =>  [
-                    'is_unique' => 'El %s ya existe',
                     'required' => 'El %s no puede quedar en blanco.',
                     'min_length' => 'El %s debe contener al menos 3 caracteres.',
                     'max_length' => 'El %s debe contener máximo 50 caracteres.',
@@ -698,17 +704,17 @@ class Bankentities_controller extends CI_Controller
      * @copyright 2021 Fábrica de Desarrollo
      * @since     v2.0.1
      * @param     string $value, array $params
-     * @return    bool $result
+     * @return    bool
      **/
     public function value_exists($value, $params)
     {
         $sanitized_params = trim($params, ' \t[]');
         $params = preg_split('/,/', $sanitized_params);
-        list($id, $column) = $params;
+        list($id, $column, $idCondition) = $params;
 
         $this->db->select($column);
         $this->db->where($column, $value);
-        $this->db->where('id_bankentity !=', $id);
+        $idCondition == 'true' ? $this->db->where('id_bankentity !=', $id) : NULL;
         $this->db->where('flag_drop', 0);
 
         $query                                                                  =   $this->db->get('fet_bankentities');

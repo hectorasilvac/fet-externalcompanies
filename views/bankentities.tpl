@@ -71,6 +71,12 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">Abreviatura del banco: </label>
+                                        <input class="form-control" type="text" id="abbreviation_bankentity" name="abbreviation_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
+                                    </div>
+                                </div>
+                                    <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">NIT del banco: </label>
                                             <input class="form-control" type="number" id="nit_bankentity" name="nit_bankentity"
@@ -137,12 +143,18 @@
                             <form id="form_edit" method="post" action="{$path_edit}">
                                 <div class="row mg-b-25">
                                     <input class="form-control" type="hidden" name="pk">
-                                                                        <div class="col-lg-12">
+                                    <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Nombre del banco: </label>
                                             <input class="form-control" type="text" name="name_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                    <div class="form-group pos-relative">
+                                        <label class="form-control-label">Abreviatura del banco: </label>
+                                        <input class="form-control" type="text" name="abbreviation_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
+                                    </div>
+                                </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">NIT del banco: </label>
@@ -221,6 +233,10 @@
                                     <th scope="row" class="col-2 bg-light">Nombre</th>
                                     <td class="col-10" data-name="name_bankentity"></td>
                                 </tr>
+                                <tr>
+                                <th scope="row" class="col-2 bg-light">Abreviatura</th>
+                                <td class="col-10" data-name="abbreviation_bankentity"></td>
+                            </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">NIT</th>
                                     <td class="col-10" data-name="nit_bankentity"></td>

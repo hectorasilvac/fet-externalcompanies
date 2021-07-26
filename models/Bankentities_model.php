@@ -59,7 +59,7 @@ class Bankentities_model extends CI_Model
 
         if (isset($search) && !empty($search)) 
         {
-            $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
+            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
 
             if (is_array($search) && count($search) > 0) 
             {
@@ -118,7 +118,7 @@ class Bankentities_model extends CI_Model
      **/
     public function all_rows($limit, $start, $search, $col, $dir)
     {
-        $this->db->select('id_bankentity, name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
+        $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
         $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
 
@@ -226,6 +226,7 @@ class Bankentities_model extends CI_Model
 
         $data                                                                   =   array();
         $data['name_bankentity']                                                =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
+        $data['abbreviation_bankentity']                                        =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
         $data['nit_bankentity']                                                 =   trim($params['nit_bankentity']);
         $data['digit_bankentity']                                               =   trim($params['digit_bankentity']);
         $data['code_bankentity']                                                =   trim($params['code_bankentity']);
@@ -276,6 +277,7 @@ class Bankentities_model extends CI_Model
 
         $data['id']                                                             =   $params['pk'];
         $data['name_bankentity']                                                =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
+        $data['abbreviation_bankentity']                                        =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
         $data['nit_bankentity']                                                 =   trim($params['nit_bankentity']);
         $data['digit_bankentity']                                               =   trim($params['digit_bankentity']);
         $data['code_bankentity']                                                =   trim($params['code_bankentity']);
@@ -323,7 +325,7 @@ class Bankentities_model extends CI_Model
 
         if ($valid_params) 
         {
-            $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
+            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
             $this->db->where($params['pk'], $params['value']);
             $this->db->where('flag_drop', 0);
 
@@ -447,7 +449,7 @@ class Bankentities_model extends CI_Model
      **/
     public function export_xlsx($search)
     {
-        $this->db->select('name_bankentity, nit_bankentity, digit_bankentity, code_bankentity, contact_bankentity, phone_bankentity, email_bankentity, address_bankentity');
+        $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, contact_bankentity, phone_bankentity, email_bankentity, address_bankentity');
         $this->db->where('flag_drop', 0);
 
         if (!empty($search))

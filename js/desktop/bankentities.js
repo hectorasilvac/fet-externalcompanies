@@ -15,6 +15,13 @@ function formValidation(formId, path, mainTable) {
         lettersonly_es: true,
         notEmpty: true,
       },
+      abbreviation_bankentity: {
+        required: true,
+        minlength: 2,
+        maxlength: 15,
+        lettersonly_es: true,
+        notEmpty: true,
+      },
       nit_bankentity: {
         required: true,
         digits: true,
@@ -26,7 +33,7 @@ function formValidation(formId, path, mainTable) {
         required: true,
         digits: true,
         minlength: 1,
-        maxlength: 2,
+        maxlength: 1,
         notEmpty: true,
       },
       code_bankentity: {
@@ -65,9 +72,14 @@ function formValidation(formId, path, mainTable) {
     },
     messages: {
       name_bankentity: {
-        required: "Ingrese el nombre del banco",
+        required: "Ingresa el nombre del banco",
         minlength: "Debe tener al menos 3 caracteres",
         maxlength: "Debe tener máximo 50 caracteres",
+      },
+      abbreviation_bankentity: {
+        required: "Ingresa la abreviatura del banco",
+        minlength: "Debe tener al menos 2 caracteres",
+        maxlength: "Debe tener máximo 15 caracteres",
       },
       nit_bankentity: {
         required: "Ingresa el NIT del banco",
@@ -79,7 +91,7 @@ function formValidation(formId, path, mainTable) {
         required: "Ingresa el dígito de verificación",
         digits: "Debe contener sólo números",
         minlength: "Debe tener al menos 1 carácter",
-        maxlength: "Debe tener máximo 2 caracteres",
+        maxlength: "Debe tener máximo 1 carácter",
       },
       code_bankentity: {
         required: "Ingresa el código del banco",
@@ -111,9 +123,15 @@ function formValidation(formId, path, mainTable) {
     },
     errorElement: "small",
     errorPlacement: function (error, element) {
-      $(error).addClass("invalid-feedback font-weight-normal");
 
+      var errorExists = $(error)[0].id.length > 0;
+      if (errorExists) {
+        $(`small#${$(error)[0].id}`).remove();
+      }
+
+      $(error).addClass("invalid-feedback font-weight-normal");
       $(error).insertAfter(element);
+      return;
     },
     submitHandler: function (form) {
       customSubmit(form, formId, path, mainTable);
@@ -135,14 +153,18 @@ function customSubmit(form, formId, path, mainTable) {
       $("#error-list").empty();
 
       if (data === false && typeof message == "object") {
-        Object.entries(message).forEach(([key, value]) => {
-          modal_alert(data, value);
 
+        var errorsList = "";
+
+        Object.entries(message).forEach(([key, value]) => {
+          errorsList += `<li>${value}</li>`;
           var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
 
           $(`${formId} input[name=${key}]`).addClass("error");
           $(errorElement).insertAfter(`${formId} input[name=${key}]`);
         });
+
+        modal_alert(data, errorsList);
         return false;
       }
 
@@ -190,7 +212,7 @@ function appendTwoColumns({ firstCol, secondCol, elementRef }) {
 jQuery.validator.addMethod(
   "lettersonly_es",
   function (value, element) {
-    return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1]*$/.test(value);
+    return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value);
   },
   "Este campo no puede contener números."
 );
