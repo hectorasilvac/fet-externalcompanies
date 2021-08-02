@@ -119,7 +119,8 @@ class Bankentities_model extends CI_Model
     public function all_rows($limit, $start, $search, $col, $dir)
     {
         $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
-        $this->db->from('fet_bankentities');
+        // $this->db->select('(Select count (DISTINCT fet_cv.name_cv) from fet_workers join fet_cv on id_cv = fet_cv.id_cv fet_workers where fet_workers.id_bankentiy = fb.id_bankentity) as workers');
+        $this->db->from('fet_bankentities fb');
         $this->db->where('flag_drop', 0);
 
         if (!empty($search))

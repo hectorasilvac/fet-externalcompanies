@@ -1,5 +1,4 @@
 function appendTwoColumns({ firstCol, secondCol, elementRef }) {
-
   $(elementRef).append(`
   <tr>
     <td>
@@ -12,151 +11,141 @@ function appendTwoColumns({ firstCol, secondCol, elementRef }) {
 }
 
 function locationSelect2({
-        selectRef,
-        dataName,
-        placeholder,
-        parentId = null,
-        parentName = null,
-        disabled = false,
-      }) {
-        return $(selectRef)
-          .select2({
-            disabled: disabled,
-            theme: "bootstrap4",
-            width: "100%",
-            language: "es",
-            placeholder: placeholder,
-            allowClear: true,
-            ajax: {
-              url: $path_location,
-              dataType: "json",
-              delay: 250,
-              data: function (params) {
-                var id = $(`${selectRef} option:selected`).val();
-      
-                return {
-                  name: dataName,
-                  q: params.term,
-                  page: params.page || 1,
-                  id: id,
-                  parentId: parentId,
-                  parentName: parentName,
-                };
-              },
-              processResults: function (data, params) {
-                var page = params.page || 1;
-                return {
-                  results: $.map(data.items, function (item) {
-                    return {
-                      id: item.id,
-                      text: item.text,
-                    };
-                  }),
-                  pagination: {
-                    more: page * 10 <= data.total_count,
-                  },
-                };
-              },
-            },
-            escapeMarkup: function (markup) {
-              return markup;
-            },
-          })
-          .on("change", function (e) {
-            $(this).valid();
-          });
-      }
-      
-      function retrieveLocationSelect2({
-        selectRef,
-        dataName,
-        placeholder,
-        pk,
-        value,
-        table,
-        parentId = null,
-        parentName = null,
-        optionText,
-        optionValue,
-        count = null,
-      }) {
-        locationSelect2({
-          selectRef: selectRef,
-          dataName: dataName,
-          placeholder: placeholder,
-          parentId: parentId,
-          parentName: parentName,
-        });
+  selectRef,
+  dataName,
+  placeholder,
+  parentId = null,
+  parentName = null,
+  disabled = false,
+}) {
+  return $(selectRef)
+    .select2({
+      disabled: disabled,
+      theme: "bootstrap4",
+      width: "100%",
+      language: "es",
+      placeholder: placeholder,
+      allowClear: true,
+      ajax: {
+        url: $path_location,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          var id = $(`${selectRef} option:selected`).val();
 
-        if (count === 1) {
-          $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: $path_find,
-            data: {
-              pk: pk,
-              value: value,
-              table: table,
-            },
-          }).then(function ({ data }) {
-            var selectInput = selectRef;
-            var option = new Option(
-              data[optionText],
-              data[optionValue],
-              true,
-              true
-            );
-            $(selectInput).append(option).trigger("change");
-          });
-        }
-      }
-      
-      // Method for validating letters of the Spanish alphabet
-      jQuery.validator.addMethod(
-        "lettersonly_es",
-        function (value, element) {
-          return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1]*$/.test(value);
+          return {
+            name: dataName,
+            q: params.term,
+            page: params.page || 1,
+            id: id,
+            parentId: parentId,
+            parentName: parentName,
+          };
         },
-        "Este campo no puede contener números."
-      );
-
-      jQuery.validator.addMethod(
-        'notEmpty',
-        function (value, element) {
-          return this.optional(element) || $.trim(value).length > 0;
+        processResults: function (data, params) {
+          var page = params.page || 1;
+          return {
+            results: $.map(data.items, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+              };
+            }),
+            pagination: {
+              more: page * 10 <= data.total_count,
+            },
+          };
         },
-        'Este campo no puede estar vacío.'
-      );
+      },
+      escapeMarkup: function (markup) {
+        return markup;
+      },
+    })
+    .on("change", function (e) {
+      $(this).valid();
+    });
+}
 
-      
-      function validate_input({
-        value,
-        minLength = null,
-        maxLength = null,
-        isEmail = null,
-        isText = null,
-        isNumeric = null,
-        isRequired = true,
-      }) {
-        if ($.trim(value) == "" && isRequired === true) return "No puede estar vacío";
-        if (minLength !== null && value.length < minLength)
-          return `Debe contener mínimo ${minLength} caracteres`;
-        if (maxLength !== null && value.length > maxLength)
-          return `Debe contener máximo ${maxLength} caracteres`;
-        if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
-          return "Solo se permiten letras";
-        if (isEmail !== null && value !== '' && !value.match(/^\S+@\S+\.\S+\D$/))
-          return "El correo electrónico no es válido";
-        if (isNumeric !== null && value !== '' && !value.match(/^[0-9]+$/))
-          return "El campo debe contener solo números";
-      }
+function retrieveLocationSelect2({
+  selectRef,
+  dataName,
+  placeholder,
+  pk,
+  value,
+  table,
+  parentId = null,
+  parentName = null,
+  optionText,
+  optionValue,
+  count = null,
+}) {
+  locationSelect2({
+    selectRef: selectRef,
+    dataName: dataName,
+    placeholder: placeholder,
+    parentId: parentId,
+    parentName: parentName,
+  });
 
+  if (count === 1) {
+    $.ajax({
+      type: "POST",
+      dataType: "json",
+      url: $path_find,
+      data: {
+        pk: pk,
+        value: value,
+        table: table,
+      },
+    }).then(function ({ data }) {
+      var selectInput = selectRef;
+      var option = new Option(data[optionText], data[optionValue], true, true);
+      $(selectInput).append(option).trigger("change");
+    });
+  }
+}
 
-  /****************************************************************************************/
-  /*********************************** DOCUMENT IS READY **********************************/
-  /****************************************************************************************/
+// Method for validating letters of the Spanish alphabet
+jQuery.validator.addMethod(
+  "lettersonly_es",
+  function (value, element) {
+    return this.optional(element) || /^[a-zA-Z\s\u00f1\u00d1]*$/.test(value);
+  },
+  "Este campo no puede contener números."
+);
+
+jQuery.validator.addMethod(
+  "notEmpty",
+  function (value, element) {
+    return this.optional(element) || $.trim(value).length > 0;
+  },
+  "Este campo no puede estar vacío."
+);
+
+function validate_input({
+  value,
+  minLength = null,
+  maxLength = null,
+  isEmail = null,
+  isText = null,
+  isNumeric = null,
+  isRequired = true,
+}) {
+  if ($.trim(value) == "" && isRequired === true) return "No puede estar vacío";
+  if (minLength !== null && value.length < minLength)
+    return `Debe contener mínimo ${minLength} caracteres`;
+  if (maxLength !== null && value.length > maxLength)
+    return `Debe contener máximo ${maxLength} caracteres`;
+  if (isText !== null && value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
+    return "Solo se permiten letras";
+  if (isEmail !== null && value !== "" && !value.match(/^\S+@\S+\.\S+\D$/))
+    return "El correo electrónico no es válido";
+  if (isNumeric !== null && value !== "" && !value.match(/^[0-9]+$/))
+    return "El campo debe contener solo números";
+}
+
+// Document is ready
 $(document).ready(function () {
-
   $.fn.editable.defaults.mode = "inline";
 
   locationSelect2({
@@ -241,7 +230,7 @@ $(document).ready(function () {
       email_cv_ec: {
         email: true,
         minlength: 3,
-        maxlength: 13,
+        maxlength: 50,
       },
       phone_cv_ec: {
         digits: true,
@@ -312,41 +301,36 @@ $(document).ready(function () {
     },
   });
 
-
   function submit(form) {
     $(form).ajaxSubmit({
-      dataType: 'json',
+      dataType: "json",
       url: $path_add,
-      type: 'post',
-      beforeSubmit: function()
-      {
-          $('#loading').removeClass('d-none');
+      type: "post",
+      beforeSubmit: function () {
+        $("#loading").removeClass("d-none");
       },
       success: function ({ data, message }) {
-  
-          $('#loading').addClass('d-none');
-          $("#error-list").empty();
+        $("#loading").addClass("d-none");
+        $("#error-list").empty();
 
         if (data === false && typeof message == "object") {
+          var errorsList = "";
+
           Object.entries(message).forEach(([key, value]) => {
-
-            var errorExists = $(`#${key}-error`).length;
-
-            if (errorExists) {
-              $(`#${key}-error`).text(value);
-            } else {
-              var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
-
-              $(`#${key}`).addClass("error");
-              $(errorElement).insertAfter(`#${key}`);
-            }
+            errorsList += `<li>${value}</li>`;
+            var errorElement = `<small id="${key}-error" class="error invalid-feedback font-weight-normal">${value}</small>`;
+  
+            $(`${formId} input[name=${key}]`).addClass("error");
+            $(errorElement).insertAfter(`${formId} input[name=${key}]`);
           });
+  
+          modal_alert(data, errorsList);
           return false;
         }
 
         if (data === false && typeof message == "string") {
           modal_alert(data, message);
-        
+
           return false;
         }
 
@@ -354,31 +338,22 @@ $(document).ready(function () {
 
         $(".select2-hidden-accessible").empty();
         $("#form_add")[0].reset();
-        $('#view_form_add').addClass('d-none');
+        $("#view_form_add").addClass("d-none");
         table.ajax.reload();
       },
     });
   }
 
-  $('#form_add').on('change', '.form-control', function() {
+  $("#form_add").on("input", ".form-control", function () {
+    if ($(this).valid()){
+      var name = $(this).attr("name");
+      var errorExists = $(this).next()[0]?.id == `${name}-error` ? $(this).next()[0].remove() : null;
 
-    if ( $(this).valid() )
-    {
-      var id = $(this).attr('id');
-      var errorExists = $(`#${id}-error`).length;
-
-      if ( errorExists ) {
-        $(`#${id}-error`).remove();
-        return;
-      }
       return;
     }
-    
   });
 
-  /****************************************************************************************/
-  /******************************** IMPLEMENTING DATATABLE ********************************/
-  /****************************************************************************************/
+  // Datatable
 
   var table = $("#default_table").DataTable({
     info: true,
@@ -408,7 +383,7 @@ $(document).ready(function () {
         targets: [1],
         data: "nit_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='nit_cv_ec' data-required='false' data-minlength='3' data-maxlength='13' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='nit_cv_ec' data-required='false' data-maxlength='13' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
@@ -429,7 +404,7 @@ $(document).ready(function () {
         targets: [4],
         data: "phone_cv_ec",
         render: function (data, type, row) {
-          return `<span data-name='phone_cv_ec' data-minlength='7' data-maxlength='13' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
+          return `<span data-name='phone_cv_ec' data-maxlength='13' data-required='false' data-type='number' data-pk='${row.id_cv_ec}' data-url='${$path_edit}'>${data}</span>`;
         },
       },
       {
@@ -454,9 +429,10 @@ $(document).ready(function () {
           }
 
           if (act_assign) {
-
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (' + row.aspirants + ')" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" title="Ver Aspirantes Pertenecientes (' +
+              row.aspirants +
+              ')" href="javascript:void(0)" class="assign-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-exchange-alt"></i></a>';
           }
@@ -471,7 +447,12 @@ $(document).ready(function () {
           if (act_trace) {
             content +=
               '<a data-toggle="tooltip" data-placement="top" title="Trazabilidad" href="javascript:void(0)" class="trace-row pd-x-5-force" data-id="' +
-              data + '" onclick="trace(\'' + $path_trace +"', 'id_cv_ec'," + data + ')"><i class="fas fa-history"></i></a>';
+              data +
+              '" onclick="trace(\'' +
+              $path_trace +
+              "', 'id_cv_ec'," +
+              data +
+              ')"><i class="fas fa-history"></i></a>';
           }
 
           return content + "</div>";
@@ -480,30 +461,27 @@ $(document).ready(function () {
     ],
     drawCallback: function (settings) {
       var rows = this.fnGetData();
-      var inputSearch = $('.dataTables_filter input').val();
+      var inputSearch = $(".dataTables_filter input").val();
 
       $('[data-toggle="tooltip"]').tooltip();
 
-      if (rows.length == 0)
-      {
-          $('#btn_export_xlsx').removeAttr('href');
-      }
-      else
-      {
-          if (inputSearch != '')
-          {
-              $('#btn_export_xlsx').attr('href', $path_export_xlsx + '/?search=' + inputSearch);
-          }
-          else
-          {
-              $('#btn_export_xlsx').attr('href', $path_export_xlsx);
-          }
+      if (rows.length == 0) {
+        $("#btn_export_xlsx").removeAttr("href");
+      } else {
+        if (inputSearch != "") {
+          $("#btn_export_xlsx").attr(
+            "href",
+            $path_export_xlsx + "/?search=" + inputSearch
+          );
+        } else {
+          $("#btn_export_xlsx").attr("href", $path_export_xlsx);
+        }
       }
 
       if (act_edit) {
         $("#default_table td span[data-type]").editable({
-          emptytext: 'Vacío',
-          inputclass: 'py-2 pl-2 pr-3 mw-50',
+          emptytext: "Vacío",
+          inputclass: "py-2 pl-2 pr-3 mw-50",
           validate: function (value) {
             return validate_input({
               value: value,
@@ -512,7 +490,8 @@ $(document).ready(function () {
               isEmail: $(this).attr("data-type") == "email" || null,
               isNumeric: $(this).attr("data-type") == "number" || null,
               isText: $(this).attr("data-type") == "text" || null,
-              isRequired: $(this).attr("data-required") == "false" ? false : true,
+              isRequired:
+                $(this).attr("data-required") == "false" ? false : true,
             });
           },
           success: function (response) {
@@ -548,20 +527,36 @@ $(document).ready(function () {
         });
       }
 
-      $('span.editable').css('border-bottom', 'none');
+      $("span.editable").css("border-bottom", "none");
     },
   });
 
-  /****************************************************************************************/
-  /***************************************** EDIT *****************************************/
-  /****************************************************************************************/
+  // Add
+
+  $("#btn_add").on("click", function () {
+    $("#view_table").addClass("d-none");
+    $("#view_form_add").removeClass("d-none");
+    validateForm.resetForm();
+    $("#form_add")[0].reset();
+  });
+
+  $("#btn_cancel_add").on("click", function () {
+    var defaultTable = $("#default_table").DataTable();
+    defaultTable.ajax.reload();
+    validateForm.resetForm();
+    $(".select2-hidden-accessible").empty();
+    $("#form_add")[0].reset();
+    $("#view_form_add").addClass("d-none");
+    $("#view_table").removeClass("d-none");
+  });
+
+  // Edit
 
   $("#default_table").on("click", "a.edit-row", function () {
-
-    $('#view_table').addClass('d-none');
-    $('#view_form_edit').removeClass('d-none');
+    $("#view_table").addClass("d-none");
+    $("#view_form_edit").removeClass("d-none");
     validate_edit.resetForm();
-    $('#form_edit')[0].reset();
+    $("#form_edit")[0].reset();
 
     var companyId = $(this).attr("data-id");
 
@@ -660,12 +655,11 @@ $(document).ready(function () {
             $("#loading").addClass("d-none");
           }
         );
-     }
+      },
     });
   });
 
-
- var validate_edit = $("#form_edit").validate({
+  var validate_edit = $("#form_edit").validate({
     onkeyup: false,
     ignore: [],
     rules: {
@@ -711,23 +705,20 @@ $(document).ready(function () {
     },
   });
 
-
-  $('#btn_confirm_edit').on('click', function ()
-  {
-      $('#form_edit').submit();
+  $("#btn_confirm_edit").on("click", function () {
+    $("#form_edit").submit();
   });
 
-  $('#form_edit').ajaxForm({
-      dataType:  'json',
-      success:  function(response) {
-        modal_alert(response.data, response.message);
+  $("#form_edit").ajaxForm({
+    dataType: "json",
+    success: function (response) {
+      modal_alert(response.data, response.message);
 
-        if (response.data) $('#view_form_edit').addClass('d-none');      
-      },
-      beforeSubmit: function()
-      {
-          $('#loading').removeClass('d-none');
-      }
+      if (response.data) $("#view_form_edit").addClass("d-none");
+    },
+    beforeSubmit: function () {
+      $("#loading").removeClass("d-none");
+    },
   });
 
   $("#btn_cancel_edit").on("click", function () {
@@ -737,12 +728,10 @@ $(document).ready(function () {
     $("#form_edit")[0].reset();
     $("#view_form_edit").addClass("d-none");
     $("#view_table").removeClass("d-none");
-
   });
 
-  /****************************************************************************************/
-  /**************************************** DETAILS ***************************************/
-  /****************************************************************************************/
+  // Details
+
   $("#default_table").on("click", "a.detail-row", function () {
     var companyId = $(this).attr("data-id");
 
@@ -766,14 +755,19 @@ $(document).ready(function () {
         $('#view_details td[data-name="type_cv_ec"]').text(data.type_cv_ec);
         $('#view_details td[data-name="phone_cv_ec"]').text(data.phone_cv_ec);
         $('#view_details td[data-name="email_cv_ec"]').text(data.email_cv_ec);
-        $('#view_details td[data-name="address_cv_ec"]').text(data.address_cv_ec);
-        $('#view_details td[data-name="country_cv_ec"]').text(data.name_country);
-        $('#view_details td[data-name="department_cv_ec"]').text(data.name_department);
+        $('#view_details td[data-name="address_cv_ec"]').text(
+          data.address_cv_ec
+        );
+        $('#view_details td[data-name="country_cv_ec"]').text(
+          data.name_country
+        );
+        $('#view_details td[data-name="department_cv_ec"]').text(
+          data.name_department
+        );
         $('#view_details td[data-name="city_cv_ec"]').text(data.name_city);
 
         $("#loading").toggleClass("d-none");
-      }
-      
+      },
     });
   });
 
@@ -782,11 +776,9 @@ $(document).ready(function () {
     $("#view_table").toggleClass("d-none");
   });
 
-  /****************************************************************************************/
-  /***************************************** ASSIGN ***************************************/
-  /****************************************************************************************/
-  $("#default_table").on("click", "a.assign-row", function () {
+  // Assign
 
+  $("#default_table").on("click", "a.assign-row", function () {
     $("#view_assign").toggleClass("d-none");
     $("#view_table").toggleClass("d-none");
 
@@ -804,37 +796,30 @@ $(document).ready(function () {
       beforeSend: function () {
         $("#loading").toggleClass("d-none");
       },
-      success: function ({ data, message })
-      {
+      success: function ({ data, message }) {
         $("#loading").toggleClass("d-none");
-        $('tbody#assign_content').empty();
-        $('thead#assign_head').removeClass('d-none');
+        $("tbody#assign_content").empty();
+        $("thead#assign_head").removeClass("d-none");
 
-        if (data)
-        {
-          if (data.length > 1) 
-          {
-            $.each(data, function(index, item) {
+        if (data) {
+          if (data.length > 1) {
+            $.each(data, function (index, item) {
               appendTwoColumns({
                 firstCol: item.full_name,
                 secondCol: item.number_dcv,
-                elementRef: 'tbody#assign_content'
+                elementRef: "tbody#assign_content",
               });
             });
-          }
-          else
-          {
+          } else {
             appendTwoColumns({
               firstCol: data.full_name,
               secondCol: data.number_dcv,
-              elementRef: 'tbody#assign_content'
+              elementRef: "tbody#assign_content",
             });
           }
-        }
-        else
-        {
-          $('thead#assign_head').addClass('d-none');
-          $('tbody#assign_content').append(`
+        } else {
+          $("thead#assign_head").addClass("d-none");
+          $("tbody#assign_content").append(`
           <tr>
             <td colspan="2">No hay aspirantes asignados a esta empresa.</td>
           </tr>
@@ -844,86 +829,56 @@ $(document).ready(function () {
     });
   });
 
-    $("#btn_cancel_assign").on("click", function () {
-      $("#view_assign").toggleClass("d-none");
-      $("#view_table").toggleClass("d-none");
-    });
-
-  /****************************************************************************************/
-  /***************************************** ADD ******************************************/
-  /****************************************************************************************/
-
-  $("#btn_add").on("click", function () {
-    $("#view_table").addClass("d-none");
-    $("#view_form_add").removeClass("d-none");
-    validateForm.resetForm();
-    $("#form_add")[0].reset();
+  $("#btn_cancel_assign").on("click", function () {
+    $("#view_assign").toggleClass("d-none");
+    $("#view_table").toggleClass("d-none");
   });
 
+  // Drop
 
-  $("#btn_cancel_add").on("click", function () {
-    var defaultTable = $("#default_table").DataTable();
-    defaultTable.ajax.reload();
-    validateForm.resetForm();
-    $(".select2-hidden-accessible").empty();
-    $("#form_add")[0].reset();
-    $("#view_form_add").addClass("d-none");
-    $("#view_table").removeClass("d-none");
-  });
-
-  /****************************************************************************************/
-  /***************************************** DROP *****************************************/
-  /****************************************************************************************/
-
-  $('#default_table').on('click', 'a.remove-row', function()
-  {
+  $("#default_table").on("click", "a.remove-row", function () {
     var companyId = $(this).attr("data-id");
 
-      $('#modal_delete').iziModal({
-          title: 'Eliminar empresa',
-          icon: 'fas fa-trash-alt',
-          headerColor: '#DC3545',
-          zindex: 9999,
-          onClosed: function()
-          {
-              $('#btn_confirm_delete').off('click');
-              $('#modal_delete').iziModal('destroy');
-          },
-          onOpening: function()
-          {
-              $('#btn_confirm_delete').on('click', function()
-              {
-                  $('#loading').removeClass('d-none');
+    $("#modal_delete").iziModal({
+      title: "Eliminar empresa",
+      icon: "fas fa-trash-alt",
+      headerColor: "#DC3545",
+      zindex: 9999,
+      onClosed: function () {
+        $("#btn_confirm_delete").off("click");
+        $("#modal_delete").iziModal("destroy");
+      },
+      onOpening: function () {
+        $("#btn_confirm_delete").on("click", function () {
+          $("#loading").removeClass("d-none");
 
-                  $.ajax({
-                      type: 'POST',
-                      url: $path_drop,
-                      data: {
-                          id_cv_ec: companyId,
-                      },
-                      dataType: 'json',
-                      success: function (response)
-                      {
-                          var defaultTable = $('#default_table').DataTable();
-                          defaultTable.ajax.reload();
-                          modal_alert(response.data, response.message);
-                          $('#loading').addClass('d-none');
-                      },
-                      error: function () {
-                          modal_alert(false, 'Error de conexión.');
-                      }
-                  });
+          $.ajax({
+            type: "POST",
+            url: $path_drop,
+            data: {
+              id_cv_ec: companyId,
+            },
+            dataType: "json",
+            success: function (response) {
+              var defaultTable = $("#default_table").DataTable();
+              defaultTable.ajax.reload();
+              modal_alert(response.data, response.message);
+              $("#loading").addClass("d-none");
+            },
+            error: function () {
+              modal_alert(false, "Error de conexión.");
+            },
+          });
 
-                  $('#modal_delete').iziModal('close');
-              });
+          $("#modal_delete").iziModal("close");
+        });
 
-              $('#btn_cancel_delete').on('click', function()
-              {
-                  $('#modal_delete').iziModal('close');
-              });
-          }
-      });
+        $("#btn_cancel_delete").on("click", function () {
+          $("#modal_delete").iziModal("close");
+        });
+      },
+    });
 
-      $('#modal_delete').iziModal('open');
+    $("#modal_delete").iziModal("open");
   });
 });

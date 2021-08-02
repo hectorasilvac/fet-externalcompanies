@@ -58,18 +58,21 @@ class Externalcompanies_model extends CI_Model
 
         $result['total']                                                        =   $this->db->count_all_results();
 
-        if (isset($search) && !empty($search)) {
+        if (isset($search) && !empty($search)) 
+        {
             $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
             $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
             $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
             $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
 
-            if (is_array($search) && count($search) > 0) {
+            if (is_array($search) && count($search) > 0) 
+            {
                 $this->db->like($search[0]['name'], $search[0]['value']);
                 $search_data                                                        = [];
 
                 $this->db->group_start();
-                foreach ($search as $element) {
+                foreach ($search as $element) 
+                {
                     $name = $element['name'];
                     $value = $element['value'];
                     $search_data[$name] = $value;
@@ -81,7 +84,9 @@ class Externalcompanies_model extends CI_Model
                 $this->db->where('fet_cv_ec.flag_drop', 0);
 
                 $result['total_filtered']                                           =   $this->db->count_all_results();
-            } else {
+            } 
+            else 
+            {
                 $this->db->group_start();
                 $this->db->like('fet_cv_ec.name_cv_ec', $search);
                 $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
@@ -99,7 +104,9 @@ class Externalcompanies_model extends CI_Model
 
                 $result['total_filtered']                                           =   $this->db->count_all_results();
             }
-        } else {
+        } 
+        else 
+        {
             $result['total_filtered']                                           =   $result['total'];
         }
 
@@ -446,7 +453,8 @@ class Externalcompanies_model extends CI_Model
 
         $this->form_validation->set_rules($entries);
 
-        if ($this->form_validation->run()) {
+        if ($this->form_validation->run()) 
+        {
             $data                                                               =   array();
             $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0        ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
             $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0         ? trim($params['nit_cv_ec']) : NULL;
@@ -462,7 +470,8 @@ class Externalcompanies_model extends CI_Model
 
             $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_cv_ec');
 
-            if ($query) {
+            if ($query) 
+            {
                 $data_history                                                   =   $data;
                 $data_history['id_cv_ec']                                       =   $query;
                 $data_history['user_update']                                    =   $data['user_insert'];
@@ -474,11 +483,15 @@ class Externalcompanies_model extends CI_Model
 
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'La empresa se ha registrado correctamente';
-            } else {
+            } 
+            else 
+            {
                 $result['data']                                                 =   FALSE;
                 $result['message']                                              =   'Error al registrar la empresa';
             }
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   $this->form_validation->error_array();
         }
@@ -499,7 +512,8 @@ class Externalcompanies_model extends CI_Model
         $result                                                                 =   array();
         $data                                                                   =   array();
 
-        if (count($params) >= 2) {
+        if (count($params) >= 2) 
+        {
 
             $data['id']                                                         =   $params['pk'];
             $data['user_update']                                                =   $this->session->userdata['id_user'];
@@ -514,8 +528,11 @@ class Externalcompanies_model extends CI_Model
                 $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']        =   $params['value'] : NULL;
 
                 $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
-            } else {
-                if (isset($params['name'])) {
+            } 
+            else 
+            {
+                if (isset($params['name'])) 
+                {
                     $params[$params['name']]                                    =   NULL;
                     unset($params['name']);
                 }
@@ -536,11 +553,15 @@ class Externalcompanies_model extends CI_Model
             if ($query) {
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'Acción realizada con éxito!';
-            } else {
+            } 
+            else 
+            {
                 $result['data']                                                 =   FALSE;
                 $result['message']                                              =   'Problemas al editar el rol.';
             }
-        } else {
+        } 
+        else
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';
         }
@@ -575,11 +596,15 @@ class Externalcompanies_model extends CI_Model
             if (count($query->result_array()) > 0) {
                 $result['data']                                                 =   $query->row_array();
                 $result['message']                                              =   FALSE;
-            } else {
+            } 
+            else 
+            {
                 $result['data']                                                 =   FALSE;
                 $result['message']                                              =   'Problemas al mostrar los detalles de la empresa.';
             }
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';
         }
