@@ -187,6 +187,24 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
+        // Development Area
+        $this->form_validation->set_rules('name_bankentity', 'Nombre del banco', 'required');
+        $this->form_validation->set_rules('abbreviation_bankentity', 'Abreviatura', 'required');
+        $this->form_validation->set_rules('nit_bankentity', 'NIT', 'required');
+        $this->form_validation->set_rules('digit_bankentity', 'Dígito de verificación', 'required');
+        $this->form_validation->set_rules('code_bankentity', 'Código del banco', 'required');
+        $this->form_validation->set_rules('contact_bankentity', 'Nombre del contacto', 'required');
+        $this->form_validation->set_rules('phone_bankentity', 'Teléfono del contacto', 'required');
+        $this->form_validation->set_rules('email_bankentity', 'Correo electrónico del contacto', 'required');
+        $this->form_validation->set_rules('address_bankentity', 'Dirección del banco', 'required');
+
+        if ($this->form_validation->run())
+        {
+            
+        }
+
+        // Development Area
+
         $data                                                                   =   array();
         $data['name_bankentity']                                                =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
         $data['abbreviation_bankentity']                                        =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
