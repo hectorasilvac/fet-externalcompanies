@@ -177,10 +177,9 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                $entries                                                        =   $this->form_rules();
-                $this->form_validation->set_rules($entries);
+                $exist_bank                                                     =   $this->_bankentities_model->exist_bank($params);
 
-                if ($this->form_validation->run()) 
+                if ($exist_bank['data'])
                 {
                     $add                                                        =   $this->_bankentities_model->add($params);
                     
@@ -189,10 +188,7 @@ class Bankentities_controller extends CI_Controller
                 } 
                 else 
                 {
-                    $result['data']                                             =   FALSE;
-                    $result['message']                                          =   $this->form_validation->error_array();
-
-                    echo json_encode($result);
+                    echo json_encode($exist_bank);
                     exit();
                 }
             }
