@@ -95,20 +95,7 @@ class Bankentities_model extends CI_Model
         $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
 
-        
-        // foreach ($banks as $key => $bank) 
-        // {
-        //     $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as workers');
-        //     $this->db->from('fet_workers');
-        //     $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
-        //     $this->db->where('fet_workers.id_bankentity', $bank['id_bankentity']);
-            
-        //     $query                                                              = $this->db->get();
-
-        //     $banks[$key]['workers'] = $query->row_array()['workers'];
-        // }
-
-        if (!empty($search))
+        if ( ! empty($search))
         {
             $this->db->group_start();
             $this->db->like('name_bankentity', $search);
@@ -129,9 +116,11 @@ class Bankentities_model extends CI_Model
 
         $banks                                                                  =   $query->result_array();
 
-        if ($this->session->userdata['mobile'] == 0) {
+        if ($this->session->userdata['mobile'] == 0) 
+        {
             $count                                                              =   $start;
-            foreach ($banks as $key => $action) {
+            foreach ($banks as $key => $action) 
+            {
                 $count++;
                 $banks[$key]['number']                                          =   $count;
             }
