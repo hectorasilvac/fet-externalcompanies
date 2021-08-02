@@ -187,7 +187,6 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        // Development Area
         $this->form_validation->set_rules('name_bankentity', 'Nombre del banco', 'required');
         $this->form_validation->set_rules('abbreviation_bankentity', 'Abreviatura', 'required');
         $this->form_validation->set_rules('nit_bankentity', 'NIT', 'required');
@@ -200,43 +199,32 @@ class Bankentities_model extends CI_Model
 
         if ($this->form_validation->run())
         {
-            
+            $params['name_bankentity']                                          =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
+            $params['abbreviation_bankentity']                                  =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
+            $params['contact_bankentity']                                       =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
+            $params['user_insert']                                              =   $this->session->userdata['id_user'];
+            $params['date_insert']                                              =   date('Y-m-d H:i:s');
         }
 
-        // Development Area
-
-        $data                                                                   =   array();
-        $data['name_bankentity']                                                =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
-        $data['abbreviation_bankentity']                                        =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
-        $data['nit_bankentity']                                                 =   trim($params['nit_bankentity']);
-        $data['digit_bankentity']                                               =   trim($params['digit_bankentity']);
-        $data['code_bankentity']                                                =   trim($params['code_bankentity']);
-        $data['contact_bankentity']                                             =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
-        $data['phone_bankentity']                                               =   trim($params['phone_bankentity']);
-        $data['email_bankentity']                                               =   trim($params['email_bankentity']);
-        $data['address_bankentity']                                             =   trim($params['address_bankentity']);
-        $data['user_insert']                                                    =   $this->session->userdata['id_user'];
-        $data['date_insert']                                                    =   date('Y-m-d H:i:s');
-
-        $query                                                                  =   $this->_trabajandofet_model->insert_data($data, 'fet_bankentities');
+        $query                                                                  =   $this->_trabajandofet_model->insert_data($params, 'fet_bankentities');
 
         if ($query) 
         {
-            $data_history                                                       =   $data;
+            $data_history                                                       =   $params;
             $data_history['id_bankentity']                                      =   $query;
-            $data_history['user_update']                                        =   $data['user_insert'];
+            $data_history['user_update']                                        =   $params['user_insert'];
             $data_history['date_update']                                        =   date('Y-m-d H:i:s');
             unset($data_history['date_insert'], $data_history['user_insert']);
 
             $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
             $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   'La entidad bancaria se ha registrado correctamente';
+            $result['message']                                                  =   'La entidad bancaria se ha registrado correctamente.';
         } 
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Error al registrar la entidad bancaria';
+            $result['message']                                                  =   'Error al registrar la entidad bancaria.';
         }
 
 
