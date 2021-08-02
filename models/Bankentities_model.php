@@ -58,19 +58,19 @@ class Bankentities_model extends CI_Model
 
         if ( ! empty($search)) 
         {
-                $this->db->group_start();
-                $this->db->like('name_bankentity', $search);
-                $this->db->or_like('nit_bankentity', $search);
-                $this->db->or_like('digit_bankentity', $search);
-                $this->db->or_like('code_bankentity', $search);
-                $this->db->or_like('address_bankentity', $search);
-                $this->db->or_like('contact_bankentity', $search);
-                $this->db->or_like('phone_bankentity', $search);
-                $this->db->or_like('email_bankentity', $search);
-                $this->db->group_end();
-                $this->db->where('flag_drop', 0);
-                $this->db->from('fet_bankentities');
-                $result['total_filtered']                                       =   $this->db->count_all_results();
+            $this->db->group_start();
+            $this->db->like('name_bankentity', $search);
+            $this->db->or_like('nit_bankentity', $search);
+            $this->db->or_like('digit_bankentity', $search);
+            $this->db->or_like('code_bankentity', $search);
+            $this->db->or_like('address_bankentity', $search);
+            $this->db->or_like('contact_bankentity', $search);
+            $this->db->or_like('phone_bankentity', $search);
+            $this->db->or_like('email_bankentity', $search);
+            $this->db->group_end();
+            $this->db->where('flag_drop', 0);
+            $this->db->from('fet_bankentities');
+            $result['total_filtered']                                       =   $this->db->count_all_results();
         } 
         else 
         {
@@ -148,7 +148,7 @@ class Bankentities_model extends CI_Model
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
             $this->db->where('fet_workers.id_bankentity', $params['value']);
             $this->db->group_by('fet_cv.number_dcv, full_name');
-            
+
             $query                                                              =   $this->db->get();
 
             if (count($query->result_array()) > 0) 
@@ -375,9 +375,8 @@ class Bankentities_model extends CI_Model
     public function detail($params)
     {
         $result                                                                 =   array();
-        $valid_params                                                           =   isset($params['pk']) && isset($params['value']);
 
-        if ($valid_params) 
+        if (isset($params['pk']) && isset($params['value'])) 
         {
             $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
             $this->db->where($params['pk'], $params['value']);
@@ -540,6 +539,4 @@ class Bankentities_model extends CI_Model
         return $result;
         exit();
     }
-
-
 }
