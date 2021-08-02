@@ -54,35 +54,11 @@ class Bankentities_model extends CI_Model
 
         $this->db->where('flag_drop', 0);
         $this->db->from('fet_bankentities');
-
         $result['total']                                                        =   $this->db->count_all_results();
 
-        if (isset($search) && !empty($search)) 
+        if ( ! empty($search)) 
         {
-            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
 
-            if (is_array($search) && count($search) > 0) 
-            {
-                $this->db->like($search[0]['name'], $search[0]['value']);
-                $search_data                                                    = [];
-
-                $this->db->group_start();
-                foreach ($search as $element) 
-                {
-                    $name = $element['name'];
-                    $value = $element['value'];
-                    $search_data[$name] = $value;
-                }
-
-                $this->db->or_like($search_data);
-                $this->db->group_end();
-                $this->db->from('fet_bankentities');
-                $this->db->where('flag_drop', 0);
-
-                $result['total_filtered']                                       =   $this->db->count_all_results();
-            } 
-            else 
-            {
                 $this->db->group_start();
                 $this->db->like('name_bankentity', $search);
                 $this->db->or_like('nit_bankentity', $search);
@@ -93,12 +69,9 @@ class Bankentities_model extends CI_Model
                 $this->db->or_like('phone_bankentity', $search);
                 $this->db->or_like('email_bankentity', $search);
                 $this->db->group_end();
-
                 $this->db->where('flag_drop', 0);
                 $this->db->from('fet_bankentities');
-
                 $result['total_filtered']                                       =   $this->db->count_all_results();
-            }
         } 
         else 
         {
