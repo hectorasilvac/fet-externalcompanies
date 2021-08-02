@@ -177,20 +177,20 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                // $exist_bank                                                     =   $this->_bankentities_model->exist_bank($params);
+                $exist_bank                                                     =   $this->_bankentities_model->exist_bank($params);
 
-                // if ($exist_bank['data'])
-                // {
+                if ($exist_bank['data'])
+                {
                     $add                                                        =   $this->_bankentities_model->add($params);
                     
                     echo json_encode($add);
                     exit();
-                // } 
-                // else 
-                // {
-                //     echo json_encode($exist_bank);
-                //     exit();
-                // }
+                } 
+                else 
+                {
+                    echo json_encode($exist_bank);
+                    exit();
+                }
             }
             else
             {

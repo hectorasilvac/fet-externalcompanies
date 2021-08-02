@@ -176,6 +176,92 @@ class Bankentities_model extends CI_Model
         exit();
     }
 
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function exist_bank($params)
+    {
+        print_r('bancoo');
+        die();
+
+        $result                                                                 =   array();
+
+        if (isset($params['pk']))
+        {
+            $this->db->select($params['name']);
+            $this->db->where('git_company != ', 'G');
+            $this->db->where('flag_drop', 0);
+            $this->db->where($params['name'], trim($params['value']));
+            $this->db->where('id_user !=', $params['pk']);
+        }
+        else
+        {
+            $this->db->select('email_user, user, id_aspirant');
+            $this->db->where('git_company != ', 'G');
+            $this->db->where('flag_drop', 0);
+            $this->db->group_start();
+            $this->db->where('email_user', trim($params['email_user']));
+            $this->db->or_where('user', trim($params['user']));
+            $this->db->or_where('id_aspirant', $params['id_aspirant']);
+            $this->db->group_end();
+        }
+
+        $query                                                                  =   $this->db->get('git_users');
+
+        if (count($query->result_array()) > 0)
+        {
+            $message                                                            =   ' alguno de estos datos';
+
+            if (isset($params['pk']))
+            {
+                $params[$params['name']]                                        =   trim($params['value']);
+                unset( $params['name'], $params['value'], $params['pk'] );
+            }
+
+            foreach ($query->row_array() as $key => $value)
+            {
+                switch ($key)
+                {
+                    case 'email_user':
+                        if ( $value == trim($params['email_user']) )
+                        {
+                            $message                                            =   ' este correo electrónico.';
+                        }
+                        break;
+
+                    case 'user':
+                        if ($value == trim($params['user']))
+                        {
+                            $message                                            =   ' este nombre de usuario.';
+                        }
+                        break;
+
+                    case 'id_aspirant':
+                        if ($value == $params['id_aspirant'])
+                        {
+                            $message                                            =   ' este aspirante asignado.';
+                        }
+                        break;
+                }
+            }
+
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Ya existe un usuario con ' . $message;
+        }
+        else
+        {
+            $result['data']                                                     =   TRUE;
+            $result['message']                                                  =   FALSE;
+        }
+
+        return $result;
+        exit();
+    }
+
     /**
      * @author    Innovación y Tecnología
      * @copyright 2021 Fábrica de Desarrollo
