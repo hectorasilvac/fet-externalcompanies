@@ -189,8 +189,6 @@ class Bankentities_model extends CI_Model
 
         if (isset($params['pk']))
         {
-            print_r('Pendiente por diligenciar este PK');
-            exit();
             // $this->db->select($params['name']);
             // $this->db->where('git_company != ', 'G');
             // $this->db->where('flag_drop', 0);
@@ -278,36 +276,40 @@ class Bankentities_model extends CI_Model
         $this->form_validation->set_rules('email_bankentity', 'Correo electrónico del contacto', 'required');
         $this->form_validation->set_rules('address_bankentity', 'Dirección del banco', 'required');
 
-        if ($this->form_validation->run())
+        if ($this->form_validation->run()) 
         {
             $params['name_bankentity']                                          =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
             $params['abbreviation_bankentity']                                  =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
             $params['contact_bankentity']                                       =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
             $params['user_insert']                                              =   $this->session->userdata['id_user'];
             $params['date_insert']                                              =   date('Y-m-d H:i:s');
-        }
 
-        $query                                                                  =   $this->_trabajandofet_model->insert_data($params, 'fet_bankentities');
+            $query                                                              =   $this->_trabajandofet_model->insert_data($params, 'fet_bankentities');
 
-        if ($query) 
-        {
-            $data_history                                                       =   $params;
-            $data_history['id_bankentity']                                      =   $query;
-            $data_history['user_update']                                        =   $params['user_insert'];
-            $data_history['date_update']                                        =   date('Y-m-d H:i:s');
-            unset($data_history['date_insert'], $data_history['user_insert']);
+            if ($query) 
+            {
+                $data_history                                                   =   $params;
+                $data_history['id_bankentity']                                  =   $query;
+                $data_history['user_update']                                    =   $params['user_insert'];
+                $data_history['date_update']                                    =   date('Y-m-d H:i:s');
+                unset($data_history['date_insert'], $data_history['user_insert']);
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
 
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   'La entidad bancaria se ha registrado correctamente.';
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'La entidad bancaria se ha registrado correctamente.';
+            } 
+            else 
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Error al registrar la entidad bancaria.';
+            }
         } 
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Error al registrar la entidad bancaria.';
+            $result['message']                                                  =   'Completa todos los campos.';
         }
-
 
         return $result;
         exit();
@@ -323,38 +325,51 @@ class Bankentities_model extends CI_Model
     public function edit($params)
     {
         $result                                                                 =   array();
-        $data                                                                   =   array();
 
-        $data['id']                                                             =   $params['pk'];
-        $data['name_bankentity']                                                =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
-        $data['abbreviation_bankentity']                                        =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
-        $data['nit_bankentity']                                                 =   trim($params['nit_bankentity']);
-        $data['digit_bankentity']                                               =   trim($params['digit_bankentity']);
-        $data['code_bankentity']                                                =   trim($params['code_bankentity']);
-        $data['contact_bankentity']                                             =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
-        $data['phone_bankentity']                                               =   trim($params['phone_bankentity']);
-        $data['email_bankentity']                                               =   trim($params['email_bankentity']);
-        $data['address_bankentity']                                             =   trim($params['address_bankentity']);
-        $data['user_update']                                                    =   $this->session->userdata['id_user'];
-        $data['date_update']                                                    =   date('Y-m-d H:i:s');
+        $this->form_validation->set_rules('name_bankentity', 'Nombre del banco', 'required');
+        $this->form_validation->set_rules('abbreviation_bankentity', 'Abreviatura', 'required');
+        $this->form_validation->set_rules('nit_bankentity', 'NIT', 'required');
+        $this->form_validation->set_rules('digit_bankentity', 'Dígito de verificación', 'required');
+        $this->form_validation->set_rules('code_bankentity', 'Código del banco', 'required');
+        $this->form_validation->set_rules('contact_bankentity', 'Nombre del contacto', 'required');
+        $this->form_validation->set_rules('phone_bankentity', 'Teléfono del contacto', 'required');
+        $this->form_validation->set_rules('email_bankentity', 'Correo electrónico del contacto', 'required');
+        $this->form_validation->set_rules('address_bankentity', 'Dirección del banco', 'required');
 
-         $query                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_bankentity', 'fet_bankentities');
-
-        if ($query) 
+        if ($this->form_validation->run()) 
         {
-            $data_history                                                       =   $data;
-            $data_history['id_bankentity']                                      =   $data_history['id'];
-            unset($data_history['id']);
+            $params['id']                                                       =   $params['pk'];
+            $params['name_bankentity']                                          =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_bankentity'])));
+            $params['abbreviation_bankentity']                                  =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['abbreviation_bankentity'])));
+            $params['contact_bankentity']                                       =   $this->_trabajandofet_model->accents(trim($params['contact_bankentity']));
+            $params['user_update']                                              =   $this->session->userdata['id_user'];
+            $params['date_update']                                              =   date('Y-m-d H:i:s');
+            unset($params['pk']);
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+            $query                                                              =   $this->_trabajandofet_model->update_data($params, 'id_bankentity', 'fet_bankentities');
 
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   'Acción realizada con éxito!';
+            if ($query) 
+            {
+                $data_history                                                   =   $params;
+                $data_history['id_bankentity']                                  =   $data_history['id'];
+                unset($data_history['id']);
+
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_bankentities_history');
+
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'Acción realizada con éxito!';
+            } 
+            else 
+            {
+
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Problemas al editar la entidad bancaria.';
+            }
         } 
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Problemas al editar el rol.';
+            $result['message']                                                  =   'Completa todos los campos.';
         }
 
         return $result;

@@ -61,7 +61,7 @@
                 {if $act_add}
                     <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
-                            <form id="form_add" method="post" data-form>
+                            <form id="form_add" method="post" action="{$path_add}">
                                 <div class="row mg-b-25">
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
@@ -131,7 +131,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
+                                <button id="btn_confirm_add" type="button" class="btn btn-info">Agregar</button>
                                 <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
                             </form>
                         </div>
