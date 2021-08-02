@@ -70,7 +70,7 @@ class Bankentities_controller extends CI_Controller
             $this->_view->assign('act_view',                                    in_array('VIEW', $this->actions));
             $this->_view->assign('act_add',                                     in_array('ADD', $this->actions));
             $this->_view->assign('act_edit',                                    in_array('EDIT', $this->actions));
-            $this->_view->assign('act_details',                                 in_array('DETAILS', $this->actions));
+            $this->_view->assign('act_detail',                                  in_array('DETAILS', $this->actions));
             $this->_view->assign('act_assign',                                  in_array('ASSIGN', $this->actions));
             $this->_view->assign('act_drop',                                    in_array('UDROP', $this->actions));
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
@@ -79,11 +79,11 @@ class Bankentities_controller extends CI_Controller
             $this->_view->assign('path_view',                                   site_url('bankentities/datatable'));
             $this->_view->assign('path_add',                                    site_url('bankentities/add'));
             $this->_view->assign('path_edit',                                   site_url('bankentities/edit'));
-            $this->_view->assign('path_details',                                site_url('bankentities/details'));
+            $this->_view->assign('path_detail',                                 site_url('bankentities/detail'));
             $this->_view->assign('path_drop',                                   site_url('bankentities/udrop'));
             $this->_view->assign('path_trace',                                  site_url('bankentities/trace'));
             $this->_view->assign('path_export_xlsx',                            site_url('bankentities/exportxlsx'));
-            $this->_view->assign('path_find',                                   site_url('bankentities/find'));
+            $this->_view->assign('path_affiliated_workers',                     site_url('bankentities/affiliatedworkers'));
 
 
             $this->_view->display('admin/bankentities.tpl');
@@ -236,22 +236,18 @@ class Bankentities_controller extends CI_Controller
 
             if ($params) 
             {
-                $entries                                                        =   $this->form_rules(TRUE, $params['pk']);
-                $this->form_validation->set_rules($entries);
+                $exist_bank                                                     =   $this->_bankentities_model->exist_bank($params);
 
-                if ($this->form_validation->run()) 
+                if ($exist_bank['data'])
                 {
-                    $edit                                                       =   $this->_bankentities_model->edit($params);
+                    $edit                                                        =   $this->_bankentities_model->edit($params);
                     
                     echo json_encode($edit);
                     exit();
                 } 
                 else 
                 {
-                    $result['data']                                             =   FALSE;
-                    $result['message']                                          =   $this->form_validation->error_array();
-
-                    echo json_encode($result);
+                    echo json_encode($exist_bank);
                     exit();
                 }
             } 
@@ -291,7 +287,7 @@ class Bankentities_controller extends CI_Controller
     * @param     array $params
     * @return    json array
     **/
-    public function details()
+    public function detail()
     {
         if(in_array('DETAILS', $this->actions))
         {
@@ -299,9 +295,9 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                    $details                                                    =   $this->_bankentities_model->details($params);
+                    $detail                                                    =   $this->_bankentities_model->detail($params);
 
-                    echo json_encode($details);
+                    echo json_encode($detail);
                     exit();
             }
             else
@@ -340,7 +336,7 @@ class Bankentities_controller extends CI_Controller
     * @param     array $params
     * @return    json array
     **/
-    public function find_by_id()
+    public function affiliated_workers()
     {
         if (in_array('VIEW', $this->actions))
         {
@@ -348,9 +344,9 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                $find                                                           =   $this->_bankentities_model->find_by_id($params);
+                $affiliated_workers                                             =   $this->_bankentities_model->affiliated_workers($params);
 
-                echo json_encode($find);
+                echo json_encode($affiliated_workers);
                 exit();
             }
             else

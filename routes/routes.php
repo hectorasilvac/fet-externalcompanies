@@ -223,12 +223,12 @@ $route['bankentities/add']                                                      
 
 $route['bankentities/edit']                                                     =   'bankentities_controller/edit';
 
-$route['bankentities/find']                                                     =   'bankentities_controller/find_by_id';
+$route['bankentities/affiliatedworkers']                                        =   'bankentities_controller/affiliated_workers';
 
 $route['bankentities/udrop']                                                    =   'bankentities_controller/udrop';
 
 $route['bankentities/trace']                                                    =   'bankentities_controller/trace';
 
-$route['bankentities/details']                                                  =   'bankentities_controller/details';
+$route['bankentities/detail']                                                   =   'bankentities_controller/detail';
 
 $route['bankentities/exportxlsx']                                               =   'bankentities_controller/export_xlsx';

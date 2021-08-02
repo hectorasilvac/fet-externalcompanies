@@ -137,44 +137,41 @@ class Bankentities_model extends CI_Model
      * @param     array $params
      * @return    array $result
      **/
-    public function find_by_id($params)
+    public function affiliated_workers($params)
     {
         $result                                                                 =   array();
 
-        if (isset($params['get_workers']) && $params['get_workers'] === 'true')
+        if (isset($params['pk']) && isset($params['value'])) 
         {
-            $this->db->query("SET sql_mode=(SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));");
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
             $this->db->from('fet_workers');
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
             $this->db->where('fet_workers.id_bankentity', $params['value']);
-            $this->db->group_by('fet_cv.number_dcv');
+            $this->db->group_by('fet_cv.number_dcv, full_name');
+            
+            $query                                                              =   $this->db->get();
 
-
-            $query = $this->db->get();
-        } 
-        else 
-        {
-            $this->db->where($params['pk'], $params['value']);
-            $this->db->where('flag_drop', 0);
-
-            $query                                                              =   $this->db->get($params['table']);
+            if (count($query->result_array()) > 0) 
+            {
+                $result['data']                                                 =   $query->result_array();
+                $result['message']                                              =   FALSE;
+            } 
+            else 
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'No hay usuarios afiliados a esta entidad bancaria.';
+            }
         }
-
-        if (count($query->result_array()) > 0) 
-        {
-            count($query->result_array()) === 1 ? $result['data']               =   $query->row_array()     : NULL;
-            count($query->result_array()) > 1   ? $result['data']               =   $query->result_array()  : NULL;
-            $result['message']                                                  =   FALSE;
-        } 
         else 
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'No se podido realizar la operación.';
         }
+
         return $result;
         exit();
     }
+    
 
         /**
     * @author    Innovación y Tecnología
@@ -187,28 +184,26 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
+        $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
+        $this->db->group_start();
+        $this->db->where('name_bankentity', trim($params['name_bankentity']));
+        $this->db->or_where('abbreviation_bankentity', trim($params['abbreviation_bankentity']));
+        $this->db->or_where('nit_bankentity', trim($params['nit_bankentity']));
+        $this->db->or_where('code_bankentity', trim($params['code_bankentity']));
+        $this->db->or_where('address_bankentity', trim($params['address_bankentity']));
+        $this->db->or_where('contact_bankentity', trim($params['contact_bankentity']));
+        $this->db->or_where('phone_bankentity', trim($params['phone_bankentity']));
+        $this->db->or_where('email_bankentity', trim($params['email_bankentity']));
+        $this->db->group_end();
+
         if (isset($params['pk']))
         {
-            // $this->db->select($params['name']);
-            // $this->db->where('git_company != ', 'G');
-            // $this->db->where('flag_drop', 0);
-            // $this->db->where($params['name'], trim($params['value']));
-            // $this->db->where('id_user !=', $params['pk']);
+            $this->db->where('flag_drop', 0);  
+            $this->db->where('id_bankentity !=', $params['pk']);
         }
         else
         {
-            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
-            $this->db->where('flag_drop', 0);
-            $this->db->group_start();
-            $this->db->where('name_bankentity', trim($params['name_bankentity']));
-            $this->db->or_where('abbreviation_bankentity', trim($params['abbreviation_bankentity']));
-            $this->db->or_where('nit_bankentity', trim($params['nit_bankentity']));
-            $this->db->or_where('code_bankentity', trim($params['code_bankentity']));
-            $this->db->or_where('address_bankentity', trim($params['address_bankentity']));
-            $this->db->or_where('contact_bankentity', trim($params['contact_bankentity']));
-            $this->db->or_where('phone_bankentity', trim($params['phone_bankentity']));
-            $this->db->or_where('email_bankentity', trim($params['email_bankentity']));
-            $this->db->group_end();
+            $this->db->where('flag_drop', 0);  
         }
 
         $query                                                                  =   $this->db->get('fet_bankentities');
@@ -216,12 +211,6 @@ class Bankentities_model extends CI_Model
         if (count($query->result_array()) > 0)
         {
             $message                                                            =   ' alguno de estos datos';
-
-            if (isset($params['pk']))
-            {
-                $params[$params['name']]                                        =   trim($params['value']);
-                unset( $params['name'], $params['value'], $params['pk'] );
-            }
 
             foreach ($query->row_array() as $key => $value) 
             {
@@ -383,14 +372,14 @@ class Bankentities_model extends CI_Model
      * @param     array $params
      * @return    array $result
      **/
-    public function details($params)
+    public function detail($params)
     {
         $result                                                                 =   array();
         $valid_params                                                           =   isset($params['pk']) && isset($params['value']);
 
         if ($valid_params) 
         {
-            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
+            $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
             $this->db->where($params['pk'], $params['value']);
             $this->db->where('flag_drop', 0);
 

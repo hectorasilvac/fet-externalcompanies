@@ -138,7 +138,7 @@
                     </div>
                 {/if}
                 {if $act_edit}
-                    <div id="view_form_edit" class="mg-t-60 d-none" data-form>
+                    <div id="view_form_edit" class="mg-t-60 d-none">
                         <div class="form-layout">
                             <form id="form_edit" method="post" action="{$path_edit}">
                                 <div class="row mg-b-25">
@@ -225,8 +225,8 @@
                         </div>
                     </div>
                 {/if}
-                {if $act_details}
-                    <div id="view_details" class="mg-t-60 d-none">
+                {if $act_detail}
+                    <div id="view_detail" class="mg-t-60 d-none">
                         <table class="table table-bordered border">
                             <tbody>
                                 <tr>
@@ -267,7 +267,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <button id="btn_cancel_details" class="btn btn-secondary">Cerrar</button>
+                        <button id="btn_cancel_detail" class="btn btn-secondary">Cerrar</button>
                     </div>
                 {/if}
                 {if $act_assign}
@@ -338,15 +338,15 @@
         var $path_view                                                          =   '{$path_view}';
         var $path_add                                                           =   '{$path_add}';
         var $path_edit                                                          =   '{$path_edit}';
-        var $path_details                                                       =   '{$path_details}';
+        var $path_detail                                                        =   '{$path_detail}';
         var $path_drop                                                          =   '{$path_drop}';
         var $path_trace                                                         =   '{$path_trace}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
-        var $path_find                                                          =   '{$path_find}';
+        var $path_affiliated_workers                                            =   '{$path_affiliated_workers}';
 
         var act_view                                                            =   '{$act_view}';
         var act_edit                                                            =   '{$act_edit}';
-        var act_details                                                         =   '{$act_details}';
+        var act_detail                                                          =   '{$act_detail}';
         var act_assign                                                          =   '{$act_assign}';
         var act_drop                                                            =   '{$act_drop}';
         var act_trace                                                           =   '{$act_trace}';
