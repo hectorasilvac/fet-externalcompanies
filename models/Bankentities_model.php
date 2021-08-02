@@ -58,7 +58,6 @@ class Bankentities_model extends CI_Model
 
         if ( ! empty($search)) 
         {
-
                 $this->db->group_start();
                 $this->db->like('name_bankentity', $search);
                 $this->db->or_like('nit_bankentity', $search);
@@ -92,9 +91,22 @@ class Bankentities_model extends CI_Model
     public function all_rows($limit, $start, $search, $col, $dir)
     {
         $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
-        // $this->db->select('(Select count (DISTINCT fet_cv.name_cv) from fet_workers join fet_cv on id_cv = fet_cv.id_cv fet_workers where fet_workers.id_bankentiy = fb.id_bankentity) as workers');
-        $this->db->from('fet_bankentities fb');
+        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.name_cv) from fet_workers JOIN fet_cv ON fet_workers.id_cv = fet_cv.id_cv WHERE fet_workers.id_bankentity = fet_bankentities.id_bankentity) as workers');
+        $this->db->from('fet_bankentities');
         $this->db->where('flag_drop', 0);
+
+        
+        // foreach ($banks as $key => $bank) 
+        // {
+        //     $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as workers');
+        //     $this->db->from('fet_workers');
+        //     $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+        //     $this->db->where('fet_workers.id_bankentity', $bank['id_bankentity']);
+            
+        //     $query                                                              = $this->db->get();
+
+        //     $banks[$key]['workers'] = $query->row_array()['workers'];
+        // }
 
         if (!empty($search))
         {
@@ -123,18 +135,6 @@ class Bankentities_model extends CI_Model
                 $count++;
                 $banks[$key]['number']                                          =   $count;
             }
-        }
-
-        foreach ($banks as $key => $bank) 
-        {
-            $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as workers');
-            $this->db->from('fet_workers');
-            $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
-            $this->db->where('fet_workers.id_bankentity', $bank['id_bankentity']);
-            
-            $query                                                              = $this->db->get();
-
-            $banks[$key]['workers'] = $query->row_array()['workers'];
         }
 
         return $banks;
