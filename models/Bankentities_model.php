@@ -185,32 +185,35 @@ class Bankentities_model extends CI_Model
     **/
     public function exist_bank($params)
     {
-        print_r('bancoo');
-        die();
-
         $result                                                                 =   array();
 
         if (isset($params['pk']))
         {
-            $this->db->select($params['name']);
-            $this->db->where('git_company != ', 'G');
-            $this->db->where('flag_drop', 0);
-            $this->db->where($params['name'], trim($params['value']));
-            $this->db->where('id_user !=', $params['pk']);
+            print_r('Pendiente por diligenciar este PK');
+            exit();
+            // $this->db->select($params['name']);
+            // $this->db->where('git_company != ', 'G');
+            // $this->db->where('flag_drop', 0);
+            // $this->db->where($params['name'], trim($params['value']));
+            // $this->db->where('id_user !=', $params['pk']);
         }
         else
         {
-            $this->db->select('email_user, user, id_aspirant');
-            $this->db->where('git_company != ', 'G');
+            $this->db->select('name_bankentity, abbreviation_bankentity, nit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
             $this->db->where('flag_drop', 0);
             $this->db->group_start();
-            $this->db->where('email_user', trim($params['email_user']));
-            $this->db->or_where('user', trim($params['user']));
-            $this->db->or_where('id_aspirant', $params['id_aspirant']);
+            $this->db->where('name_bankentity', trim($params['name_bankentity']));
+            $this->db->or_where('abbreviation_bankentity', trim($params['abbreviation_bankentity']));
+            $this->db->or_where('nit_bankentity', trim($params['nit_bankentity']));
+            $this->db->or_where('code_bankentity', trim($params['code_bankentity']));
+            $this->db->or_where('address_bankentity', trim($params['address_bankentity']));
+            $this->db->or_where('contact_bankentity', trim($params['contact_bankentity']));
+            $this->db->or_where('phone_bankentity', trim($params['phone_bankentity']));
+            $this->db->or_where('email_bankentity', trim($params['email_bankentity']));
             $this->db->group_end();
         }
 
-        $query                                                                  =   $this->db->get('git_users');
+        $query                                                                  =   $this->db->get('fet_bankentities');
 
         if (count($query->result_array()) > 0)
         {
@@ -222,35 +225,27 @@ class Bankentities_model extends CI_Model
                 unset( $params['name'], $params['value'], $params['pk'] );
             }
 
-            foreach ($query->row_array() as $key => $value)
+            foreach ($query->row_array() as $key => $value) 
             {
-                switch ($key)
-                {
-                    case 'email_user':
-                        if ( $value == trim($params['email_user']) )
-                        {
-                            $message                                            =   ' este correo electrónico.';
-                        }
-                        break;
 
-                    case 'user':
-                        if ($value == trim($params['user']))
-                        {
-                            $message                                            =   ' este nombre de usuario.';
-                        }
-                        break;
+                $inputs = [
+                    'name_bankentity'                                           =>  ' este nombre.',
+                    'abbreviation_bankentity'                                   =>  ' esta abreviación.',
+                    'nit_bankentity'                                            =>  ' este NIT.',
+                    'code_bankentity'                                           =>  ' este código.',
+                    'address_bankentity'                                        =>  ' esta dirección.',
+                    'contact_bankentity'                                        =>  ' este contacto.',
+                    'phone_bankentity'                                          =>  ' este teléfono.',
+                    'email_bankentity'                                          =>  ' este correo.',
+                ];
 
-                    case 'id_aspirant':
-                        if ($value == $params['id_aspirant'])
-                        {
-                            $message                                            =   ' este aspirante asignado.';
-                        }
-                        break;
+                if (isset($inputs[$key]) && strtolower($value) == strtolower(trim($params[$key]))) {
+                    $message                                                    =   $inputs[$key];
                 }
             }
 
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Ya existe un usuario con ' . $message;
+            $result['message']                                                  =   'Ya existe un banco con ' . $message;
         }
         else
         {
