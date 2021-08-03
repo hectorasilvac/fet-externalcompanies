@@ -479,6 +479,7 @@ $(function ($) {
   });
 
   // Assign
+  
   $("#default_table").on("click", "a.assign-row", function () {
     $("#view_assign").toggleClass("d-none");
     $("#view_table").toggleClass("d-none");

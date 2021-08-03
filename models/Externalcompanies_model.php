@@ -114,6 +114,48 @@ class Externalcompanies_model extends CI_Model
         exit();
     }
 
+        /**
+     * @author    Innovación y Tecnología
+     * @copyright 2021 Fábrica de Desarrollo
+     * @since     v2.0.1
+     * @param     array $params
+     * @return    array $result
+     **/
+    public function affiliated_workers($params)
+    {
+        $result                                                                 =   array();
+
+        if (isset($params['pk']) && isset($params['value'])) 
+        {
+            $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
+            $this->db->from('fet_cv_we');
+            $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
+            $this->db->where('fet_cv_we.id_cv_ec', $params['value']);
+            $this->db->group_by('fet_cv.number_dcv, full_name');
+
+            $query                                                              =   $this->db->get();
+
+            if (count($query->result_array()) > 0) 
+            {
+                $result['data']                                                 =   $query->result_array();
+                $result['message']                                              =   FALSE;
+            } 
+            else 
+            {
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'No hay usuarios afiliados a esta entidad bancaria.';
+            }
+        }
+        else 
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'No se podido realizar la operación.';
+        }
+
+        return $result;
+        exit();
+    }
+
     /**
      * @author    Innovación y Tecnología
      * @copyright 2021 Fábrica de Desarrollo
@@ -124,11 +166,13 @@ class Externalcompanies_model extends CI_Model
     public function all_rows($limit, $start, $search, $col, $dir)
     {
         $this->db->select('fet_cv_ec.id_cv_ec, fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec');
+        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.name_cv) FROM fet_cv_we JOIN fet_cv ON fet_cv_we.id_cv = fet_cv.id_cv WHERE fet_cv_we.id_cv_ec = fet_cv_ec.id_cv_ec) as aspirants');
         $this->db->from('fet_cv_ec');
         $this->db->where('fet_cv_ec.flag_drop', 0);
         $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
 
-        if (!empty($search)) {
+        if ( ! empty($search)) 
+        {
             $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
             $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
             $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
@@ -153,23 +197,14 @@ class Externalcompanies_model extends CI_Model
 
         $companies                                                              =   $query->result_array();
 
-        if ($this->session->userdata['mobile'] == 0) {
+        if ($this->session->userdata['mobile'] == 0) 
+        {
             $count                                                              =   $start;
-            foreach ($companies as $key => $action) {
+            foreach ($companies as $key => $action) 
+            {
                 $count++;
                 $companies[$key]['number']                                      =   $count;
             }
-        }
-
-
-        foreach ($companies as $key => $company) {
-            $this->db->select('COUNT(DISTINCT fet_cv.name_cv) as aspirants');
-            $this->db->from('fet_cv_we');
-            $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
-            $this->db->where('fet_cv_we.id_cv_ec', $company['id_cv_ec']);
-            $query = $this->db->get();
-
-            $companies[$key]['aspirants'] = $query->row_array()['aspirants'];
         }
 
         return $companies;
@@ -214,6 +249,160 @@ class Externalcompanies_model extends CI_Model
             $result['items']                                                    =   $query->result_array();
         } else {
             $result['items']                                                    =   array();
+        }
+
+        return $result;
+        exit();
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function countries_select($params)
+    {
+        $result                                                                 =   array();
+
+        $page                                                                   =   $params['page'];
+        $range                                                                  =   10;
+
+        $start                                                                  =   ($page - 1) * $range;
+        $limit                                                                  =   $start + $range;
+
+        $this->db->select('id_country AS id, name_country AS text');
+        $this->db->where('flag_drop', 0);
+
+        if (isset($params['q']) && $params['q'] != '')
+        {
+            $this->db->like('name_country', $params['q']);
+        }
+
+        $this->db->order_by('id_country', 'asc');
+        $this->db->limit($limit, $start);
+
+        $query                                                                  =   $this->db->get('git_countries');
+
+        $result['total_count']                                                  =   $query->num_rows();
+
+        if ($result['total_count'] > 0)
+        {
+            $result['items']                                                    =   $query->result_array();
+        }
+        else
+        {
+            $result['items']                                                    =   array();
+        }
+
+        return $result;
+        exit();
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function departments_select($params)
+    {
+        $result                                                                 =   array();
+
+        $page                                                                   =   $params['page'];
+        $range                                                                  =   10;
+
+        $start                                                                  =   ($page - 1) * $range;
+        $limit                                                                  =   $start + $range;
+
+        if (isset($params['country']) && $params['country'] != '')
+        {
+            $this->db->select('id_department AS id, name_department AS text');
+            $this->db->where('flag_drop', 0);
+            $this->db->where('id_country', $params['country']);
+
+            if (isset($params['q']) && $params['q'] != '')
+            {
+                $this->db->like('name_department', $params['q']);
+            }
+
+            $this->db->order_by('id_department', 'asc');
+            $this->db->limit($limit, $start);
+
+            $query                                                              =   $this->db->get('git_departments');
+
+            $result['total_count']                                              =   $query->num_rows();
+
+            if ($result['total_count'] > 0)
+            {
+                $result['items']                                                =   $query->result_array();
+            }
+            else
+            {
+                $result['items']                                                =   array();
+            }
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Por favor ingresa el país.';
+        }
+        
+
+        return $result;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function cities_select($params)
+    {
+        $result                                                                 =   array();
+
+        $page                                                                   =   $params['page'];
+        $range                                                                  =   10;
+
+        $start                                                                  =   ($page - 1) * $range;
+        $limit                                                                  =   $start + $range;
+
+        if (isset($params['department']) && $params['department'] != '')
+        {
+            $this->db->select('id_city AS id, name_city AS text');
+            $this->db->where('flag_drop', 0);
+            $this->db->where('id_department', $params['department']);
+
+            if (isset($params['q']) && $params['q'] != '')
+            {
+                $this->db->like('name_city', $params['q']);
+            }
+
+            $this->db->order_by('id_city', 'asc');
+            $this->db->limit($limit, $start);
+
+            $query                                                              =   $this->db->get('git_cities');
+
+            $result['total_count']                                              =   $query->num_rows();
+
+            if ($result['total_count'] > 0)
+            {
+                $result['items']                                                =   $query->result_array();
+            }
+            else
+            {
+                $result['items']                                                =   array();
+            }
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'Por favor ingresa el departamento.';
         }
 
         return $result;
@@ -512,6 +701,9 @@ class Externalcompanies_model extends CI_Model
         $result                                                                 =   array();
         $data                                                                   =   array();
 
+        // print_r($params);
+        // die();
+
         if (count($params) >= 2) 
         {
 
@@ -523,7 +715,7 @@ class Externalcompanies_model extends CI_Model
             if ($value_is_valid) {
                 $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']         =   mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
                 $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']          =   $params['value']                                                      : NULL;
-                $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']         =   $this->_trabajandofet_model->user_name($params['value'])              : NULL;
+                $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']         =   $this->_trabajandofet_model->accents($params['value'])              : NULL;
                 $params['name'] == 'email_cv_ec' ?  $data['email_cv_ec']        =   $this->_trabajandofet_model->user_name($params['value'])              : NULL;
                 $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']        =   $params['value'] : NULL;
 
@@ -575,15 +767,14 @@ class Externalcompanies_model extends CI_Model
      * @copyright 2021 Fábrica de Desarrollo
      * @since     v2.0.1
      * @param     array $params
-     * @return    array $result
      **/
-    public function details($params)
+    public function detail($params)
     {
         $result                                                                 =   array();
-        $valid_params                                                           =   isset($params['pk']) && isset($params['value']);
 
-        if ($valid_params) {
-            $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
+        if (isset($params['pk']) && isset($params['value']))
+        {
+            $this->db->select('fet_cv_ec.id_cv_ec, fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country AS text_country_cv_ec, git_countries.id_country AS country_cv_ec, git_departments.name_department AS text_department_cv_ec, git_departments.id_department AS department_cv_ec, git_cities.name_city AS text_city_cv_ec, git_cities.id_city AS city_cv_ec');
             $this->db->from('fet_cv_ec');
             $this->db->join('git_countries', 'git_countries.id_country = fet_cv_ec.country_cv_ec');
             $this->db->join('git_departments', 'git_departments.id_department = fet_cv_ec.department_cv_ec');
@@ -622,29 +813,45 @@ class Externalcompanies_model extends CI_Model
      **/
     public function udrop($param)
     {
-        $data                                                                   =   array(
-            'id'                                                                        =>  $param['id_cv_ec'],
-            'flag_drop'                                                                 =>  1,
-            'user_update'                                                               =>  $this->session->userdata['id_user'],
-            'date_update'                                                               =>  date('Y-m-d H:i:s')
-        );
+        $this->db->select('id_cv_ec');
+        $this->db->where('id_cv_ec', $param['id_cv_ec']);
+        $query                                                                  =   $this->db->get('fet_cv_we');
+        $affiliated_workers                                                     =   count($query->result_array()) > 0;
 
-        $result                                                                 =   array();
+        if ( ! $affiliated_workers) 
+        {
+            $data                                                                   =   array(
+                'id'                                                                        =>  $param['id_cv_ec'],
+                'flag_drop'                                                                 =>  1,
+                'user_update'                                                               =>  $this->session->userdata['id_user'],
+                'date_update'                                                               =>  date('Y-m-d H:i:s')
+            );
 
-        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+            $result                                                                 =   array();
 
-        if ($answer) {
-            $data_history                                                       =   $data;
-            $data_history['id_cv_ec']                                           =   $data_history['id'];
-            unset($data_history['id']);
+            $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+            if ($answer) 
+            {
+                $data_history                                                       =   $data;
+                $data_history['id_cv_ec']                                           =   $data_history['id'];
+                unset($data_history['id']);
 
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   'Acción realizada con éxito!';
-        } else {
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+
+                $result['data']                                                     =   TRUE;
+                $result['message']                                                  =   'Acción realizada con éxito!';
+            } 
+            else 
+            {
+                $result['data']                                                     =   FALSE;
+                $result['message']                                                  =   'Problemas al eliminar la empresa.';
+            }
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Problemas al eliminar la empresa.';
+            $result['message']                                                  =   'No es posible eliminar la empresa porque tiene trabajadores afiliados.';
         }
 
         return $result;

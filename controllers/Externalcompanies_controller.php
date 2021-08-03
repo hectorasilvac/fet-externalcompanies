@@ -70,7 +70,7 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('act_view',                                    in_array('VIEW', $this->actions));
             $this->_view->assign('act_add',                                     in_array('ADD', $this->actions));
             $this->_view->assign('act_edit',                                    in_array('EDIT', $this->actions));
-            $this->_view->assign('act_details',                                 in_array('DETAILS', $this->actions));
+            $this->_view->assign('act_detail',                                  in_array('DETAILS', $this->actions));
             $this->_view->assign('act_assign',                                  in_array('ASSIGN', $this->actions));
             $this->_view->assign('act_drop',                                    in_array('UDROP', $this->actions));
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
@@ -79,11 +79,17 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('path_view',                                   site_url('externalcompanies/datatable'));
             $this->_view->assign('path_add',                                    site_url('externalcompanies/add'));
             $this->_view->assign('path_edit',                                   site_url('externalcompanies/edit'));
-            $this->_view->assign('path_details',                                site_url('externalcompanies/details'));
+            $this->_view->assign('path_detail',                                 site_url('externalcompanies/detail'));
             $this->_view->assign('path_drop',                                   site_url('externalcompanies/udrop'));
             $this->_view->assign('path_trace',                                  site_url('externalcompanies/trace'));
             $this->_view->assign('path_display',                                site_url('externalcompanies/display'));
             $this->_view->assign('path_export_xlsx',                            site_url('externalcompanies/exportxlsx'));
+            $this->_view->assign('path_countries',                              site_url('externalcompanies/countries'));
+            $this->_view->assign('path_departments',                            site_url('externalcompanies/departments'));
+            $this->_view->assign('path_cities',                                 site_url('externalcompanies/cities'));
+            $this->_view->assign('path_affiliated_workers',                     site_url('externalcompanies/affiliatedworkers'));
+
+
             $this->_view->assign('path_location',                               site_url('externalcompanies/location'));
             $this->_view->assign('path_find',                                   site_url('externalcompanies/find'));
 
@@ -166,6 +172,154 @@ class Externalcompanies_controller extends CI_Controller
         }
     }
 
+       /**
+    *@author    Innovación y Tecnología
+    *@copyright 2021 Fabrica de Desarrollo
+    *@since     v2.0.1
+    *@param     array $params
+    *@return    json array
+    **/
+    public function countries()
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $countries                                                          =   $this->_externalcompanies_model->countries_select($params);
+
+            echo json_encode($countries);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('cv'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function affiliated_workers()
+    {
+        if (in_array('VIEW', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                $affiliated_workers                                             =   $this->_externalcompanies_model->affiliated_workers($params);
+
+                echo json_encode($affiliated_workers);
+                exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('externalcompanies'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        } 
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('externalcompanies'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    *@author    Innovación y Tecnología
+    *@copyright 2021 Fabrica de Desarrollo
+    *@since     v2.0.1
+    *@param     array $params
+    *@return    json array
+    **/
+    public function departments()
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $departments                                                        =   $this->_externalcompanies_model->departments_select($params);
+
+            echo json_encode($departments);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('cv'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    *@author    Innovación y Tecnología
+    *@copyright 2021 Fabrica de Desarrollo
+    *@since     v2.0.1
+    *@param     array $params
+    *@return    json array
+    **/
+    public function cities()
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $cities                                                             =   $this->_externalcompanies_model->cities_select($params);
+
+            echo json_encode($cities);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('cv'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
@@ -232,7 +386,7 @@ class Externalcompanies_controller extends CI_Controller
     * @param     array $params
     * @return    json array
     **/
-    public function details()
+    public function detail()
     {
         if(in_array('DETAILS', $this->actions))
         {
@@ -240,9 +394,9 @@ class Externalcompanies_controller extends CI_Controller
 
             if ($params)
             {
-                    $details                                                    =   $this->_externalcompanies_model->details($params);
+                    $detail                                                    =   $this->_externalcompanies_model->detail($params);
 
-                    echo json_encode($details);
+                    echo json_encode($detail);
                     exit();
             }
             else
@@ -336,7 +490,8 @@ class Externalcompanies_controller extends CI_Controller
         {
             $params                                                             =   $this->security->xss_clean($_POST);
 
-            if ($params) {
+            if ($params) 
+            {
                 if (isset($params['name']) && $params['name'] != '' && $params['name'] != null) 
                 {
                     $exist_company                                              =   $this->_externalcompanies_model->exist_company($params);

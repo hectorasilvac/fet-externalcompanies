@@ -173,7 +173,7 @@ class Bankentities_model extends CI_Model
     }
     
 
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1

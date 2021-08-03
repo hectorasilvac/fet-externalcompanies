@@ -61,7 +61,7 @@
                 {if $act_add}
                     <div id="view_form_add" class="mg-t-60 d-none">
                         <div class="form-layout">
-                            <form id="form_add" method="post">
+                            <form id="form_add" method="post" action="{$path_add}">
                                 <div class="row mg-b-25">
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
@@ -83,8 +83,8 @@
                                             <label class="form-control-label">Tipo de empresa: </label>
                                             <select class="form-control" id="type_cv_ec" name="type_cv_ec">
                                                 <option value="" disabled selected>Selecciona tipo de empresa</option>
-                                                <option value="PUBLICA">Pública</option>
-                                                <option value="PRIVADA">Privada</option>
+                                                <option value="Pública">Pública</option>
+                                                <option value="Privada">Privada</option>
                                             </select>
                                         </div>
                                     </div>
@@ -134,7 +134,7 @@
                                     </div>
                                 </div>
                                 </div>
-                                <button id="btn_confirm_add" class="btn btn-info">Agregar</button>
+                                <button id="btn_confirm_add"  type="button" class="btn btn-info">Agregar</button>
                                 <button id="btn_cancel_add" type="button" class="btn btn-secondary">Cancelar</button>
                             </form>
                         </div>
@@ -204,8 +204,8 @@
                         </div>
                     </div>
                 {/if}
-                {if $act_details}
-                    <div id="view_details" class="mg-t-60 d-none">
+                {if $act_detail}
+                    <div id="view_detail" class="mg-t-60 d-none">
                         <table class="table table-bordered border">
                             <tbody>
                                 <tr>
@@ -234,19 +234,19 @@
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">País</th>
-                                    <td class="col-10" data-name="country_cv_ec"></td>
+                                    <td class="col-10" data-name="text_country_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Departamento</th>
-                                    <td class="col-10" data-name="department_cv_ec"></td>
+                                    <td class="col-10" data-name="text_department_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Ciudad</th>
-                                    <td class="col-10" data-name="city_cv_ec"></td>
+                                    <td class="col-10" data-name="text_city_cv_ec"></td>
                                 </tr>
                             </tbody>
                         </table>
-                        <button id="btn_cancel_details" class="btn btn-secondary">Cerrar</button>
+                        <button id="btn_cancel_detail" class="btn btn-secondary">Cerrar</button>
                     </div>
                 {/if}
                 {if $act_assign}
@@ -278,7 +278,7 @@
                 <div class="card bd-0">
                     <div class="card-body bd bd-t-0 rounded-bottom-0">
                         <br />
-                        <p class="mg-b-0"> Seguro que deseas eliminar esta empresa?</p>
+                        <p class="mg-b-0"> ¿Seguro que deseas eliminar esta empresa?</p>
                         <br />
                     </div>
                     <div class="card-footer bd bd-t-0 d-flex justify-content-between">
@@ -317,16 +317,22 @@
         var $path_view                                                          =   '{$path_view}';
         var $path_add                                                           =   '{$path_add}';
         var $path_edit                                                          =   '{$path_edit}';
-        var $path_details                                                       =   '{$path_details}';
+        var $path_detail                                                        =   '{$path_detail}';
         var $path_drop                                                          =   '{$path_drop}';
         var $path_trace                                                         =   '{$path_trace}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
+        var $path_countries                                                     =   '{$path_countries}';
+        var $path_departments                                                   =   '{$path_departments}';
+        var $path_cities                                                        =   '{$path_cities}';
+        var $path_affiliated_workers                                            =   '{$path_affiliated_workers}';
+
+
         var $path_find                                                          =   '{$path_find}';
         var $path_location                                                      =   '{$path_location}';
 
         var act_view                                                            =   '{$act_view}';
         var act_edit                                                            =   '{$act_edit}';
-        var act_details                                                         =   '{$act_details}';
+        var act_detail                                                          =   '{$act_detail}';
         var act_assign                                                          =   '{$act_assign}';
         var act_drop                                                            =   '{$act_drop}';
         var act_trace                                                           =   '{$act_trace}';

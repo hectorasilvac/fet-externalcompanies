@@ -209,9 +209,18 @@ $route['externalcompanies/udrop']                                               
 
 $route['externalcompanies/trace']                                               =   'externalcompanies_controller/trace';
 
-$route['externalcompanies/details']                                             =   'externalcompanies_controller/details';
+$route['externalcompanies/detail']                                             =   'externalcompanies_controller/detail';
 
 $route['externalcompanies/exportxlsx']                                          =   'externalcompanies_controller/export_xlsx';
+
+$route['externalcompanies/countries']                                           =   'externalcompanies_controller/countries';
+
+$route['externalcompanies/departments']                                         =   'externalcompanies_controller/departments';
+
+$route['externalcompanies/cities']                                              =   'externalcompanies_controller/cities';
+
+$route['externalcompanies/affiliatedworkers']                                   =   'externalcompanies_controller/affiliated_workers';
+
 
 // ENTIDADES BANCARIAS
 
