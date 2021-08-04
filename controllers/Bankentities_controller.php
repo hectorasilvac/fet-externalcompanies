@@ -351,7 +351,7 @@ class Bankentities_controller extends CI_Controller
             {
                 if ($this->input->method(TRUE) == 'GET')
                 {
-                    header("Location: " . site_url('bankentities'));
+                    header("Location: " . site_url('users'));
                 }
                 else
                 {
@@ -365,7 +365,7 @@ class Bankentities_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('bankentities'));
+                header("Location: " . site_url('users'));
             }
             else
             {

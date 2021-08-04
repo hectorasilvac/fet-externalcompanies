@@ -326,10 +326,6 @@
         var $path_cities                                                        =   '{$path_cities}';
         var $path_affiliated_workers                                            =   '{$path_affiliated_workers}';
 
-
-        var $path_find                                                          =   '{$path_find}';
-        var $path_location                                                      =   '{$path_location}';
-
         var act_view                                                            =   '{$act_view}';
         var act_edit                                                            =   '{$act_edit}';
         var act_detail                                                          =   '{$act_detail}';

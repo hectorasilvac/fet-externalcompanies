@@ -82,17 +82,11 @@ class Externalcompanies_controller extends CI_Controller
             $this->_view->assign('path_detail',                                 site_url('externalcompanies/detail'));
             $this->_view->assign('path_drop',                                   site_url('externalcompanies/udrop'));
             $this->_view->assign('path_trace',                                  site_url('externalcompanies/trace'));
-            $this->_view->assign('path_display',                                site_url('externalcompanies/display'));
             $this->_view->assign('path_export_xlsx',                            site_url('externalcompanies/exportxlsx'));
             $this->_view->assign('path_countries',                              site_url('externalcompanies/countries'));
             $this->_view->assign('path_departments',                            site_url('externalcompanies/departments'));
             $this->_view->assign('path_cities',                                 site_url('externalcompanies/cities'));
             $this->_view->assign('path_affiliated_workers',                     site_url('externalcompanies/affiliatedworkers'));
-
-
-            $this->_view->assign('path_location',                               site_url('externalcompanies/location'));
-            $this->_view->assign('path_find',                                   site_url('externalcompanies/find'));
-
 
             $this->_view->display('admin/externalcompanies.tpl');
         }
@@ -427,55 +421,6 @@ class Externalcompanies_controller extends CI_Controller
             exit();  
         }
     }
-    
-    /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fabrica de Desarrollo
-    * @since     v2.0.1
-    * @param     array $params
-    * @return    json array
-    **/
-    public function find_by_id()
-    {
-        if (in_array('VIEW', $this->actions))
-        {
-            $params                                                             =   $this->security->xss_clean($_POST);
-
-            if ($params)
-            {
-                $find                                                           =   $this->_externalcompanies_model->find_by_id($params);
-
-                echo json_encode($find);
-                exit();
-            }
-            else
-            {
-                if ($this->input->method(TRUE) == 'GET')
-                {
-                    header("Location: " . site_url('users'));
-                }
-                else
-                {
-                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
-                }
-
-                exit();
-            }
-        } 
-        else
-        {
-            if ($this->input->method(TRUE) == 'GET')
-            {
-                header("Location: " . site_url('users'));
-            }
-            else
-            {
-                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
-            }
-
-            exit();
-        }
-    }
 
     /**
     * @author    Innovación y Tecnología
@@ -540,63 +485,6 @@ class Externalcompanies_controller extends CI_Controller
             else 
             {
                 echo json_encode(array('data' => FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
-            }
-
-            exit();
-        }
-    }
-
-    /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fabrica de Desarrollo
-    * @since     v2.0.1
-    * @param     
-    * @return    json array
-    **/
-    public function location()
-    {
-        $params                                                                 =   $this->security->xss_clean($_GET);
-        $table_name                                                             =   $params['name'];
-
-        $tables = [
-            'countries' => [
-                'name'                                                          =>  'git_countries',
-                'id'                                                            =>  'id_country',
-                'text'                                                          =>  'name_country',
-            ],
-            'departments' => [
-                'name'                                                          =>  'git_departments',
-                'id'                                                            =>  'id_department',
-                'text'                                                          =>  'name_department',
-            ],
-            'cities' => [
-                'name'                                                          =>  'git_cities',
-                'id'                                                            =>  'id_city',
-                'text'                                                          =>  'name_city',
-            ],
-        ];
-
-        if (count($tables[$table_name]) > 0 && $params['parentId'] != 0 && strlen($params['parentName']) > 0)
-        {
-            $parent_table_name                                                  =   $params['parentName'];
-            $location                                                           =   $this->_externalcompanies_model->location_select($params, $tables[$table_name], $tables[$parent_table_name]);
-            
-            echo json_encode($location);
-            exit();
-        }
-
-        if (count($tables[$table_name]) > 0) {
-            $location                                                           =   $this->_externalcompanies_model->location_select($params, $tables[$table_name]);
-
-            echo json_encode($location);
-            exit();
-        } 
-        else 
-        {
-            if ($this->input->method(TRUE) == 'GET') {
-                header("Location: " . site_url('externalcompanies'));
-            } else {
-                echo json_encode(array('data' => FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
             }
 
             exit();

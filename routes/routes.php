@@ -201,10 +201,6 @@ $route['externalcompanies/add']                                                 
 
 $route['externalcompanies/edit']                                                =   'externalcompanies_controller/edit';
 
-$route['externalcompanies/find']                                                =   'externalcompanies_controller/find_by_id';
-
-$route['externalcompanies/location']                                            =   'externalcompanies_controller/location';
-
 $route['externalcompanies/udrop']                                               =   'externalcompanies_controller/udrop';
 
 $route['externalcompanies/trace']                                               =   'externalcompanies_controller/trace';
