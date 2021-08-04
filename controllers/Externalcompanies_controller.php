@@ -130,13 +130,11 @@ class Externalcompanies_controller extends CI_Controller
                                                                                     );
             }
 
-            $draw                                                               =   $this->input->post('draw');
             $limit                                                              =   $this->input->post('length');
             $start                                                              =   $this->input->post('start');
             $search                                                             =   $this->input->post('search')['value'];
             $order                                                              =   $columns[$this->input->post('order')[0]['column']];
             $dir                                                                =   $this->input->post('order')[0]['dir'];
-            $filtered_columns                                                   =   $this->input->post('columns');
 
             $count_rows                                                         =   $this->_externalcompanies_model->count_rows($search);
             $all_rows                                                           =   $this->_externalcompanies_model->all_rows($limit, $start, $search, $order, $dir);
@@ -188,7 +186,7 @@ class Externalcompanies_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('cv'));
+                header("Location: " . site_url('externalcompanies'));
             }
             else
             {
@@ -270,7 +268,7 @@ class Externalcompanies_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('cv'));
+                header("Location: " . site_url('externalcompanies'));
             }
             else
             {
@@ -303,7 +301,7 @@ class Externalcompanies_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('cv'));
+                header("Location: " . site_url('externalcompanies'));
             }
             else
             {
@@ -388,7 +386,7 @@ class Externalcompanies_controller extends CI_Controller
 
             if ($params)
             {
-                    $detail                                                    =   $this->_externalcompanies_model->detail($params);
+                    $detail                                                     =   $this->_externalcompanies_model->detail($params);
 
                     echo json_encode($detail);
                     exit();

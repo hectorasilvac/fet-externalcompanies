@@ -143,7 +143,7 @@ class Externalcompanies_model extends CI_Model
             else 
             {
                 $result['data']                                                 =   FALSE;
-                $result['message']                                              =   'No hay usuarios afiliados a esta entidad bancaria.';
+                $result['message']                                              =   'No hay usuarios afiliados a esta empresa.';
             }
         }
         else 
