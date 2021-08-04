@@ -58,52 +58,29 @@ class Externalcompanies_model extends CI_Model
 
         $result['total']                                                        =   $this->db->count_all_results();
 
-        if (isset($search) && !empty($search)) 
+        if (!empty($search)) 
         {
             $this->db->select('fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, fet_cv_ec.type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec, fet_cv_ec.address_cv_ec, git_countries.name_country, git_departments.name_department, git_cities.name_city');
             $this->db->join('git_countries', 'fet_cv_ec.country_cv_ec = git_countries.id_country');
             $this->db->join('git_departments', 'fet_cv_ec.department_cv_ec = git_departments.id_department');
             $this->db->join('git_cities', 'fet_cv_ec.city_cv_ec = git_cities.id_city');
 
-            if (is_array($search) && count($search) > 0) 
-            {
-                $this->db->like($search[0]['name'], $search[0]['value']);
-                $search_data                                                        = [];
+            $this->db->group_start();
+            $this->db->like('fet_cv_ec.name_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
+            $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
+            $this->db->or_like('git_countries.name_country', $search);
+            $this->db->or_like('git_cities.name_city', $search);
+            $this->db->group_end();
 
-                $this->db->group_start();
-                foreach ($search as $element) 
-                {
-                    $name = $element['name'];
-                    $value = $element['value'];
-                    $search_data[$name] = $value;
-                }
+            $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
+            $this->db->where('fet_cv_ec.flag_drop', 0);
+            $this->db->from('fet_cv_ec');
 
-                $this->db->or_like($search_data);
-                $this->db->group_end();
-                $this->db->from('fet_cv_ec');
-                $this->db->where('fet_cv_ec.flag_drop', 0);
-
-                $result['total_filtered']                                           =   $this->db->count_all_results();
-            } 
-            else 
-            {
-                $this->db->group_start();
-                $this->db->like('fet_cv_ec.name_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.type_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.email_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.phone_cv_ec', $search);
-                $this->db->or_like('fet_cv_ec.address_cv_ec', $search);
-                $this->db->or_like('git_countries.name_country', $search);
-                $this->db->or_like('git_cities.name_city', $search);
-                $this->db->group_end();
-
-                $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
-                $this->db->where('fet_cv_ec.flag_drop', 0);
-                $this->db->from('fet_cv_ec');
-
-                $result['total_filtered']                                           =   $this->db->count_all_results();
-            }
+            $result['total_filtered']                                           =   $this->db->count_all_results();
         } 
         else 
         {
@@ -424,6 +401,7 @@ class Externalcompanies_model extends CI_Model
 
                 $select_query                                                   =   rtrim(trim($select_query), ',');
                 $where_clauses                                                  =   rtrim(trim($where_clauses), 'OR');
+
                 $this->db->select($select_query);
                 $this->db->where($where_clauses);
                 $this->db->where('flag_drop', 0);
@@ -703,32 +681,32 @@ class Externalcompanies_model extends CI_Model
 
         if ( ! $affiliated_workers) 
         {
-            $data                                                                   =   array(
-                'id'                                                                        =>  $param['id_cv_ec'],
-                'flag_drop'                                                                 =>  1,
-                'user_update'                                                               =>  $this->session->userdata['id_user'],
-                'date_update'                                                               =>  date('Y-m-d H:i:s')
-            );
+            $data                                                               =   array(
+                'id'                                                                      =>  $param['id_cv_ec'],
+                'flag_drop'                                                               =>  1,
+                'user_update'                                                             =>  $this->session->userdata['id_user'],
+                'date_update'                                                             =>  date('Y-m-d H:i:s')
+                                                                                          );
 
-            $result                                                                 =   array();
+            $result                                                             =   array();
 
-            $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
 
             if ($answer) 
             {
-                $data_history                                                       =   $data;
-                $data_history['id_cv_ec']                                           =   $data_history['id'];
+                $data_history                                                   =   $data;
+                $data_history['id_cv_ec']                                       =   $data_history['id'];
                 unset($data_history['id']);
 
                 $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
 
-                $result['data']                                                     =   TRUE;
-                $result['message']                                                  =   'Acción realizada con éxito!';
+                $result['data']                                                 =   TRUE;
+                $result['message']                                              =   'Acción realizada con éxito!';
             } 
             else 
             {
-                $result['data']                                                     =   FALSE;
-                $result['message']                                                  =   'Problemas al eliminar la empresa.';
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Problemas al eliminar la empresa.';
             }
         } 
         else 
@@ -755,13 +733,17 @@ class Externalcompanies_model extends CI_Model
         $result['data']                                                         =   $this->_trabajandofet_model->trace_register('fet_cv_ec', 'id_cv_ec', $param['id_cv_ec']);
         $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('fet_cv_ec_history', 'id_cv_ec', $param['id_cv_ec']);
 
-        if (count($result['data']) > 0) {
+        if (count($result['data']) > 0) 
+        {
             $result['message']                                                  =   FALSE;
 
-            if (count($result['data_global']) == 0) {
+            if (count($result['data_global']) == 0) 
+            {
                 $result['data_global']                                          =   FALSE;
             }
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['data_global']                                              =   FALSE;
             $result['message']                                                  =   'No hay histórico de este registro.';
@@ -787,7 +769,8 @@ class Externalcompanies_model extends CI_Model
         $this->db->where('fet_cv_ec.flag_drop', 0);
         $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
 
-        if (!empty($search)) {
+        if ( ! empty($search)) 
+        {
             $this->db->group_start();
             $this->db->like('fet_cv_ec.name_cv_ec', $search);
             $this->db->or_like('fet_cv_ec.nit_cv_ec', $search);
@@ -807,9 +790,12 @@ class Externalcompanies_model extends CI_Model
 
         $result['data']                                                         =   $query->result_array();
 
-        if (count($result['data']) > 0) {
+        if (count($result['data']) > 0) 
+        {
             $result['message']                                                  =   FALSE;
-        } else {
+        } 
+        else 
+        {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'No hay usuarios para exportar.';
         }

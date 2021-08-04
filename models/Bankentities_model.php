@@ -54,6 +54,7 @@ class Bankentities_model extends CI_Model
 
         $this->db->where('flag_drop', 0);
         $this->db->from('fet_bankentities');
+
         $result['total']                                                        =   $this->db->count_all_results();
 
         if ( ! empty($search)) 
@@ -68,8 +69,10 @@ class Bankentities_model extends CI_Model
             $this->db->or_like('phone_bankentity', $search);
             $this->db->or_like('email_bankentity', $search);
             $this->db->group_end();
+
             $this->db->where('flag_drop', 0);
             $this->db->from('fet_bankentities');
+            
             $result['total_filtered']                                       =   $this->db->count_all_results();
         } 
         else 
