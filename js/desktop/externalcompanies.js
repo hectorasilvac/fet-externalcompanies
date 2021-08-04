@@ -123,18 +123,18 @@ $(function ($) {
         }
       }
 
-      if (act_edit) {
         if (act_edit) {
           $("#default_table td span[data-type='text']").editable({
             emptytext: "Vacío",
             validate: function (value) {
               switch ($(this).attr("data-name")) {
+
                 case "name_cv_ec":
                   if (value.length < 3)
                     return "Mínimo se permiten 3 caracteres.";
                   if (value.length > 50)
                     return "Solo se permiten 50 caracteres.";
-                  if (value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
+                  if (!value.match(/^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/))
                     return "Solo se permiten letras.";
                   if (value === null || value.trim() === "")
                     return "Campo obligatorio.";
@@ -170,15 +170,16 @@ $(function ($) {
             emptytext: "Vacío",
             validate: function (value) {
               switch ($(this).attr("data-name")) {
+                
                 case "nit_cv_ec":
-                  if (!value === null || value.trim() !== "") {
                     if (value.length > 10)
                       return "Solo se permiten 10 caracteres.";
                     if (value.length < 10)
                       return "Solo se permiten 10 caracteres.";
                     if (!value.match(/^[0-9]+$/))
                       return "Solo se permiten números.";
-                  }
+                    if (value === null || value.trim() === "")
+                      return "Campo obligatorio.";
                   break;
 
                 case "phone_cv_ec":
@@ -233,9 +234,30 @@ $(function ($) {
             },
           });
         }
-      }
     },
   });
+
+  jQuery.validator.addMethod(
+    "lettersonly_es",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
+      );
+    },
+    "Este campo no puede contener números."
+  );
+
+  jQuery.validator.addMethod(
+    "email",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^\S+@\S+\.\S+\D$/.test(value)
+      );
+    },
+    "Ingresa una cuenta válida de correo."
+  );
 
   var validate = $("#form_add").validate({
     rules: {
@@ -249,6 +271,7 @@ $(function ($) {
         digits: true,
         minlength: 10,
         maxlength: 10,
+        required: true,
       },
       type_cv_ec: {
         required: true,
@@ -286,7 +309,7 @@ $(function ($) {
         maxlength: "Solo se permiten 50 caracteres.",
       },
       nit_cv_ec: {
-        digits: "Por favor ingresa el NIT.",
+        required: "Por favor ingresa el NIT.",
         minlength: "Solo se permiten 10 caracteres.",
         maxlength: "Solo se permiten 10 caracteres.",
         digits: "Solo se permiten números.",

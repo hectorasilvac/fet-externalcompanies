@@ -437,28 +437,18 @@ class Externalcompanies_controller extends CI_Controller
 
             if ($params) 
             {
-                if (isset($params['name']) && $params['name'] != '' && $params['name'] != null) 
-                {
-                    $exist_company                                              =   $this->_externalcompanies_model->exist_company($params);
+                $exist_company                                                  =   $this->_externalcompanies_model->exist_company($params);
 
-                    if ($exist_company['data']) 
-                    {
-                        $edit                                                   =   $this->_externalcompanies_model->edit($params);
-
-                        echo json_encode($edit);
-                        exit();
-                    } 
-                    else 
-                    {
-                        echo json_encode($exist_company);
-                        exit();
-                    }
-                } 
-                else 
+                if ($exist_company['data']) 
                 {
                     $edit                                                       =   $this->_externalcompanies_model->edit($params);
 
                     echo json_encode($edit);
+                    exit();
+                } 
+                else 
+                {
+                    echo json_encode($exist_company);
                     exit();
                 }
             } 

@@ -72,8 +72,7 @@
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
-                                            <label class="form-control-label">NIT de la empresa: <span
-                                                    class="tx-primary tx-10">(Opcional)</span></label>
+                                            <label class="form-control-label">NIT de la empresa: </label>
                                             <input class="form-control" type="text" id="nit_cv_ec" name="nit_cv_ec"
                                                 placeholder="Ingresa el NIT de la empresa" autocomplete="off">
                                         </div>

@@ -376,119 +376,126 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['pk']))
+        $exceptions                                                             =   (isset($params['name']) && $params['name'] === 'type_cv_ec') || 
+                                                                                    (isset($params['value']) && strlen(trim($params['value'])) === 0) || 
+                                                                                    (isset($params['address_cv_ec']) && strlen(trim($params['address_cv_ec'])) === 0);
+
+        if ( ! $exceptions) 
         {
-            if ($params['name'] !== 'type_cv_ec') 
+            if (isset($params['pk']) && isset($params['name'])) 
             {
                 $this->db->select($params['name']);
                 $this->db->where($params['name'], trim($params['value']));
+            }
+            else 
+            {
+                $select_query                                                   =   '';
+                $where_clauses                                                  =   '';
+
+                if (isset($params['name_cv_ec']) && strlen($params['name_cv_ec']) > 0) 
+                {
+                    $select_query                                               .=  'name_cv_ec, ';
+                    $where_clauses                                              .=  "name_cv_ec = '{$params["name_cv_ec"]}' OR ";
+                }
+
+                if (isset($params['nit_cv_ec']) && strlen($params['nit_cv_ec']) > 0) 
+                {
+                    $select_query                                               .=  'nit_cv_ec, ';
+                    $where_clauses                                              .=  "nit_cv_ec = '{$params["nit_cv_ec"]}' OR ";
+                }
+
+                if (isset($params['email_cv_ec']) && strlen($params['email_cv_ec']) > 0) 
+                {
+                    $select_query                                               .=  'email_cv_ec, ';
+                    $where_clauses                                              .=  "email_cv_ec = '{$params["email_cv_ec"]}' OR ";
+                }
+
+                if (isset($params['phone_cv_ec']) && strlen($params['phone_cv_ec']) > 0) 
+                {
+                    $select_query                                               .=  'phone_cv_ec, ';
+                    $where_clauses                                              .=  "phone_cv_ec = '{$params["phone_cv_ec"]}' OR ";
+                }
+
+                if (isset($params['address_cv_ec']) && strlen($params['address_cv_ec']) > 0) 
+                {
+                    $select_query                                               .=  'address_cv_ec, ';
+                    $where_clauses                                              .=  "address_cv_ec = '{$params["address_cv_ec"]}' OR ";
+                }
+
+                $select_query                                                   =   rtrim(trim($select_query), ',');
+                $where_clauses                                                  =   rtrim(trim($where_clauses), 'OR');
+                $this->db->select($select_query);
+                $this->db->where($where_clauses);
                 $this->db->where('flag_drop', 0);
                 $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
-                $this->db->where('id_cv_ec !=', $params['pk']);
-            } 
-        } 
-        else 
-        {
-             $select_query                                                      =   '';
-             $where_clauses                                                     =   '';
 
-            if (isset($params['name_cv_ec']) && strlen($params['name_cv_ec']) > 0)
-            {
-                $select_query                                                   .=  'name_cv_ec, ';
-                $where_clauses                                                  .=  "name_cv_ec = '{$params["name_cv_ec"]}' OR ";
-            }
-
-            if (isset($params['nit_cv_ec']) && strlen($params['nit_cv_ec']) > 0)
-            {
-                $select_query                                                   .=  'nit_cv_ec, ';
-                $where_clauses                                                  .=  "nit_cv_ec = '{$params["nit_cv_ec"]}' OR ";
-            }
-
-            if (isset($params['email_cv_ec']) && strlen($params['email_cv_ec']) > 0)
-            {
-                $select_query                                                   .=  'email_cv_ec, ';
-                $where_clauses                                                  .=  "email_cv_ec = '{$params["email_cv_ec"]}' OR ";
-            }
-
-            if (isset($params['phone_cv_ec']) && strlen($params['phone_cv_ec']) > 0)
-            {
-                $select_query                                                   .=  'phone_cv_ec, ';
-                $where_clauses                                                  .=  "phone_cv_ec = '{$params["phone_cv_ec"]}' OR ";
-            }
-
-            if (isset($params['address_cv_ec']) && strlen($params['address_cv_ec']) > 0)
-            {
-                $select_query                                                   .=  'address_cv_ec, ';
-                $where_clauses                                                  .=  "address_cv_ec = '{$params["address_cv_ec"]}' OR ";
-            }
-
-             $select_query                                                      =   rtrim(trim($select_query), ',');
-             $where_clauses                                                     =   rtrim(trim($where_clauses), 'OR');
-             $this->db->select($select_query);
-             $this->db->where($where_clauses);
-             $this->db->where('flag_drop', 0);
-        }
-
-        $query                                                                  =   $this->db->get('fet_cv_ec');
-
-        if (count($query->result_array()) > 0) 
-        {
-            $message                                                            =   '';
-
-            if (isset($params['pk']))
-            {
-                $params[$params['name']]                                        =   trim($params['value']);
-                unset( $params['name'], $params['value'], $params['pk'] );
-            }
-            
-            foreach ($query->row_array() as $key => $value) {
-                switch ($key) {
-                    case 'name_cv_ec':
-                        if (strtolower($value) == strtolower(trim($params['name_cv_ec']))) 
-                        {
-                            $message                                            =   'este nombre';
-                        }
-                        break;
-
-                    case 'nit_cv_ec':
-                        if (strtolower($value) == strtolower(trim($params['nit_cv_ec'])))
-                        {
-                            $message                                            =   'este NIT';
-                        }
-                        break;
-
-                    case 'email_cv_ec':
-                        if (strtolower($value) == strtolower(trim($params['email_cv_ec'])))
-                        {
-                            $message                                            =   'este correo electrónico';
-                        }
-                        break;
-
-                    case 'phone_cv_ec':
-                        if (strtolower($value) == strtolower(trim($params['phone_cv_ec'])))
-                        {
-                            $message                                            =   'este teléfono';
-                        }
-                        break;
-
-                    case 'address_cv_ec':
-                        if (strtolower($value) == strtolower(trim($params['address_cv_ec'])))
-                        {
-                            $message                                            =   'esta dirección';
-                        }
-                        break;
+                if (isset($params['pk'])) 
+                {
+                    $this->db->where('fet_cv_ec.id_cv_ec !=', $params['pk']);
                 }
             }
 
-            $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Ya existe una empresa con ' . $message;
-        } 
-        else 
-        {
-            $result['data']                                                     =   TRUE;
-            $result['message']                                                  =   FALSE;
+            $query                                                              =   $this->db->get('fet_cv_ec');
+
+            if (count($query->result_array()) > 0) 
+            {
+                $message                                                        =   '';
+
+                if (isset($params['pk']) && isset($params['name'])) 
+                {
+                    $params[$params['name']]                                    =   trim($params['value']);
+                    unset($params['name'], $params['value'], $params['pk']);
+                }
+
+                foreach ($query->row_array() as $key => $value) {
+                    switch ($key) 
+                    {
+                        case 'name_cv_ec':
+                            if (isset($params['name_cv_ec']) && strtolower($value) == strtolower(trim($params['name_cv_ec']))) 
+                            {
+                                $message                                        =   'este nombre';
+                            }
+                            break;
+
+                        case 'nit_cv_ec':
+                            if (isset($params['nit_cv_ec']) && strtolower($value) == strtolower(trim($params['nit_cv_ec']))) 
+                            {
+                                $message                                        =   'este NIT';
+                            }
+                            break;
+
+                        case 'email_cv_ec':
+                            if (isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))) 
+                            {
+                                $message                                        =   'este correo electrónico';
+                            }
+                            break;
+
+                        case 'phone_cv_ec':
+                            if (isset($params['phone_cv_ec']) && strtolower($value) == strtolower(trim($params['phone_cv_ec']))) 
+                            {
+                                $message                                        =   'este teléfono';
+                            }
+                            break;
+
+                        case 'address_cv_ec':
+                            if (isset($params['address_cv_ec']) && strtolower($value) == strtolower(trim($params['address_cv_ec']))) 
+                            {
+                                $message                                        =   'esta dirección';
+                            }
+                            break;
+                    }
+                }
+
+                $result['data']                                                 =   FALSE;
+                $result['message']                                              =   'Ya existe una empresa con ' . $message;
+                return $result;
+                exit();
+            }
         }
 
+        $result['data']                                                     =   TRUE;
+        $result['message']                                                  =   FALSE;
         return $result;
         exit();
     }
@@ -504,34 +511,34 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $this->form_validation->set_rules('name_cv_ec', 'Nombre de la empresa', 'required');
-        $this->form_validation->set_rules('type_cv_ec', 'NIT de la empresa', 'required');
-        $this->form_validation->set_rules('country_cv_ec', 'País', 'required');
-        $this->form_validation->set_rules('department_cv_ec', 'Departamento', 'required');
-        $this->form_validation->set_rules('city_cv_ec', 'Ciudad', 'required');
+        $this->form_validation->set_rules('name_cv_ec', 'nombre de la empresa', 'required');
+        $this->form_validation->set_rules('nit_cv_ec', 'NIT de la empresa', 'required');
+        $this->form_validation->set_rules('type_cv_ec', 'tipo de empresa', 'required');
+        $this->form_validation->set_rules('country_cv_ec', 'país', 'required');
+        $this->form_validation->set_rules('department_cv_ec', 'departamento', 'required');
+        $this->form_validation->set_rules('city_cv_ec', 'ciudad', 'required');
 
         if ($this->form_validation->run()) 
-        {
-            $data                                                               =   array();
-            $data['name_cv_ec']                                                 =   isset($params['name_cv_ec'])       && strlen($params['name_cv_ec']) > 0        ? mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec']))) : NULL;
-            $data['nit_cv_ec']                                                  =   isset($params['nit_cv_ec'])        && strlen($params['nit_cv_ec']) > 0         ? trim($params['nit_cv_ec']) : NULL;
-            $data['type_cv_ec']                                                 =   isset($params['type_cv_ec'])       && strlen($params['type_cv_ec']) > 0        ? trim($params['type_cv_ec']) : NULL;
-            $data['email_cv_ec']                                                =   isset($params['email_cv_ec'])      && strlen($params['email_cv_ec']) > 0       ? $this->_trabajandofet_model->user_name(trim($params['email_cv_ec'])) : NULL;
-            $data['phone_cv_ec']                                                =   isset($params['phone_cv_ec'])      && strlen($params['phone_cv_ec']) > 0       ? trim($params['phone_cv_ec']) : NULL;
-            $data['address_cv_ec']                                              =   isset($params['address_cv_ec'])    && strlen($params['address_cv_ec']) > 0     ? trim($params['address_cv_ec']) : NULL;
-            $data['country_cv_ec']                                              =   isset($params['country_cv_ec'])    && strlen($params['country_cv_ec']) > 0     ? trim($params['country_cv_ec']) : NULL;
-            $data['department_cv_ec']                                           =   isset($params['department_cv_ec']) && strlen($params['department_cv_ec']) > 0  ? trim($params['department_cv_ec']) : NULL;
-            $data['city_cv_ec']                                                 =   isset($params['city_cv_ec'])       && strlen($params['city_cv_ec']) > 0        ? trim($params['city_cv_ec']) : NULL;
-            $data['user_insert']                                                =   $this->session->userdata['id_user'];
-            $data['date_insert']                                                =   date('Y-m-d H:i:s');
+        {                                                          
+            $params['name_cv_ec']                                               =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['name_cv_ec'])));
+            $params['nit_cv_ec']                                                =   trim($params['nit_cv_ec']);
+            $params['type_cv_ec']                                               =   trim($params['type_cv_ec']);
+            $params['email_cv_ec']                                              =   $this->_trabajandofet_model->user_name(trim($params['email_cv_ec']));
+            $params['phone_cv_ec']                                              =   trim($params['phone_cv_ec']);
+            $params['address_cv_ec']                                            =   trim($params['address_cv_ec']);
+            $params['country_cv_ec']                                            =   trim($params['country_cv_ec']);
+            $params['department_cv_ec']                                         =   trim($params['department_cv_ec']);
+            $params['city_cv_ec']                                               =   trim($params['city_cv_ec']);
+            $params['user_insert']                                              =   $this->session->userdata['id_user'];
+            $params['date_insert']                                              =   date('Y-m-d H:i:s');
 
-            $query                                                              =   $this->_trabajandofet_model->insert_data($data, 'fet_cv_ec');
+            $query                                                              =   $this->_trabajandofet_model->insert_data($params, 'fet_cv_ec');
 
             if ($query) 
             {
-                $data_history                                                   =   $data;
+                $data_history                                                   =   $params;
                 $data_history['id_cv_ec']                                       =   $query;
-                $data_history['user_update']                                    =   $data['user_insert'];
+                $data_history['user_update']                                    =   $params['user_insert'];
                 $data['date_update']                                            =   date('Y-m-d H:i:s');
                 unset($data_history['date_insert']);
                 unset($data_history['user_insert']);
@@ -550,7 +557,7 @@ class Externalcompanies_model extends CI_Model
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   $this->form_validation->error_array();
+            $result['message']                                                  =   'Completa todos los campos.';
         }
 
         return $result;
@@ -567,60 +574,68 @@ class Externalcompanies_model extends CI_Model
     public function edit($params)
     {
         $result                                                                 =   array();
-        $data                                                                   =   array();
 
-        // print_r($params);
-        // die();
-
-        if (count($params) >= 2) 
+        if (isset($params['pk']) && strlen($params['pk']) > 0) 
         {
+            if (isset($params['value'])) 
+            {
+                switch ($params['name']) 
+                {
+                    case 'name_cv_ec':
+                        $params['name_cv_ec']                                   =   mb_strtoupper($this->_trabajandofet_model->accents(trim($params['value'])));
+                        break;
 
-            $data['id']                                                         =   $params['pk'];
-            $data['user_update']                                                =   $this->session->userdata['id_user'];
-            $data['date_update']                                                =   date('Y-m-d H:i:s');
-            $value_is_valid                                                     =   isset($params['value']) ? $params['value'] != '' || $params['value'] != NULL : FALSE;
+                    case 'nit_cv_ec':
+                        $params['nit_cv_ec']                                    =   trim($params['value']);
+                        break;
 
-            if ($value_is_valid) {
-                $params['name'] == 'name_cv_ec'  ?  $data['name_cv_ec']         =   mb_strtoupper($this->_trabajandofet_model->accents($params['value'])) : NULL;
-                $params['name'] == 'nit_cv_ec'   ?  $data['nit_cv_ec']          =   $params['value']                                                      : NULL;
-                $params['name'] == 'type_cv_ec'  ?  $data['type_cv_ec']         =   $this->_trabajandofet_model->accents($params['value'])              : NULL;
-                $params['name'] == 'email_cv_ec' ?  $data['email_cv_ec']        =   $this->_trabajandofet_model->user_name($params['value'])              : NULL;
-                $params['name'] == 'phone_cv_ec' ?  $data['phone_cv_ec']        =   $params['value'] : NULL;
+                    case 'type_cv_ec':
+                        $params['type_cv_ec']                                   =   trim($params['value']);
+                        break;
 
-                $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+                    case 'email_cv_ec':
+                        $params['email_cv_ec']                                  =   $this->_trabajandofet_model->user_name(trim($params['value']));
+                        break;
+
+                    case 'phone_cv_ec':
+                        $params['phone_cv_ec']                                  =   trim($params['value']);
+                        break;
+                }
+                unset($params['value'], $params['name']);
             } 
             else 
             {
-                if (isset($params['name'])) 
-                {
-                    $params[$params['name']]                                    =   NULL;
-                    unset($params['name']);
-                }
-
-                if (isset($params['pk']))    unset($params['pk']);
-                if (isset($params['value'])) unset($params['value']);
-
-                $data                                                           =   array_merge($data, $params);
-                $query                                                          =   $this->_trabajandofet_model->update_data($data, 'id_cv_ec', 'fet_cv_ec');
+                $params['address_cv_ec']                                        =   trim($params['address_cv_ec']);
+                $params['country_cv_ec']                                        =   trim($params['country_cv_ec']);
+                $params['department_cv_ec']                                     =   trim($params['department_cv_ec']);
+                $params['city_cv_ec']                                           =   trim($params['city_cv_ec']);
             }
 
-            $data_history                                                       =   $data;
-            $data_history['id_cv_ec']                                           =   $data_history['id'];
-            unset($data_history['id']);
+            $params['id'] = $params['pk'];
+            $params['user_update']                                              =   $this->session->userdata['id_user'];
+            $params['date_update']                                              =   date('Y-m-d H:i:s');
+            unset($params['pk']);
 
-            $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+            $query                                                              =   $this->_trabajandofet_model->update_data($params, 'id_cv_ec', 'fet_cv_ec');
 
-            if ($query) {
+            if ($query) 
+            {
+                $data_history                                                       =   $params;
+                $data_history['id_cv_ec']                                           =   $data_history['id'];
+                unset($data_history['id']);
+
+                $this->_trabajandofet_model->insert_data($data_history, 'fet_cv_ec_history');
+
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'Acción realizada con éxito!';
             } 
             else 
             {
                 $result['data']                                                 =   FALSE;
-                $result['message']                                              =   'Problemas al editar el rol.';
+                $result['message']                                              =   'Problemas al editar la empresa.';
             }
         } 
-        else
+        else 
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';
