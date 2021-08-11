@@ -94,9 +94,8 @@ class Bankentities_model extends CI_Model
     public function all_rows($limit, $start, $search, $col, $dir)
     {
         $this->db->select('id_bankentity, name_bankentity, abbreviation_bankentity, nit_bankentity, digit_bankentity, code_bankentity, address_bankentity, contact_bankentity, phone_bankentity, email_bankentity');
-        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.name_cv) from fet_workers JOIN fet_cv ON fet_workers.id_cv = fet_cv.id_cv WHERE fet_workers.id_bankentity = fet_bankentities.id_bankentity) as workers');
-        $this->db->from('fet_bankentities');
-        $this->db->where('flag_drop', 0);
+        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.number_dcv ) from fet_workers JOIN fet_cv ON fet_workers.id_cv = fet_cv.id_cv WHERE fet_workers.id_bankentity = fet_bankentities.id_bankentity) as workers');
+        $this->db->where('fet_bankentities.flag_drop', 0);
 
         if ( ! empty($search))
         {
@@ -115,7 +114,7 @@ class Bankentities_model extends CI_Model
         $this->db->limit($limit, $start);
         $this->db->order_by($col, $dir);
 
-        $query                                                                  =   $this->db->get();
+        $query                                                                  =   $this->db->get('fet_bankentities');
 
         $banks                                                                  =   $query->result_array();
 
@@ -144,15 +143,16 @@ class Bankentities_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['pk']) && isset($params['value'])) 
+        if (isset($params['value'])) 
         {
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
-            $this->db->from('fet_workers');
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
             $this->db->where('fet_workers.id_bankentity', $params['value']);
+            $this->db->where('fet_workers.flag_drop', 0);
             $this->db->group_by('fet_cv.number_dcv, full_name');
+    
 
-            $query                                                              =   $this->db->get();
+            $query                                                              =   $this->db->get('fet_workers');
 
             if (count($query->result_array()) > 0) 
             {

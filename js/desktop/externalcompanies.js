@@ -101,7 +101,7 @@ $(function ($) {
 
           return content + "</div>";
         },
-        visible: act_edit || act_drop || act_trace ? true : false,
+        visible: act_edit || act_detail || act_assign || act_drop || act_trace ? true : false,
       },
     ],
     drawCallback: function (settings) {

@@ -101,6 +101,7 @@ $(function ($) {
 
           return content + "</div>";
         },
+        visible: act_edit || act_detail || act_assign || act_drop || act_trace ? true : false,
       },
     ],
     drawCallback: function (settings) {
@@ -219,7 +220,7 @@ $(function ($) {
         maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Por favor ingresa el díigito de verificación.",
+        required: "Por favor ingresa el dígito de verificación.",
         digits: "Solo se permiten números.",
         minlength: "Solo se permite 1 carácter",
         maxlength: "Solo se permite 1 carácter",
@@ -332,7 +333,7 @@ $(function ($) {
         maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Por favor ingresa el díigito de verificación.",
+        required: "Por favor ingresa el dígito de verificación.",
         digits: "Solo se permiten números.",
         minlength: "Solo se permite 1 carácter",
         maxlength: "Solo se permite 1 carácter",

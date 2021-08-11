@@ -73,7 +73,7 @@
                                     <div class="col-lg-12">
                                     <div class="form-group pos-relative">
                                         <label class="form-control-label">Abreviatura del banco: </label>
-                                        <input class="form-control" type="text" id="abbreviation_bankentity" name="abbreviation_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
+                                        <input class="form-control" type="text" id="abbreviation_bankentity" name="abbreviation_bankentity" placeholder="Ingresa la abreviatura del banco" autocomplete="off">
                                     </div>
                                 </div>
                                     <div class="col-lg-12">
@@ -152,7 +152,7 @@
                                     <div class="col-lg-12">
                                     <div class="form-group pos-relative">
                                         <label class="form-control-label">Abreviatura del banco: </label>
-                                        <input class="form-control" type="text" name="abbreviation_bankentity" placeholder="Ingresa el nombre del banco" autocomplete="off">
+                                        <input class="form-control" type="text" name="abbreviation_bankentity" placeholder="Ingresa la abreviatura del banco" autocomplete="off">
                                     </div>
                                 </div>
                                     <div class="col-lg-12">

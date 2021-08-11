@@ -101,7 +101,7 @@ $(function ($) {
 
           return content + "</div>";
         },
-        visible: act_edit || act_drop || act_trace ? true : false,
+        visible: act_edit || act_detail || act_assign || act_drop || act_trace ? true : false,
       },
     ],
     drawCallback: function (settings) {
@@ -122,117 +122,118 @@ $(function ($) {
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
       }
-      if (act_edit) {
-        $("#default_table td span[data-type='text']").editable({
-          emptytext: "Vacío",
-          validate: function (value) {
-            switch ($(this).attr("data-name")) {
 
-              case "name_cv_ec":
-                if (value.length < 3)
-                  return "Mínimo se permiten 3 caracteres.";
-                if (value.length > 150)
-                  return "Solo se permiten 150 caracteres.";
-                if (!value.match(/^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC]*$/))
-                  return "Solo se permiten letras y números.";
-                if (value === null || value.trim() === "")
-                  return "Campo obligatorio.";
-                break;
+        if (act_edit) {
+          $("#default_table td span[data-type='text']").editable({
+            emptytext: "Vacío",
+            validate: function (value) {
+              switch ($(this).attr("data-name")) {
 
-              case "email_cv_ec":
-                if (!value === null || value.trim() !== "") {
+                case "name_cv_ec":
                   if (value.length < 3)
                     return "Mínimo se permiten 3 caracteres.";
                   if (value.length > 150)
                     return "Solo se permiten 150 caracteres.";
-                  if (!value.match(/^\S+@\S+\.\S+\D$/))
-                    return "Ingresa una cuenta válida de correo.";
-                }
-                break;
-            }
-          },
-          success: function (response) {
-            var { data, message } = $.parseJSON(response);
-            var successful_update = data === true;
-
-            if (successful_update) {
-              modal_alert(data, message);
-              return true;
-            }
-
-            modal_alert(data, message);
-            return false;
-          },
-        });
-
-        $("#default_table td span[data-type='number']").editable({
-          emptytext: "Vacío",
-          validate: function (value) {
-            switch ($(this).attr("data-name")) {
-              
-              case "nit_cv_ec":
-                  if (value.length > 12)
-                    return "Solo se permiten 12 caracteres.";
-                  if (value.length < 10)
-                    return "Mínimo se permiten 10 caracteres.";
-                  if (!value.match(/^[0-9]+$/))
-                    return "Solo se permiten números.";
+                  if (!value.match(/^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC]*$/))
+                    return "Solo se permiten letras y números.";
                   if (value === null || value.trim() === "")
                     return "Campo obligatorio.";
-                break;
+                  break;
 
-              case "phone_cv_ec":
-                if (!value === null || value.trim() !== "") {
-                  if (value.length < 7)
-                    return "Mínimo permiten 7 caracteres.";
-                  if (value.length > 20)
-                    return "Solo se permiten 20 caracteres.";
-                  if (!value.match(/^[0-9]+$/))
-                    return "Solo se permiten números.";
-                }
-                break;
-            }
-          },
-          success: function (response) {
-            var { data, message } = $.parseJSON(response);
-            var successful_update = data === true;
+                case "email_cv_ec":
+                  if (!value === null || value.trim() !== "") {
+                    if (value.length < 3)
+                      return "Mínimo se permiten 3 caracteres.";
+                    if (value.length > 150)
+                      return "Solo se permiten 150 caracteres.";
+                    if (!value.match(/^\S+@\S+\.\S+\D$/))
+                      return "Ingresa una cuenta válida de correo.";
+                  }
+                  break;
+              }
+            },
+            success: function (response) {
+              var { data, message } = $.parseJSON(response);
+              var successful_update = data === true;
 
-            if (successful_update) {
+              if (successful_update) {
+                modal_alert(data, message);
+                return true;
+              }
+
               modal_alert(data, message);
-              return true;
-            }
+              return false;
+            },
+          });
 
-            modal_alert(data, message);
-            return false;
-          },
-        });
+          $("#default_table td span[data-type='number']").editable({
+            emptytext: "Vacío",
+            validate: function (value) {
+              switch ($(this).attr("data-name")) {
+                
+                case "nit_cv_ec":
+                    if (value.length > 12)
+                      return "Solo se permiten 12 caracteres.";
+                    if (value.length < 10)
+                      return "Mínimo se permiten 10 caracteres.";
+                    if (!value.match(/^[0-9]+$/))
+                      return "Solo se permiten números.";
+                    if (value === null || value.trim() === "")
+                      return "Campo obligatorio.";
+                  break;
 
-        $("#default_table td span[data-type='select2']").editable({
-          type: "select",
-          source: [
-            { value: "PRIVADA", text: "Privada" },
-            { value: "PUBLICA", text: "Pública" },
-          ],
-          validate: function (value) {
-            if (value === null || value.trim() === "")
-              return "Campo obligatorio.";
-            if (value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
-              return "Solo se permiten letras.";
-          },
-          success: function (response) {
-            var { data, message } = $.parseJSON(response);
-            var successful_update = data === true;
+                case "phone_cv_ec":
+                  if (!value === null || value.trim() !== "") {
+                    if (value.length < 7)
+                      return "Mínimo permiten 7 caracteres.";
+                    if (value.length > 20)
+                      return "Solo se permiten 20 caracteres.";
+                    if (!value.match(/^[0-9]+$/))
+                      return "Solo se permiten números.";
+                  }
+                  break;
+              }
+            },
+            success: function (response) {
+              var { data, message } = $.parseJSON(response);
+              var successful_update = data === true;
 
-            if (successful_update) {
+              if (successful_update) {
+                modal_alert(data, message);
+                return true;
+              }
+
               modal_alert(data, message);
-              return true;
-            }
+              return false;
+            },
+          });
 
-            modal_alert(data, message);
-            return false;
-          },
-        });
-      }
+          $("#default_table td span[data-type='select2']").editable({
+            type: "select",
+            source: [
+              { value: "Privada", text: "Privada" },
+              { value: "Pública", text: "Pública" },
+            ],
+            validate: function (value) {
+              if (value === null || value.trim() === "")
+                return "Campo obligatorio.";
+              if (value.match(/[^a-zA-ZáéíóúñÑÁÉÍÓÚ ]/g))
+                return "Solo se permiten letras.";
+            },
+            success: function (response) {
+              var { data, message } = $.parseJSON(response);
+              var successful_update = data === true;
+
+              if (successful_update) {
+                modal_alert(data, message);
+                return true;
+              }
+
+              modal_alert(data, message);
+              return false;
+            },
+          });
+        }
     },
   });
 
@@ -320,7 +321,7 @@ $(function ($) {
       },
       nit_cv_ec: {
         required: "Por favor ingresa el NIT.",
-        minlength: "Mínimo se permiten 10 caracteres.",
+        minlength: "Solo se permiten 10 caracteres.",
         maxlength: "Solo se permiten 12 caracteres.",
         digits: "Solo se permiten números.",
       },
@@ -370,7 +371,7 @@ $(function ($) {
     rules: {
       address_cv_ec: {
         minlength: 5,
-        maxlength: 80,
+        maxlength: 150,
       },
       country_cv_ec: {
         required: true,
@@ -385,7 +386,7 @@ $(function ($) {
     messages: {
       address_cv_ec: {
         minlength: "Mínimo se permiten 5 caracteres.",
-        maxlength: "Solo se permiten 80 caracteres.",
+        maxlength: "Solo se permiten 150 caracteres.",
       },
       country_cv_ec: {
         required: "Por favor selecciona un país.",

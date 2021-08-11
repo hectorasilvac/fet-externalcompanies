@@ -101,8 +101,7 @@ class Externalcompanies_model extends CI_Model
     public function all_rows($limit, $start, $search, $col, $dir)
     {
         $this->db->select('fet_cv_ec.id_cv_ec, fet_cv_ec.name_cv_ec, fet_cv_ec.nit_cv_ec, IF(STRCMP(fet_cv_ec.type_cv_ec, "PUBLICA") = 0, "Pública", "Privada") as type_cv_ec, fet_cv_ec.email_cv_ec, fet_cv_ec.phone_cv_ec');
-        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.name_cv) FROM fet_cv_we JOIN fet_cv ON fet_cv_we.id_cv = fet_cv.id_cv WHERE fet_cv_we.id_cv_ec = fet_cv_ec.id_cv_ec) as aspirants');
-        $this->db->from('fet_cv_ec');
+        $this->db->select('(SELECT COUNT(DISTINCT fet_cv.number_dcv) FROM fet_cv_we JOIN fet_cv ON fet_cv_we.id_cv = fet_cv.id_cv WHERE fet_cv_we.id_cv_ec = fet_cv_ec.id_cv_ec) as aspirants');
         $this->db->where('fet_cv_ec.flag_drop', 0);
         $this->db->where('fet_cv_ec.id_cv_ec !=', 1);
 
@@ -128,7 +127,7 @@ class Externalcompanies_model extends CI_Model
         $this->db->limit($limit, $start);
         $this->db->order_by($col, $dir);
 
-        $query                                                                  =   $this->db->get();
+        $query                                                                  =   $this->db->get('fet_cv_ec');
 
         $companies                                                              =   $query->result_array();
 
@@ -157,15 +156,15 @@ class Externalcompanies_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['pk']) && isset($params['value'])) 
+        if (isset($params['value'])) 
         {
             $this->db->select('CONCAT(fet_cv.name_cv, " ", fet_cv.first_lcv, " ", fet_cv.second_lcv) AS full_name, fet_cv.number_dcv');
-            $this->db->from('fet_cv_we');
             $this->db->join('fet_cv', 'fet_cv_we.id_cv = fet_cv.id_cv');
             $this->db->where('fet_cv_we.id_cv_ec', $params['value']);
+            $this->db->where('flag_drop', 0);
             $this->db->group_by('fet_cv.number_dcv, full_name');
 
-            $query                                                              =   $this->db->get();
+            $query                                                              =   $this->db->get('fet_cv_we');
 
             if (count($query->result_array()) > 0) 
             {
@@ -577,7 +576,7 @@ class Externalcompanies_model extends CI_Model
                 $params['city_cv_ec']                                           =   trim($params['city_cv_ec']);
             }
 
-            $params['id'] = $params['pk'];
+            $params['id']                                                       =   $params['pk'];
             $params['user_update']                                              =   $this->session->userdata['id_user'];
             $params['date_update']                                              =   date('Y-m-d H:i:s');
             unset($params['pk']);

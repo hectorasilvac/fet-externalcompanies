@@ -2,18 +2,38 @@ $(function ($) {
   //BUILD - DESKTOP
   $.fn.editable.defaults.mode = "inline";
 
+  var height = ($(window).height() - 380);
+
   $("#default_table").DataTable({
     language: {
       sUrl: "resources/lib/datatables/Spanish.json",
     },
-    info: true,
+    info: false,
     lengthChange: true,
-    processing: true,
     serverSide: true,
-    ajax: {
-      url: $path_view,
-      dataType: "json",
-      type: "POST",
+    scrollY: height,
+    scroller:
+    {
+        loadingIndicator: true
+    },
+    ajax: function(data, callback, settings) 
+    {
+      $.ajax({
+        url: $path_view,
+        dataType: "json",
+        type: "POST",
+        data: data,
+        success: function(data)
+        {
+          callback(
+            {
+                draw: data.draw,
+                data: data.data,
+                recordsTotal: data.recordsTotal,
+                recordsFiltered: data.recordsFiltered
+            });
+        }
+      })
     },
     columnDefs: [
       {
@@ -110,6 +130,7 @@ $(function ($) {
 
           return content + "</div>";
         },
+        visible: act_edit || act_detail || act_assign || act_drop || act_trace ? true : false,
       },
     ],
     drawCallback: function (settings) {
@@ -227,7 +248,7 @@ $(function ($) {
         maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Por favor ingresa el díigito de verificación.",
+        required: "Por favor ingresa el dígito de verificación.",
         digits: "Solo se permiten números.",
         minlength: "Solo se permite 1 carácter",
         maxlength: "Solo se permite 1 carácter",
@@ -340,7 +361,7 @@ $(function ($) {
         maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Por favor ingresa el díigito de verificación.",
+        required: "Por favor ingresa el dígito de verificación.",
         digits: "Solo se permiten números.",
         minlength: "Solo se permite 1 carácter",
         maxlength: "Solo se permite 1 carácter",

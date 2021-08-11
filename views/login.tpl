@@ -58,7 +58,7 @@
                         <span class="text-fet tx-ubuntu-bold-italic d-block tx-xxl-140 tx-md-108">Mejor</span>
                         <span class="text-white tx-ubuntu-italic ml-5 tx-xxl-140 tx-md-108 lh-md-6r">Servicio</span>
                     </h2>
-                    <button type="button" id="btn_start" class="btn btn-login tx-xxl-45 tx-md-34 mt-xxl-128 mt-md-6 wd-xxl-400 wd-md-360">
+                    <button type="button" id="btn_start" class="btn btn-login tx-xxl-45 tx-md-34 mt-xxl-128 mt-md-6 wd-xxl-420 wd-md-360">
                     Empecemos</button>
                 </div>
             {/if}
