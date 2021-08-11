@@ -191,6 +191,45 @@ $route['users/aspirants']                                                       
 
 $route['users/exportxlsx']                                                      =   'users_controller/export_xlsx';
 
+
+// CONTROL CAMBIOS DE TURNO
+$route['shiftchange']                                                           =   'shiftchange_controller/view';
+
+$route['shiftchange/datatable']                                                 =   'shiftchange_controller/datatable';
+
+$route['shiftchange/workers']                                                	=   'shiftchange_controller/workers';
+
+$route['shiftchange/coordinators']                                              =   'shiftchange_controller/coordinators';
+
+$route['shiftchange/add']                                                       =   'shiftchange_controller/add';
+
+$route['shiftchange/detail']                                                    =   'shiftchange_controller/detail';
+
+$route['shiftchange/signature/(:any)']                                          =   'shiftchange_controller/file_signature/$1';
+
+$route['shiftchange/assign']                                                    =   'shiftchange_controller/assign';
+
+$route['shiftchange/mailreplacement']                                           =   'shiftchange_controller/mail_replacement';
+
+$route['shiftchange/changecoordinator']                                         =   'shiftchange_controller/change_coordinator';
+
+$route['shiftchange/udrop']                                                     =   'shiftchange_controller/udrop';
+
+$route['shiftchange/trace']                                                     =   'shiftchange_controller/trace';
+
+$route['shiftchange/exportxlsx']                                                =   'shiftchange_controller/export_xlsx';
+
+
+// VENTANA DE ALERTA
+$route['scblock']                                                               =   'scblock_controller/view';
+
+
+//ENCUESTA RIESGO BIOMECANICO
+$route['biomechanicalform']                                                     =   'biomechanicalform_controller/view';
+
+$route['biomechanicalform/add']                                                 =   'biomechanicalform_controller/add';
+
+
 // EMPRESAS EXTERNAS
 
 $route['externalcompanies']                                                     =   'externalcompanies_controller/view';

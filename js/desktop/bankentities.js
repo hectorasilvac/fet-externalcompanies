@@ -131,7 +131,18 @@ $(function ($) {
         /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
       );
     },
-    "Este campo no puede contener números."
+    "Solo se permiten letras."
+  );
+
+  jQuery.validator.addMethod(
+    "email",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^\S+@\S+\.\S+\D$/.test(value)
+      );
+    },
+    "Ingresa una cuenta válida de correo."
   );
 
   var validate = $("#form_add").validate({
@@ -151,7 +162,7 @@ $(function ($) {
       nit_bankentity: {
         required: true,
         digits: true,
-        minlength: 3,
+        minlength: 9,
         maxlength: 9,
       },
       digit_bankentity: {
@@ -192,53 +203,53 @@ $(function ($) {
     },
     messages: {
       name_bankentity: {
-        required: "Ingresa el nombre del banco",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 50 caracteres",
+        required: "Por favor ingresa el nombre.",
+        minlength: "Mínimo se permiten 3 caracteres.",
+        maxlength: "Solo se permiten 50 caracteres.",
       },
       abbreviation_bankentity: {
-        required: "Ingresa la abreviatura del banco",
-        minlength: "Debe tener al menos 2 caracteres",
-        maxlength: "Debe tener máximo 15 caracteres",
+        required: "Por favor ingresa la abreviatura.",
+        minlength: "Mínimo se permiten 2 caracteres.",
+        maxlength: "Solo se permiten 15 caracteres.",
       },
       nit_bankentity: {
-        required: "Ingresa el NIT del banco",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 9 caracteres",
+        required: "Por favor ingresa el NIT.",
+        digits: "Solo se permiten números.",
+        minlength: "Solo se permiten 9 caracteres.",
+        maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Ingresa el dígito de verificación",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener 1 carácter",
-        maxlength: "Debe tener 1 carácter",
+        required: "Por favor ingresa el díigito de verificación.",
+        digits: "Solo se permiten números.",
+        minlength: "Solo se permite 1 carácter",
+        maxlength: "Solo se permite 1 carácter",
       },
       code_bankentity: {
-        required: "Ingresa el código del banco",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 1 carácter",
-        maxlength: "Debe tener máximo 4 caracteres",
+        required: "Por favor ingresa el código.",
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permite 1 carácter.",
+        maxlength: "Solo se permiten 4 caracteres.",
       },
       address_bankentity: {
-        required: "Ingresa la dirección",
-        minlength: "Debe contener al menos 5 caracteres",
-        maxlength: "Debe contener máximo 70 caracteres",
+        required: "Por favor ingresa la dirección.",
+        minlength: "Mínimo se permiten 5 caracteres.",
+        maxlength: "Solo se permiten 70 caracteres.",
       },
       contact_bankentity: {
-        required: "Ingresa el contacto",
-        minlength: "Debe contener al menos 3 caracteres",
-        maxlength: "Debe contener máximo 50 caracteres",
+        required: "Por favor ingresa el contacto.",
+        minlength: "Mínimo se permiten 3 caracteres.",
+        maxlength: "Solo se permiten 50 caracteres.",
       },
       phone_bankentity: {
-        required: "Ingresa el número del contacto",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 7 caracteres",
-        maxlength: "Debe tener máximo 13 caracteres",
+        required: "Por favor ingresa el número del contacto.",
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permiten 7 caracteres.",
+        maxlength: "Solo se permiten 13 caracteres.",
       },
       email_bankentity: {
-        required: "Ingresa el correo corporativo",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 50 caracteres",
+        required: "Por favor ingresa el correo electrónico.",
+        minlength: "Mínimo se permiten 3 caracteres",
+        maxlength: "Solo se permiten 50 caracteres",
       },
     },
     errorPlacement: function (error, element) {
@@ -264,7 +275,7 @@ $(function ($) {
       nit_bankentity: {
         required: true,
         digits: true,
-        minlength: 3,
+        minlength: 9,
         maxlength: 9,
       },
       digit_bankentity: {
@@ -305,53 +316,53 @@ $(function ($) {
     },
     messages: {
       name_bankentity: {
-        required: "Ingresa el nombre del banco",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 50 caracteres",
+        required: "Por favor ingresa el nombre.",
+        minlength: "Mínimo se permiten 3 caracteres.",
+        maxlength: "Solo se permiten 50 caracteres.",
       },
       abbreviation_bankentity: {
-        required: "Ingresa la abreviatura del banco",
-        minlength: "Debe tener al menos 2 caracteres",
-        maxlength: "Debe tener máximo 15 caracteres",
+        required: "Por favor ingresa la abreviatura.",
+        minlength: "Mínimo se permiten 2 caracteres.",
+        maxlength: "Solo se permiten 15 caracteres.",
       },
       nit_bankentity: {
-        required: "Ingresa el NIT del banco",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 9 caracteres",
+        required: "Por favor ingresa el NIT.",
+        digits: "Solo se permiten números.",
+        minlength: "Solo se permiten 9 caracteres.",
+        maxlength: "Solo se permiten 9 caracteres.",
       },
       digit_bankentity: {
-        required: "Ingresa el dígito de verificación",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener 1 carácter",
-        maxlength: "Debe tener 1 carácter",
+        required: "Por favor ingresa el díigito de verificación.",
+        digits: "Solo se permiten números.",
+        minlength: "Solo se permite 1 carácter",
+        maxlength: "Solo se permite 1 carácter",
       },
       code_bankentity: {
-        required: "Ingresa el código del banco",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 1 carácter",
-        maxlength: "Debe tener máximo 4 caracteres",
+        required: "Por favor ingresa el código.",
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permite 1 carácter.",
+        maxlength: "Solo se permiten 4 caracteres.",
       },
       address_bankentity: {
-        required: "Ingresa la dirección",
-        minlength: "Debe contener al menos 5 caracteres",
-        maxlength: "Debe contener máximo 70 caracteres",
+        required: "Por favor ingresa la dirección.",
+        minlength: "Mínimo se permiten 5 caracteres.",
+        maxlength: "Solo se permiten 70 caracteres.",
       },
       contact_bankentity: {
-        required: "Ingresa el contacto",
-        minlength: "Debe contener al menos 3 caracteres",
-        maxlength: "Debe contener máximo 50 caracteres",
+        required: "Por favor ingresa el contacto.",
+        minlength: "Mínimo se permiten 3 caracteres.",
+        maxlength: "Solo se permiten 50 caracteres.",
       },
       phone_bankentity: {
-        required: "Ingresa el número del contacto",
-        digits: "Debe contener sólo números",
-        minlength: "Debe tener al menos 7 caracteres",
-        maxlength: "Debe tener máximo 13 caracteres",
+        required: "Por favor ingresa el número del contacto.",
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permiten 7 caracteres.",
+        maxlength: "Solo se permiten 13 caracteres.",
       },
       email_bankentity: {
-        required: "Ingresa el correo corporativo",
-        minlength: "Debe tener al menos 3 caracteres",
-        maxlength: "Debe tener máximo 50 caracteres",
+        required: "Por favor ingresa el correo electrónico.",
+        minlength: "Mínimo se permiten 3 caracteres",
+        maxlength: "Solo se permiten 50 caracteres",
       },
     },
     errorPlacement: function (error, element) {
@@ -527,22 +538,6 @@ $(function ($) {
     $("#view_table").toggleClass("d-none");
   });
 
-  function add(response) {
-    modal_alert(response.data, response.message);
-
-    if (response.data) {
-      $("#view_form_add").addClass("d-none");
-    }
-  }
-
-  function edit(response) {
-    modal_alert(response.data, response.message);
-
-    if (response.data) {
-      $("#view_form_edit").addClass("d-none");
-    }
-  }
-
   // Udrop
 
   $("#default_table").on("click", "a.remove-row", function () {
@@ -591,3 +586,19 @@ $(function ($) {
     $("#modal_delete").iziModal("open");
   });
 });
+
+function add(response) {
+  modal_alert(response.data, response.message);
+
+  if (response.data) {
+    $("#view_form_add").addClass("d-none");
+  }
+}
+
+function edit(response) {
+  modal_alert(response.data, response.message);
+
+  if (response.data) {
+    $("#view_form_edit").addClass("d-none");
+  }
+}

@@ -132,10 +132,10 @@ $(function ($) {
                 case "name_cv_ec":
                   if (value.length < 3)
                     return "Mínimo se permiten 3 caracteres.";
-                  if (value.length > 50)
-                    return "Solo se permiten 50 caracteres.";
-                  if (!value.match(/^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/))
-                    return "Solo se permiten letras.";
+                  if (value.length > 150)
+                    return "Solo se permiten 150 caracteres.";
+                  if (!value.match(/^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC]*$/))
+                    return "Solo se permiten letras y números.";
                   if (value === null || value.trim() === "")
                     return "Campo obligatorio.";
                   break;
@@ -144,8 +144,8 @@ $(function ($) {
                   if (!value === null || value.trim() !== "") {
                     if (value.length < 3)
                       return "Mínimo se permiten 3 caracteres.";
-                    if (value.length > 50)
-                      return "Solo se permiten 50 caracteres.";
+                    if (value.length > 150)
+                      return "Solo se permiten 150 caracteres.";
                     if (!value.match(/^\S+@\S+\.\S+\D$/))
                       return "Ingresa una cuenta válida de correo.";
                   }
@@ -172,10 +172,10 @@ $(function ($) {
               switch ($(this).attr("data-name")) {
                 
                 case "nit_cv_ec":
-                    if (value.length > 10)
-                      return "Solo se permiten 10 caracteres.";
+                    if (value.length > 12)
+                      return "Solo se permiten 12 caracteres.";
                     if (value.length < 10)
-                      return "Solo se permiten 10 caracteres.";
+                      return "Mínimo se permiten 10 caracteres.";
                     if (!value.match(/^[0-9]+$/))
                       return "Solo se permiten números.";
                     if (value === null || value.trim() === "")
@@ -186,8 +186,8 @@ $(function ($) {
                   if (!value === null || value.trim() !== "") {
                     if (value.length < 7)
                       return "Mínimo permiten 7 caracteres.";
-                    if (value.length > 10)
-                      return "Solo se permiten 10 caracteres.";
+                    if (value.length > 20)
+                      return "Solo se permiten 20 caracteres.";
                     if (!value.match(/^[0-9]+$/))
                       return "Solo se permiten números.";
                   }
@@ -245,7 +245,18 @@ $(function ($) {
         /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
       );
     },
-    "Este campo no puede contener números."
+    "Solo se permiten letras."
+  );
+
+  jQuery.validator.addMethod(
+    "letters_numbers",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
+      );
+    },
+    "Solo se permiten letras y números."
   );
 
   jQuery.validator.addMethod(
@@ -264,32 +275,33 @@ $(function ($) {
       name_cv_ec: {
         required: true,
         minlength: 3,
-        maxlength: 50,
-        lettersonly_es: true,
+        maxlength: 150,
+        letters_numbers: true,
       },
       nit_cv_ec: {
         digits: true,
         minlength: 10,
-        maxlength: 10,
+        maxlength: 12,
         required: true,
       },
       type_cv_ec: {
+        maxlength: 15,
         required: true,
         lettersonly_es: true,
       },
       email_cv_ec: {
         email: true,
         minlength: 3,
-        maxlength: 50,
+        maxlength: 150,
       },
       phone_cv_ec: {
         digits: true,
         minlength: 7,
-        maxlength: 10,
+        maxlength: 20,
       },
       address_cv_ec: {
         minlength: 5,
-        maxlength: 80,
+        maxlength: 150,
       },
       country_cv_ec: {
         required: true,
@@ -304,33 +316,33 @@ $(function ($) {
     messages: {
       name_cv_ec: {
         required: "Por favor ingresa el nombre.",
-        lettersonly_es: "Solo se permiten letras.",
         minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
+        maxlength: "Solo se permiten 150 caracteres.",
       },
       nit_cv_ec: {
         required: "Por favor ingresa el NIT.",
         minlength: "Solo se permiten 10 caracteres.",
-        maxlength: "Solo se permiten 10 caracteres.",
+        maxlength: "Solo se permiten 12 caracteres.",
         digits: "Solo se permiten números.",
       },
       type_cv_ec: {
         required: "Seleccione el tipo de empresa.",
+        maxlength: "Solo se permiten 15 caracteres.",
         lettersonly_es: "Solo se permiten letras.",
       },
       email_cv_ec: {
         email: "Por favor ingresa un correo electrónico válido.",
         minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
+        maxlength: "Solo se permiten 150 caracteres.",
       },
       phone_cv_ec: {
         digits: "Solo se permiten números.",
         minlength: "Mínimo se permiten 7 caracteres.",
-        maxlength: "Solo se permiten 10 caracteres.",
+        maxlength: "Solo se permiten 20 caracteres.",
       },
       address_cv_ec: {
         minlength: "Mínimo se permiten 5 caracteres.",
-        maxlength: "Solo se permiten 80 caracteres.",
+        maxlength: "Solo se permiten 150 caracteres.",
       },
       country_cv_ec: {
         required: "Por favor selecciona un país.",
@@ -359,7 +371,7 @@ $(function ($) {
     rules: {
       address_cv_ec: {
         minlength: 5,
-        maxlength: 80,
+        maxlength: 150,
       },
       country_cv_ec: {
         required: true,
@@ -374,7 +386,7 @@ $(function ($) {
     messages: {
       address_cv_ec: {
         minlength: "Mínimo se permiten 5 caracteres.",
-        maxlength: "Solo se permiten 80 caracteres.",
+        maxlength: "Solo se permiten 150 caracteres.",
       },
       country_cv_ec: {
         required: "Por favor selecciona un país.",

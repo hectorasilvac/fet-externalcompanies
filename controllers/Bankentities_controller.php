@@ -85,7 +85,6 @@ class Bankentities_controller extends CI_Controller
             $this->_view->assign('path_export_xlsx',                            site_url('bankentities/exportxlsx'));
             $this->_view->assign('path_affiliated_workers',                     site_url('bankentities/affiliatedworkers'));
 
-
             $this->_view->display('admin/bankentities.tpl');
         }
         else
@@ -114,7 +113,8 @@ class Bankentities_controller extends CI_Controller
                     1                                                                   =>  'name_bankentity',
                     2                                                                   =>  'nit_bankentity',
                     3                                                                   =>  'contact_bankentity',
-                    4                                                                   =>  'phone_bankentity',                                                                                    );
+                    4                                                                   =>  'phone_bankentity',
+                                                                                    );
             }
             else
             {
@@ -238,7 +238,7 @@ class Bankentities_controller extends CI_Controller
 
                 if ($exist_bank['data'])
                 {
-                    $edit                                                        =   $this->_bankentities_model->edit($params);
+                    $edit                                                       =   $this->_bankentities_model->edit($params);
                     
                     echo json_encode($edit);
                     exit();
@@ -293,7 +293,7 @@ class Bankentities_controller extends CI_Controller
 
             if ($params)
             {
-                    $detail                                                    =   $this->_bankentities_model->detail($params);
+                    $detail                                                     =   $this->_bankentities_model->detail($params);
 
                     echo json_encode($detail);
                     exit();

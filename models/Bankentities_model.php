@@ -73,7 +73,7 @@ class Bankentities_model extends CI_Model
             $this->db->where('flag_drop', 0);
             $this->db->from('fet_bankentities');
             
-            $result['total_filtered']                                       =   $this->db->count_all_results();
+            $result['total_filtered']                                           =   $this->db->count_all_results();
         } 
         else 
         {
@@ -168,7 +168,7 @@ class Bankentities_model extends CI_Model
         else 
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'No se podido realizar la operación.';
+            $result['message']                                                  =   'No se ha podido realizar la operación.';
         }
 
         return $result;
@@ -199,14 +199,11 @@ class Bankentities_model extends CI_Model
         $this->db->or_where('email_bankentity', trim($params['email_bankentity']));
         $this->db->group_end();
 
+        $this->db->where('flag_drop', 0);  
+
         if (isset($params['pk']))
         {
-            $this->db->where('flag_drop', 0);  
             $this->db->where('id_bankentity !=', $params['pk']);
-        }
-        else
-        {
-            $this->db->where('flag_drop', 0);  
         }
 
         $query                                                                  =   $this->db->get('fet_bankentities');
@@ -220,7 +217,7 @@ class Bankentities_model extends CI_Model
 
                 $inputs = [
                     'name_bankentity'                                           =>  ' este nombre.',
-                    'abbreviation_bankentity'                                   =>  ' esta abreviación.',
+                    'abbreviation_bankentity'                                   =>  ' esta abreviatura.',
                     'nit_bankentity'                                            =>  ' este NIT.',
                     'code_bankentity'                                           =>  ' este código.',
                     'address_bankentity'                                        =>  ' esta dirección.',
@@ -429,7 +426,7 @@ class Bankentities_model extends CI_Model
                 'flag_drop'                                                              =>  1,
                 'user_update'                                                            =>  $this->session->userdata['id_user'],
                 'date_update'                                                            =>  date('Y-m-d H:i:s')
-            );
+                                                                                        );
 
             $result                                                             =   array();
 

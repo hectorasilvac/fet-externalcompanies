@@ -209,39 +209,39 @@
                             <tbody>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Nombre</th>
-                                    <td class="col-10" data-name="name_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="name_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">NIT</th>
-                                    <td class="col-10" data-name="nit_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="nit_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Tipo</th>
-                                    <td class="col-10" data-name="type_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="type_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Teléfono</th>
-                                    <td class="col-10" data-name="phone_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="phone_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Correo</th>
-                                    <td class="col-10" data-name="email_cv_ec">grupoaw@gmail.com</td>
+                                    <td class="col-10 text-break" data-name="email_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Dirección</th>
-                                    <td class="col-10" data-name="address_cv_ec">Calle 45 #34-56</td>
+                                    <td class="col-10 text-break" data-name="address_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">País</th>
-                                    <td class="col-10" data-name="text_country_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="text_country_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Departamento</th>
-                                    <td class="col-10" data-name="text_department_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="text_department_cv_ec"></td>
                                 </tr>
                                 <tr>
                                     <th scope="row" class="col-2 bg-light">Ciudad</th>
-                                    <td class="col-10" data-name="text_city_cv_ec"></td>
+                                    <td class="col-10 text-break" data-name="text_city_cv_ec"></td>
                                 </tr>
                             </tbody>
                         </table>

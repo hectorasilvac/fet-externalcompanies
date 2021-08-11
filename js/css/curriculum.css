@@ -1,0 +1,283 @@
+body
+{
+    font-family: Arial, Helvetica, sans-serif;
+}
+.overlay-header
+{
+    width:100%;
+}
+.container
+{
+    max-width: 600px;
+    font-size: 9.8px;
+    float: left;
+}
+.container table
+{
+    font-size: 9.5px;
+}
+.h-box
+{
+    border:1px solid #000;
+    border-radius: 15px;
+    box-shadow: 4px 4px #000;
+    text-align: center;
+    margin-bottom: 17px;
+    width: 100%;
+    float: left;
+}
+.company
+{
+    margin-top: 1px;
+    width: 88%;
+    padding: 6px 5px;
+    font-size: 9.5px;
+    border: 0.7px solid #000;
+    height: 15px;
+}
+.law
+{
+    margin-top: 3px;
+    margin-bottom: 10px;
+    font-family:chelvetica;
+}
+.n-item
+{
+    color: #fff;
+    background-color: #000;
+    height: 20px;
+    width: 21px;
+    border-radius: 50%;
+    float: left;
+    font-weight: bold;
+    text-align: center;
+}
+.n-item h2
+{
+    margin-top: 1.3px;
+    margin-bottom: 1.3px;
+    font-size: 14px;
+    font-family:chelvetica;
+}
+.line-item
+{
+    width: 18px;
+    float: left;
+    padding-top: 10px;
+}
+.line-item div
+{
+    background-color: #02A0C6;
+    height: 2.6px;
+    width: 18px;
+    float: left;
+    margin-left: -11px;
+}
+.txt-item
+{
+    color: #fff;
+    background-color: #000;
+    height: 20px;
+    border-radius: 30px;
+    float: left;
+    font-weight: bold;
+    text-align: center;
+    width: 27%;
+    margin-left: -11px;
+}
+.txt-item h2
+{
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: 13px;
+}
+.section
+{
+    width: 100%;
+    margin:0 auto;
+    border-bottom:1px solid #000;
+    background-color: #F0F9FD;
+    text-align: left;
+}
+.section-div
+{
+    padding: 4px 4px 2..5px;
+    float: left;
+    border-right: 1px solid #000;
+    height: 26px;
+}
+.section-div-d
+{
+    padding: 4px;
+    float: left;
+    border-right: 1px solid #000;
+    height: 29.6px;
+}
+.box
+{
+    border:1px solid #000;
+    box-shadow: 4px 4px #000;
+    text-align: center;
+    margin-bottom: 15px;
+    width: 100%;
+    float: left;
+    margin-top: 12px;
+    background-color: #F0F9FD;
+}
+.t-section
+{
+    padding: 2px 4px 1px 4px;
+    margin-top: 5px;
+    margin-bottom: 0px
+}
+.info
+{
+    font-size: 9.5px;
+    padding: 0px 4px;
+    margin-bottom: 0px;
+    margin-top: 2px;
+    text-align: justify;
+}
+.table-bordered
+{
+    border-collapse: collapse !important;
+    background-color: #F0F9FD;
+}
+.table-bordered tr td
+{
+    padding: 2px 3px;
+    text-align: left;
+    height: 13px;
+    border: 1px solid #000;
+}
+.table-radius tr td
+{
+    padding: 3px;
+    height: 13px;
+}
+h4
+{
+    margin: 0px 0px 3PX;
+    text-align: left;
+    font-weight: normal;
+    font-style: italic;
+}
+td p
+{
+    margin: 3px 0px;
+}
+.div-table
+{   
+    border:1px solid #000;
+    border-radius: 12px;
+    width: 85%;
+    margin:0 auto;
+    background-color: #D9F1F6;
+}
+.option{
+    width:18px;
+    float:left;
+    margin-left: 3px;
+    font-size: 10px;
+}
+.circle
+{
+    width:18px;
+    float:left;
+    border-radius: 50%;
+    border: 0.7px solid #000;
+    height:20px;
+    padding:-3px;
+    margin-left: 3px;
+}
+.full
+{
+    background-color: #000;
+}
+.line
+{
+    border-bottom: 0.7px solid #000;
+    float: left;
+    width: 51%;
+    margin-left: 5px;
+    margin-bottom: 3px;
+    margin-top: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    height: 13px;
+}
+.b_right
+{
+    border-right: 1px solid #000
+}
+.lang-td
+{
+    width: 5%;
+}
+
+.he thead tr td
+{
+    text-align: center;
+}
+.he tbody tr td
+{
+    padding: 10px 2px;
+}
+.date-p
+{
+    height: 15px;
+    text-align: center;
+    margin-bottom: 0px;
+    float: left;
+    padding-top:-4px;
+}
+.date-n
+{
+    width: 18px;
+    padding: 0px -4px 0px -4px;
+    height:15px;
+    float: left;
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+}
+.date-d
+{
+    float: left;
+    width: 18;
+    padding: 6px -8px 0px -8px;
+    text-align: center;
+    font-size: 5px;
+    text-align:center;
+    height:9px;
+    border-top:1px solid #000;
+    border-bottom:1px solid #000;
+}
+.title-exp
+{
+    float: left;
+    width: 100%;
+    background-color:#D9F1F6;
+}
+.title-exp h4
+{
+    margin: 1.3px 0px;
+    font-weight: normal;
+    font-style: italic;
+    text-align:center;
+}
+.txt-end
+{
+    font-size: 8.5px;
+    text-align: justify;
+    float: left;
+    width: 90%;
+}
+.page
+{
+    text-align:right;
+    font-weight:900;
+    font-size:14px;
+    margin-right:-25px;
+    margin-top:-8px;
+    font-family:chelvetica;
+}

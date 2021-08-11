@@ -53,11 +53,9 @@ class Login_controller extends CI_Controller
 
         $this->_view->assign('path_dashboard',                                  site_url('dashboard'));
         $this->_view->assign('path_biomechanical',                              site_url('biomechanicalform'));
+        $this->_view->assign('random',                                          random_int(1, 3));
 
-        $this->_view->assign('random',                                          random_int(1, 4));
-
-        //$this->_view->display('login.tpl');
-        $this->_view->display('login_new.tpl');
+        $this->_view->display('login.tpl');
         exit();
     }
 
