@@ -129,7 +129,7 @@ $(function ($) {
     function (value, element) {
       return (
         this.optional(element) ||
-        /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
+        /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC\u00C0-\u00DC]*$/.test(value)
       );
     },
     "Solo se permiten letras."

@@ -242,7 +242,7 @@ $(function ($) {
     function (value, element) {
       return (
         this.optional(element) ||
-        /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
+        /^[a-zA-Z\s\u00f1\u00d1\.\u00E0-\u00FC\u00C0-\u00DC]*$/.test(value)
       );
     },
     "Solo se permiten letras."
@@ -253,7 +253,7 @@ $(function ($) {
     function (value, element) {
       return (
         this.optional(element) ||
-        /^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC]*$/.test(value)
+        /^[a-zA-Z\d\s\u00f1\u00d1\.\u00E0-\u00FC\u00C0-\u00DC]*$/.test(value)
       );
     },
     "Solo se permiten letras y números."
@@ -321,7 +321,7 @@ $(function ($) {
       },
       nit_cv_ec: {
         required: "Por favor ingresa el NIT.",
-        minlength: "Solo se permiten 10 caracteres.",
+        minlength: "Mínimo se permiten 10 caracteres.",
         maxlength: "Solo se permiten 12 caracteres.",
         digits: "Solo se permiten números.",
       },

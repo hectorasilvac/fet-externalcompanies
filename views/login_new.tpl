@@ -35,9 +35,9 @@
                 <div data-id="welcome_container" class="d-flex flex-column pd-sm-t-40 pd-t-55 align-items-center">
             <p class="mr-6 ml-4 mb-1">
                 <span class="text-fet tx-ubuntu-bold-italic tx-sm-22">Evolucionando </span>
-                <span class="text-white tx-ubuntu-italic tx-sm-22">para </span>
-                <span class="text-fet tx-ubuntu-bold-italic tx-sm-22">brindarte </span>
-                <span class="text-white tx-ubuntu-italic tx-sm-22">un </span>
+                <span class="text-white tx-ubuntu-italic tx-sm-22">para</span>
+                <span class="text-fet tx-ubuntu-bold-italic tx-sm-22">brindarte</span>
+                <span class="text-white tx-ubuntu-italic tx-sm-22">un</span>
             </p>
             <h2>
                 <span class="text-fet tx-ubuntu-bold-italic d-block tx-sm-88 tx-32">Mejor</span>
@@ -49,16 +49,16 @@
             {else}
                 <div data-id="welcome_container" class="flex-column pd-xxl-x-160 pd-md-x-80 pd-t-120" >
                     <p class="mb-xxl-4 mb-md-2 ml-4">
-                        <span class="text-fet tx-ubuntu-bold-italic tx-xxl-37 tx-md-24">Evolucionando  </span>
-                        <span class="text-white tx-ubuntu-italic tx-xxl-37 tx-md-24">para  </span>
-                        <span class="text-fet tx-ubuntu-bold-italic tx-xxl-37 tx-md-24">brindarte  </span>
-                        <span class="text-white tx-ubuntu-italic tx-xxl-37 tx-md-24">un  </span>
+                        <span class="text-fet tx-ubuntu-bold-italic tx-xxl-37 tx-md-24">Evolucionando </span>
+                        <span class="text-white tx-ubuntu-italic tx-xxl-37 tx-md-24">para</span>
+                        <span class="text-fet tx-ubuntu-bold-italic tx-xxl-37 tx-md-24">brindarte</span>
+                        <span class="text-white tx-ubuntu-italic tx-xxl-37 tx-md-24">un</span>
                     </p>
                     <h2>
                         <span class="text-fet tx-ubuntu-bold-italic d-block tx-xxl-140 tx-md-108">Mejor</span>
                         <span class="text-white tx-ubuntu-italic ml-5 tx-xxl-140 tx-md-108 lh-md-6r">Servicio</span>
                     </h2>
-                    <button type="button" id="btn_start" class="btn btn-login tx-xxl-45 tx-md-34 mt-xxl-128 mt-md-6 wd-xxl-420 wd-md-360">
+                    <button type="button" id="btn_start" class="btn btn-login tx-xxl-45 tx-md-34 mt-xxl-128 mt-md-6 wd-xxl-400 wd-md-360">
                     Empecemos</button>
                 </div>
             {/if}

@@ -61456,3 +61456,45 @@ button.drop-cv {
 .select2-container {
     min-width: 5rem;
 }
+
+.div-input-search .select2-selection {
+  border: 0px !important;
+  margin-top: 10px;
+  margin-top: 0px;
+}
+
+.div-input-search {
+  width: 320px;
+  padding-top: 12px;
+  height: 60px;
+  border-right: 1px solid #ccc;
+}
+
+.div-search-company {
+  width: 40%;
+  float: left;
+}
+
+.div-search-line {
+  width: 4%;
+  float: left;
+}
+
+.div-search-project {
+  width: 40%;
+  float: left;
+}
+
+.div-search-button {
+  width: 13%;float: left;
+}
+
+.div-search-button button {
+  background-color: transparent;
+  color: #868e96;
+  margin-left: 3px;
+}
+
+.div-news {
+  padding-bottom: 55px;
+}

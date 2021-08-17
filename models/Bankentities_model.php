@@ -101,6 +101,7 @@ class Bankentities_model extends CI_Model
         {
             $this->db->group_start();
             $this->db->like('name_bankentity', $search);
+            $this->db->or_like('abbreviation_bankentity', $search);
             $this->db->or_like('nit_bankentity', $search);
             $this->db->or_like('digit_bankentity', $search);
             $this->db->or_like('code_bankentity', $search);

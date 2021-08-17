@@ -367,27 +367,27 @@ class Externalcompanies_model extends CI_Model
             {
                 $this->db->select('name_cv_ec, nit_cv_ec, email_cv_ec, phone_cv_ec, address_cv_ec');
 
-                if (isset($params['name_cv_ec']) && $params['name_cv_ec'] != '')
+                if (isset($params['name_cv_ec']) && strlen(trim($params['name_cv_ec'])) > 0)
                 {
                     $this->db->or_where('name_cv_ec', $params['name_cv_ec']);
                 }
 
-                if (isset($params['nit_cv_ec']) && $params['nit_cv_ec'] != '')
+                if (isset($params['nit_cv_ec']) && strlen(trim($params['nit_cv_ec'])) > 0)
                 {
                     $this->db->or_where('nit_cv_ec', $params['nit_cv_ec']);
                 }
 
-                if (isset($params['email_cv_ec']) && $params['email_cv_ec'] != '')
+                if (isset($params['email_cv_ec']) && strlen(trim($params['email_cv_ec'])) > 0)
                 {
                     $this->db->or_where('email_cv_ec', $params['email_cv_ec']);
                 }
 
-                if (isset($params['phone_cv_ec']) && $params['phone_cv_ec'] != '')
+                if (isset($params['phone_cv_ec']) && strlen(trim($params['phone_cv_ec'])) > 0)
                 {
                     $this->db->or_where('phone_cv_ec', $params['phone_cv_ec']);
                 }
 
-                if (isset($params['address_cv_ec']) && $params['address_cv_ec'] != '')
+                if (isset($params['address_cv_ec']) && strlen(trim($params['address_cv_ec'])) > 0)
                 {
                     $this->db->or_where('address_cv_ec', $params['address_cv_ec']);
                 }
@@ -417,35 +417,35 @@ class Externalcompanies_model extends CI_Model
                     switch ($key) 
                     {
                         case 'name_cv_ec':
-                            if (isset($params['name_cv_ec']) && strtolower($value) == strtolower(trim($params['name_cv_ec']))) 
+                            if (isset($params['name_cv_ec']) && strlen(trim($params['name_cv_ec'])) > 0 && strtolower($value) == strtolower(trim($params['name_cv_ec']))) 
                             {
                                 $message                                        =   'este nombre';
                             }
                             break;
 
                         case 'nit_cv_ec':
-                            if (isset($params['nit_cv_ec']) && strtolower($value) == strtolower(trim($params['nit_cv_ec']))) 
+                            if (isset($params['nit_cv_ec']) && strlen(trim($params['nit_cv_ec'])) > 0 && strtolower($value) == strtolower(trim($params['nit_cv_ec']))) 
                             {
                                 $message                                        =   'este NIT';
                             }
                             break;
 
                         case 'email_cv_ec':
-                            if (isset($params['email_cv_ec']) && strtolower($value) == strtolower(trim($params['email_cv_ec']))) 
+                            if (isset($params['email_cv_ec']) && strlen(trim($params['email_cv_ec'])) > 0 && strtolower($value) == strtolower(trim($params['email_cv_ec']))) 
                             {
                                 $message                                        =   'este correo electrónico';
                             }
                             break;
 
                         case 'phone_cv_ec':
-                            if (isset($params['phone_cv_ec']) && strtolower($value) == strtolower(trim($params['phone_cv_ec']))) 
+                            if (isset($params['phone_cv_ec']) && strlen(trim($params['phone_cv_ec'])) > 0 && strtolower($value) == strtolower(trim($params['phone_cv_ec']))) 
                             {
                                 $message                                        =   'este teléfono';
                             }
                             break;
 
                         case 'address_cv_ec':
-                            if (isset($params['address_cv_ec']) && strtolower($value) == strtolower(trim($params['address_cv_ec']))) 
+                            if (isset($params['address_cv_ec']) && strlen(trim($params['address_cv_ec'])) > 0 && strtolower($value) == strtolower(trim($params['address_cv_ec']))) 
                             {
                                 $message                                        =   'esta dirección';
                             }
