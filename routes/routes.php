@@ -279,18 +279,22 @@ $route['bankentities/exportxlsx']                                               
 
 // EXTENSIONES
 
-$route['extensions']                                                                 =   'extensions_controller/view';
+$route['extensions']                                                            =   'extensions_controller/view';
 
-$route['extensions/datatable']                                                       =   'extensions_controller/datatable';
+$route['extensions/datatable']                                                  =   'extensions_controller/datatable';
 
-$route['extensions/add']                                                             =   'extensions_controller/add';
+$route['extensions/add']                                                        =   'extensions_controller/add';
 
-$route['extensions/edit']                                                            =   'extensions_controller/edit';
+$route['extensions/edit']                                                       =   'extensions_controller/edit';
 
-$route['extensions/userflags']                                                       =   'extensions_controller/user_flags';
+$route['extensions/userflags']                                                  =   'extensions_controller/user_flags';
 
-$route['extensions/udrop']                                                           =   'extensions_controller/udrop';
+$route['extensions/udrop']                                                      =   'extensions_controller/udrop';
 
-$route['extensions/trace']                                                           =   'extensions_controller/trace';
+$route['extensions/trace']                                                      =   'extensions_controller/trace';
 
-$route['extensions/exportxlsx']                                                      =   'extensions_controller/export_xlsx';
+$route['extensions/workers']                                                    =   'extensions_controller/workers';
+
+$route['extensions/areas']                                                      =   'extensions_controller/areas';
+
+$route['extensions/exportxlsx']                                                 =   'extensions_controller/export_xlsx';

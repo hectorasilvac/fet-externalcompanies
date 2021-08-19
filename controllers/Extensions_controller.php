@@ -11,7 +11,7 @@ include_once 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-class Users_controller extends CI_Controller
+class Extensions_controller extends CI_Controller
 {
     private $actions;
 
@@ -48,7 +48,7 @@ class Users_controller extends CI_Controller
     * @param
     * @return    boolean
     **/
-    public function view() // Eliminar -> Revisado
+    public function view() // Eliminar -> Pendiente
     {
         if ($this->breadcrumb != FALSE)
         {
@@ -83,6 +83,8 @@ class Users_controller extends CI_Controller
             $this->_view->assign('path_userflags',                              site_url('extensions/userflags'));
             $this->_view->assign('path_drop',                                   site_url('extensions/udrop'));
             $this->_view->assign('path_trace',                                  site_url('extensions/trace'));
+            $this->_view->assign('path_workers',                                site_url('extensions/workers'));
+            $this->_view->assign('path_areas',                                  site_url('extensions/areas'));
             $this->_view->assign('path_export_xlsx',                            site_url('extensions/exportxlsx'));
 
             $this->_view->display('admin/extensions.tpl');
@@ -108,25 +110,20 @@ class Users_controller extends CI_Controller
             if ($this->session->userdata['mobile'] == 0)
             {
                 $columns                                                        =   array(
-                    0                                                                   =>  'gu.name_user',
-                    1                                                                   =>  'gu.name_user',
-                    2                                                                   =>  'fr.name_role',
-                    3                                                                   =>  'gu.user',
-                    4                                                                   =>  'gu.email_user',
-                    5                                                                   =>  'gu.date_keepalive',
-                    6                                                                   =>  'fa.name_aspirant'
+                    0                                                                   =>  'id_worker',
+                    1                                                                   =>  'email_extension',
+                    2                                                                   =>  'internal_extension',
+                    3                                                                   =>  'external_extension',
                                                                                     );
             }
             else
             {
-                $columns                                                        =   array(
-                    0                                                                   =>  'gu.name_user',
-                    1                                                                   =>  'fr.name_role',
-                    2                                                                   =>  'gu.user',
-                    3                                                                   =>  'gu.email_user',
-                    4                                                                   =>  'gu.date_keepalive',
-                    5                                                                   =>  'fa.name_aspirant'
-                                                                                    );
+                // $columns                                                        =   array(
+                //     0                                                                   =>  'worker_info',
+                //     1                                                                   =>  'email_extension',
+                //     2                                                                   =>  'internal_extension',
+                //     3                                                                   =>  'external_extension',
+                //                                                                     );
             }
 
             $limit                                                              =   $this->input->post('length');
@@ -135,8 +132,8 @@ class Users_controller extends CI_Controller
             $order                                                              =   $columns[$this->input->post('order')[0]['column']];
             $dir                                                                =   $this->input->post('order')[0]['dir'];
 
-            $count_rows                                                         =   $this->_users_model->count_rows($search);
-            $all_rows                                                           =   $this->_users_model->all_rows($limit, $start, $search, $order, $dir);
+            $count_rows                                                         =   $this->_extensions_model->count_rows($search);
+            $all_rows                                                           =   $this->_extensions_model->all_rows($limit, $start, $search, $order, $dir);
 
             $json_data                                                          =   array(
                 "draw"                                                                  =>  intval($this->input->post('draw')),
@@ -152,7 +149,7 @@ class Users_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('users'));
+                header("Location: " . site_url('extensions'));
             }
             else
             {
@@ -170,7 +167,7 @@ class Users_controller extends CI_Controller
     * @param     array $params
     * @return    json array
     **/
-    public function add() // Eliminar -> Pendiente
+    public function add() // Eliminar -> Revisado
     {
         if(in_array('ADD', $this->actions))
         {
@@ -229,7 +226,7 @@ class Users_controller extends CI_Controller
     * @param     array $params
     * @return    json array
     **/
-    public function edit() // Eliminar -> Pendiente
+    public function edit() // Eliminar -> Revisado
     {
         if(in_array('EDIT', $this->actions))
         {
@@ -237,28 +234,18 @@ class Users_controller extends CI_Controller
 
             if ($params)
             {
-                if ($params['name'] == 'email_user' || $params['name'] == 'user' || $params['name'] == 'id_aspirant') // Editar o Borrar
-                {
-                    $exist_extension                                            =   $this->_extensions_model->exist_extension($params);
+                $exist_extension                                                =   $this->_extensions_model->exist_extension($params);
 
-                    if ($exist_extension['data'])
-                    {
-                        $edit                                                   =   $this->_extensions_model->edit($params);
-
-                        echo json_encode($edit);
-                        exit();
-                    }
-                    else
-                    {
-                        echo json_encode($exist_extension);
-                        exit();
-                    }
-                }
-                else
+                if ($exist_extension['data'])
                 {
                     $edit                                                       =   $this->_extensions_model->edit($params);
 
                     echo json_encode($edit);
+                    exit();
+                } 
+                else
+                {
+                    echo json_encode($exist_extension);
                     exit();
                 }
             }
@@ -384,6 +371,105 @@ class Users_controller extends CI_Controller
             else
             {
                 echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+    
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function workers() // Eliminar -> Revisado
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $workers                                                            =   $this->_extensions_model->workers_select($params);
+
+            echo json_encode($workers);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function areas() // Eliminar -> Revisado
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $areas                                                              =   $this->_extensions_model->areas_select($params);
+
+            echo json_encode($areas);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function telephones() // Eliminar -> Pendiente
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $telephones                                                         =   $this->_extensions_model->telephones_select($params);
+
+            echo json_encode($telephones);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
             }
 
             exit();

@@ -7,7 +7,7 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Users_model extends CI_Model
+class Extensions_model extends CI_Model
 {
     public function __construct()
     {
@@ -51,44 +51,36 @@ class Users_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        $this->db->where('git_company != ', 'G');
         $this->db->where('flag_drop', 0);
-        $this->db->where('id_user !=', $this->session->userdata['id_user']);
-
-        if($this->session->userdata['id_role'] != "11")
-        {
-            $this->db->where('id_role !=', 11);
-        }
-
-        $this->db->from('git_users');
+        $this->db->from('git_worker_extensions');
 
         $result['total']                                                        =   $this->db->count_all_results();
 
         if (!empty($search))
         {
-            $this->db->select('git_users.id_user');
-            $this->db->from('git_users');
-            $this->db->join('git_roles', 'git_roles.id_role = git_users.id_role');
-            $this->db->join('fet_aspirants', 'fet_aspirants.id_aspirant = git_users.id_aspirant', 'left');
-            $this->db->where('git_users.git_company != ', 'G');
-            $this->db->where('git_users.flag_drop', 0);
-            $this->db->where('git_users.id_user !=', $this->session->userdata['id_user']);
+            // $this->db->select('git_users.id_user');
+            // $this->db->from('git_users');
+            // $this->db->join('git_roles', 'git_roles.id_role = git_users.id_role');
+            // $this->db->join('fet_aspirants', 'fet_aspirants.id_aspirant = git_users.id_aspirant', 'left');
+            // $this->db->where('git_users.git_company != ', 'G');
+            // $this->db->where('git_users.flag_drop', 0);
+            // $this->db->where('git_users.id_user !=', $this->session->userdata['id_user']);
 
-            if($this->session->userdata['id_role'] != "11")
-            {
-                $this->db->where('git_users.id_role !=', 11);
-            }
+            // if($this->session->userdata['id_role'] != "11")
+            // {
+            //     $this->db->where('git_users.id_role !=', 11);
+            // }
 
-            $this->db->group_start();
-            $this->db->like('CONCAT(git_users.name_user, " ", git_users.lastname_user)', $search);
-            $this->db->or_like('git_roles.name_role', $search);
-            $this->db->or_like('git_users.user', $search);
-            $this->db->or_like('git_users.email_user', $search);
-            $this->db->or_like('DATE_FORMAT(git_users.date_keepalive, \'%d-%m-%Y\')', $search);
-            $this->db->or_like('CONCAT(fet_aspirants.name_aspirant, " ", fet_aspirants.first_last_name_aspirant, " ", fet_aspirants.second_last_name_aspirant)', $search);
-            $this->db->group_end();
+            // $this->db->group_start();
+            // $this->db->like('CONCAT(git_users.name_user, " ", git_users.lastname_user)', $search);
+            // $this->db->or_like('git_roles.name_role', $search);
+            // $this->db->or_like('git_users.user', $search);
+            // $this->db->or_like('git_users.email_user', $search);
+            // $this->db->or_like('DATE_FORMAT(git_users.date_keepalive, \'%d-%m-%Y\')', $search);
+            // $this->db->or_like('CONCAT(fet_aspirants.name_aspirant, " ", fet_aspirants.first_last_name_aspirant, " ", fet_aspirants.second_last_name_aspirant)', $search);
+            // $this->db->group_end();
 
-            $result['total_filtered']                                           =   $this->db->count_all_results();
+            // $result['total_filtered']                                           =   $this->db->count_all_results();
         }
         else
         {
@@ -108,49 +100,39 @@ class Users_model extends CI_Model
     **/
     public function all_rows($limit, $start, $search, $col, $dir) // Eliminar -> Pendiente
     {
-        $this->db->select('gu.id_user, gu.id_role, gu.name_user, gu.lastname_user, fr.name_role, gu.user, gu.email_user,  DATE_FORMAT(gu.date_keepalive, \'%d-%m-%Y %h:%i %p\') AS date_keepalive, gu.flag_display, gu.id_aspirant, CONCAT(fa.name_aspirant, " ", fa.first_last_name_aspirant, " ", fa.second_last_name_aspirant) AS name_aspirant');
-        $this->db->from('git_users gu');
-        $this->db->join('git_roles fr', 'fr.id_role = gu.id_role');
-        $this->db->join('fet_aspirants fa', 'fa.id_aspirant = gu.id_aspirant', 'left');
-        $this->db->where('gu.git_company != ', 'G');
-        $this->db->where('gu.flag_drop', 0);
-        $this->db->where('gu.id_user !=', $this->session->userdata['id_user']);
-
-        if($this->session->userdata['id_role'] != "11")
-        {
-            $this->db->where('gu.id_role !=', 11);
-        }
+        $this->db->select('CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv) AS id_worker, email_extension, internal_extension, external_extension');
+        $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
+        $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+        $this->db->where('git_worker_extensions.flag_drop', 0);
 
         if (!empty($search))
         {
             $this->db->group_start();
-            $this->db->like('CONCAT(gu.name_user, " ", gu.lastname_user)', $search);
-            $this->db->or_like('fr.name_role', $search);
-            $this->db->or_like('gu.user', $search);
-            $this->db->or_like('gu.email_user', $search);
-            $this->db->or_like('DATE_FORMAT(gu.date_keepalive, \'%d-%m-%Y\')', $search);
-            $this->db->or_like('CONCAT(fa.name_aspirant, " ", fa.first_last_name_aspirant, " ", fa.second_last_name_aspirant)', $search);
+            $this->db->like('CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv)', $search);
+            $this->db->or_like('email_extension', $search);
+            $this->db->or_like('internal_extension', $search);
+            $this->db->or_like('external_extension', $search);
             $this->db->group_end();
         }
 
         $this->db->limit($limit, $start);
         $this->db->order_by($col, $dir);
 
-        $query                                                                  =   $this->db->get();
+        $query                                                                  =   $this->db->get('git_worker_extensions');
 
-        $users                                                                  =   $query->result_array();
+        $extensions                                                             =   $query->result_array();
 
         if ($this->session->userdata['mobile'] == 0)
         {
             $count                                                              =   $start;
-            foreach ($users as $key => $action)
+            foreach ($extensions as $key => $action)
             {
                 $count++;
-                $users[$key]['number']                                          =   $count;
+                $extensions[$key]['number']                                     =   $count;
             }
         }
 
-        return $users;
+        return $extensions;
         exit();
     }
 
@@ -182,31 +164,131 @@ class Users_model extends CI_Model
     * @param     array $params
     * @return    array $result
     **/
+    public function workers_select($params) // Eliminar -> Revisado
+    {
+        $result                                                                 =   array();
+
+        $page                                                                   =   $params['page'];
+        $range                                                                  =   10;
+
+        $start                                                                  =   ($page - 1) * $range;
+        $limit                                                                  =   $start + $range;
+
+        $this->db->select('fet_workers.id_cv AS id, CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv) AS text');
+        $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+        $this->db->where('fet_workers.flag_drop', 0);
+
+
+        if (isset($params['q']) && $params['q'] != '')
+        {
+            $this->db->like('name_cv', $params['q']);
+            $this->db->or_like('first_lcv', $params['q']);
+            $this->db->or_like('second_lcv', $params['q']);
+            $this->db->or_like('number_dcv', $params['q']);
+        }
+
+        $this->db->order_by('id_worker', 'asc');
+        $this->db->limit($limit, $start);
+
+        $query                                                                  =   $this->db->get('fet_workers');
+
+        $result['total_count']                                                  =   $query->num_rows();
+
+        if ($result['total_count'] > 0)
+        {
+            $result['items']                                                    =   $query->result_array();
+        }
+        else
+        {
+            $result['items']                                                    =   array();
+        }
+
+        return $result;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
+    public function areas_select($params) // Eliminar -> Pendiente
+    {
+        $result                                                                 =   array();
+
+        $page                                                                   =   $params['page'];
+        $range                                                                  =   10;
+
+        $start                                                                  =   ($page - 1) * $range;
+        $limit                                                                  =   $start + $range;
+
+        $this->db->select('id_area AS id, name_area AS text');
+        $this->db->where('flag_drop', 0);
+
+
+        if (isset($params['q']) && $params['q'] != '')
+        {
+            $this->db->like('name_area', $params['q']);
+        }
+
+        $this->db->order_by('id_area', 'asc');
+        $this->db->limit($limit, $start);
+
+        $query                                                                  =   $this->db->get('git_areas');
+
+        $result['total_count']                                                  =   $query->num_rows();
+
+        if ($result['total_count'] > 0)
+        {
+            $result['items']                                                    =   $query->result_array();
+        }
+        else
+        {
+            $result['items']                                                    =   array();
+        }
+
+        return $result;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    array $result
+    **/
     public function exist_extension($params) // Eliminar -> Pendiente
     {
         $result                                                                 =   array();
 
         if (isset($params['pk']))
         {
-            $this->db->select($params['name']);
-            $this->db->where('git_company != ', 'G');
-            $this->db->where('flag_drop', 0);
-            $this->db->where($params['name'], trim($params['value']));
-            $this->db->where('id_user !=', $params['pk']);
+            // $this->db->select($params['name']);
+            // $this->db->where('git_company != ', 'G');
+            // $this->db->where('flag_drop', 0);
+            // $this->db->where($params['name'], trim($params['value']));
+            // $this->db->where('id_user !=', $params['pk']);
         }
         else
         {
-            $this->db->select('email_user, user, id_aspirant');
-            $this->db->where('git_company != ', 'G');
+            $this->db->select('id_worker, id_element1, id_element2, external_extension, internal_extension, email_extension, phone_extension, ip_extension');
             $this->db->where('flag_drop', 0);
             $this->db->group_start();
-            $this->db->where('email_user', trim($params['email_user']));
-            $this->db->or_where('user', trim($params['user']));
-            $this->db->or_where('id_aspirant', $params['id_aspirant']);
+            $this->db->where('id_worker', trim($params['id_worker']));
+            $this->db->or_where('id_element1', trim($params['id_element1']));
+            $this->db->or_where('id_element2', trim($params['id_element2']));
+            $this->db->or_where('external_extension', trim($params['external_extension']));
+            $this->db->or_where('internal_extension', trim($params['internal_extension']));
+            $this->db->or_where('email_extension', trim($params['email_extension']));
+            $this->db->or_where('phone_extension', trim($params['phone_extension']));
+            $this->db->or_where('ip_extension', trim($params['ip_extension']));
             $this->db->group_end();
         }
 
-        $query                                                                  =   $this->db->get('git_users');
+        $query                                                                  =   $this->db->get('git_worker_extensions');
 
         if (count($query->result_array()) > 0)
         {
@@ -220,33 +302,24 @@ class Users_model extends CI_Model
 
             foreach ($query->row_array() as $key => $value)
             {
-                switch ($key)
-                {
-                    case 'email_user':
-                        if ( $value == trim($params['email_user']) )
-                        {
-                            $message                                            =   ' este correo electrónico.';
-                        }
-                        break;
+                $entries = [
+                    'id_worker'                                                 =>  ' este trabajador.',
+                    'id_element1'                                               =>  ' este dispositivo (teléfono).',
+                    'id_element2'                                               =>  ' este dispositivo (celular).',
+                    'external_extension'                                        =>  ' este número externo.',
+                    'internal_extension'                                        =>  ' este número interno.',
+                    'email_extension'                                           =>  ' este correo corporativo.',
+                    'phone_extension'                                           =>  ' este número de celular.',
+                    'ip_extension'                                              =>  ' esta IP.',
+                ];
 
-                    case 'user':
-                        if ($value == trim($params['user']))
-                        {
-                            $message                                            =   ' este nombre de usuario.';
-                        }
-                        break;
-
-                    case 'id_aspirant':
-                        if ($value == $params['id_aspirant'])
-                        {
-                            $message                                            =   ' este aspirante asignado.';
-                        }
-                        break;
+                if (isset($entries[$key]) && strtolower($value) == strtolower(trim($params[$key]))) {
+                    $message                                                    =   $entries[$key];
                 }
             }
 
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Ya existe un usuario con ' . $message;
+            $result['message']                                                  =   'Ya existe una extensión con ' . $message;
         }
         else
         {
@@ -265,109 +338,57 @@ class Users_model extends CI_Model
     * @param     array $params
     * @return    array $result
     **/
-    public function add($params) // Eliminar -> Pendiente
+    public function add($params) // Eliminar -> Revisado
     {
         $result                                                                 =   array();
 
-        $this->form_validation->set_rules('name_user', 'Nombres', 'required');
-        $this->form_validation->set_rules('lastname_user', 'Apellidos', 'required');
-        $this->form_validation->set_rules('user', 'Usuario', 'required');
-        $this->form_validation->set_rules('password_user', 'Contraseña', array('required', 'min_length[8]'));
-        $this->form_validation->set_rules('email_user', 'Correo', 'required');
-        $this->form_validation->set_rules('id_role', 'Rol', 'required');
+        $this->form_validation->set_rules('id_worker', 'Trabajador', 'required');
+        $this->form_validation->set_rules('id_element1', 'Teléfono', 'required');
+        $this->form_validation->set_rules('id_element2', 'Celular', 'required');
+        $this->form_validation->set_rules('id_area', 'Área', 'required');
+        $this->form_validation->set_rules('external_extension', 'Extensión externa', 'required');
+        $this->form_validation->set_rules('internal_extension', 'Extensión interna', 'required');
+        $this->form_validation->set_rules('email_extension', 'Correo corporativo', array('required', 'valid_email'));
+        $this->form_validation->set_rules('phone_extension', 'Número de celular', 'required');
+        $this->form_validation->set_rules('ip_extension', 'IP', 'required');
 
-        if($this->form_validation->run())
+        if ($this->form_validation->run())
         {
-            $data                                                               =   array();
-            $data['id_role']                                                    =   $params['id_role'];
-            $data['git_company']                                                =   'T';
-            $data['name_user']                                                  =   ucwords(mb_strtolower($this->_trabajandofet_model->accents($params['name_user'])));
-            $data['lastname_user']                                              =   ucwords(mb_strtolower($this->_trabajandofet_model->accents($params['lastname_user'])));
-            $data['email_user']                                                 =   $this->_trabajandofet_model->user_name($params['email_user']);
-            $data['user']                                                       =   $this->_trabajandofet_model->user_name($params['user']);
-            $password_user_text                                                 =   $params['password_user'];
-            $data['password_user']                                              =   password_hash($params['password_user'], PASSWORD_DEFAULT);
-            $data['user_insert']                                                =   $this->session->userdata['id_user'];
+            $params['id_worker']                                                =   trim($params['id_worker']);
+            $params['id_element1']                                              =   trim($params['id_element1']);
+            $params['id_element2']                                              =   trim($params['id_element2']);
+            $params['id_area']                                                  =   trim($params['id_area']);
+            $params['external_extension']                                       =   trim($params['external_extension']);
+            $params['internal_extension']                                       =   trim($params['internal_extension']);
+            $params['email_extension']                                          =   $this->_trabajandofet_model->user_name($params['email_extension']);
+            $params['phone_extension']                                          =   trim($params['phone_extension']);
+            $params['ip_extension']                                             =   trim($params['ip_extension']);
+            $params['git_company']                                              =   trim($params['git_company']) === 'checked' ? 'A' : 'T';
+            $params['user_insert']                                              =   $this->session->userdata['id_user'];
+            $params['date_insert']                                              =   date('Y-m-d H:i:s');
 
-            if (isset($params['id_aspirant']) && $params['id_aspirant'] != '')
+            $query                                                              =   $this->_trabajandofet_model->insert_data($params, 'git_worker_extensions');
+
+            if ($query) 
             {
-                $data['id_aspirant']                                            =   $params['id_aspirant'];
-            }
-            else
-            {
-                unset($params['id_aspirant']);
-            }
+                $data_history                                                   =   $params;
+                $data_history['id_extension']                                   =   $query;
+                $data_history['user_update']                                    =   $params['user_insert'];
+                $data_history['date_update']                                    =   date('Y-m-d H:i:s');
+                unset($data_history['date_insert'], $data_history['user_insert']);
 
-            $this->db->trans_start();
-
-            $answer                                                             =   $this->_trabajandofet_model->insert_data($data, 'git_users');
-
-            if ($answer && isset($params['flags']))
-            {
-                foreach ($params['flags'] as $key => $value)
-                {
-                    $flag['id_user']                                            =   $answer;
-                    $flag['id_flag']                                            =   $value;
-                    $flag['git_company']                                        =   'T';
-                    $flag['user_insert']                                        =   $data['user_insert'];
-
-                    $this->_trabajandofet_model->insert_data($flag, 'git_users_flags');
-                }
-            }
-
-            $this->db->trans_complete();
-
-            if ($this->db->trans_status() === TRUE)
-            {
-                $data_history                                                   =   $data;
-                $data_history['id_user']                                        =   $answer;
-                $data_history['user_update']                                    =   $data['user_insert'];
-                unset($data_history['git_company']);
-                unset($data_history['user_insert']);
-
-                $this->_trabajandofet_model->insert_data($data_history, 'git_users_history');
+                $this->_trabajandofet_model->insert_data($data_history, 'git_worker_extensions_history');
 
                 $result['data']                                                 =   TRUE;
-                $result['message']                                              =   'Acción realizada con éxito!';
-
-                $body                                                           =   '<p style="text-align: justify;">Hola ' . $data['name_user'] . ' ' . $data['lastname_user'] . ' la plataforma'
-                                                                                .   ' de Apoyo a los Procesos Misionales TRABAJANDOFET te da la bienvenida,'
-                                                                                .   ' a continuación te presentamos tu usuario y clave para la ejecución de tus'
-                                                                                .   ' actividades, cualquier requerimiento que necesites sobre la misma, favor'
-                                                                                .   ' comunícate con nosotros por medio de nuestro correo corporativo <i>gestion@trabajandofet.co.</i></p>'
-                                                                                .   '<p><b>Usuario:</b></p>'
-                                                                                .   '<p style="text-align: center;">' . $data['user'] . '</p>'
-                                                                                .   '<p><b>Contraseña:</b></p>'
-                                                                                .   '<p style="text-align: center;">' . $password_user_text . '</p>';
-
-                $content                                                        =   array(
-                                                                                        'of'                    =>  'Plataforma',
-                                                                                        'title'                 =>  'Nuevo Usuario en Plataforma',
-                                                                                        'body'                  =>  $body,
-                                                                                        'login'                 =>  '1',
-                                                                                        'url'                   =>  'https://www.trabajandofet.co'
-                                                                                    );
-
-                $send                                                           =   $this->_trabajandofet_model->send_mail($data['email_user'], $content['title'], $content);
-
-                if ($send)
-                {
-                    $result['data']                                             =   TRUE;
-                    $result['message']                                          =   'Se ha enviado un correo electrónico con el nuevo usuario a ' . $data['email_user'];
-                }
-                else
-                {
-                    $result['data']                                             =   FALSE;
-                    $result['message']                                          =   'Problemas al enviar el correo electrónico.';
-                }
-            }
-            else
+                $result['message']                                              =   'La extensión se ha registrado correctamente';
+            } 
+            else 
             {
                 $result['data']                                                 =   FALSE;
-                $result['message']                                              =   'Problemas al guardar el usuario.';
+                $result['message']                                              =   'Error al registrar la extensión';
             }
-        }
-        else
+        } 
+        else 
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';
@@ -376,7 +397,6 @@ class Users_model extends CI_Model
         return $result;
         exit();
     }
-
     /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
@@ -384,7 +404,7 @@ class Users_model extends CI_Model
     * @param     array $params
     * @return    array $result
     **/
-    public function edit($params) // Eliminar -> Pendiente
+    public function edit($params) // Eliminar -> Revisado
     {
         $result                                                                 =   array();
 
@@ -394,24 +414,44 @@ class Users_model extends CI_Model
 
             switch ($params['name'])
             {
-                case 'name_user':
-                    $data['name_user']                                          =   ucwords(mb_strtolower($this->_trabajandofet_model->accents($params['value'])));
+                case 'id_worker':
+                    $data['id_worker']                                          =   trim($params['value']);
                     break;
 
-                case 'lastname_user':
-                    $data['lastname_user']                                      =   ucwords(mb_strtolower($this->_trabajandofet_model->accents($params['value'])));
+                case 'id_element1':
+                    $data['id_element1']                                        =   trim($params['value']);
                     break;
 
-                case 'email_user':
-                    $data['email_user']                                         =   $this->_trabajandofet_model->user_name($params['value']);
+                case 'id_element2':
+                    $data['id_element2']                                        =   trim($params['value']);
+                    break;
+                
+                case 'id_area':
+                    $data['id_area']                                            =   trim($params['value']);
+                    break;
+                
+                case 'external_extension':
+                    $data['external_extension']                                 =   trim($params['value']);
+                    break;
+                
+                case 'internal_extension':
+                    $data['internal_extension']                                 =   trim($params['value']);
                     break;
 
-                case 'user':
-                    $data['user']                                               =   $this->_trabajandofet_model->user_name($params['value']);
+                case 'email_extension':
+                    $data['email_extension']                                    =   $this->_trabajandofet_model->user_name($params['value']);
                     break;
 
-                case 'password_user':
-                    $data['password_user']                                      =   password_hash($params['value'], PASSWORD_DEFAULT);
+                case 'phone_extension':
+                    $data['phone_extension']                                    =   trim($params['value']);
+                    break;
+
+                case 'ip_extension':
+                    $data['ip_extension']                                       =   trim($params['value']);
+                    break;
+                
+                case 'git_company':
+                    $data['git_company']                                        =   trim($params['value']) === 'checked' ? 'A' : 'T';
                     break;
 
                 default:
@@ -423,17 +463,15 @@ class Users_model extends CI_Model
             $data['user_update']                                                =   $this->session->userdata['id_user'];
             $data['date_update']                                                =   date('Y-m-d H:i:s');
 
-            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_user', 'git_users');
+            $answer                                                             =   $this->_trabajandofet_model->update_data($data, 'id_extension', 'git_worker_extensions');
 
             if ($answer)
             {
                 $data_history                                                   =   $data;
-                $data_history['id_user']                                        =   $data_history['id'];
+                $data_history['id_extension']                                   =   $data_history['id'];
                 unset($data_history['id']);
 
-                $data_history['id_role']                                        =   $this->role_in_user($data_history);
-
-                $this->_trabajandofet_model->insert_data($data_history, 'git_users_history');
+                $this->_trabajandofet_model->insert_data($data_history, 'git_worker_extensions_history');
 
                 $result['data']                                                 =   TRUE;
                 $result['message']                                              =   'Acción realizada con éxito!';
@@ -441,7 +479,7 @@ class Users_model extends CI_Model
             else
             {
                 $result['data']                                                 =   FALSE;
-                $result['message']                                              =   'Problemas al editar el usuario.';
+                $result['message']                                              =   'Problemas al editar la extensión.';
             }
         }
         else
@@ -490,10 +528,10 @@ class Users_model extends CI_Model
     * @param     arraay $param
     * @return    array $result
     **/
-    public function udrop($param) // Eliminar -> Pendiente
+    public function udrop($param) // Eliminar -> Revisado
     {
         $data                                                                   =   array(
-            'id'                                                                        =>  $param['id_user'],
+            'id'                                                                        =>  $param['id_extension'],
             'flag_drop'                                                                 =>  1,
             'user_update'                                                               =>  $this->session->userdata['id_user'],
             'date_update'                                                               =>  date('Y-m-d H:i:s')
@@ -501,17 +539,23 @@ class Users_model extends CI_Model
 
         $result                                                                 =   array();
 
-        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_user', 'git_users');
+        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_extension', 'git_worker_extensions');
 
         if ($answer)
         {
+            $data_history                                                       =   $data;
+            $data_history['id_extension']                                       =   $data_history['id'];
+            unset($data_history['id']);
+
+            $this->_trabajandofet_model->insert_data($data_history, 'git_worker_extensions_history');
+
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
         }
         else
         {
             $result['data']                                                     =   FALSE;
-            $result['message']                                                  =   'Problemas al eliminar el usuario.';
+            $result['message']                                                  =   'Problemas al eliminar la extensión.';
         }
 
         return $result;
@@ -525,12 +569,12 @@ class Users_model extends CI_Model
     *@param     array $param
     *@return    array $result
     **/
-    public function trace_register($param) // Eliminar -> Pendiente
+    public function trace_register($param) // Eliminar -> Revisado
     {
         $result                                                                 =   array();
 
-        $result['data']                                                         =   $this->_trabajandofet_model->trace_register('git_users', 'id_user', $param['id_user']);
-        $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('git_users_history', 'id_user', $param['id_user']);
+        $result['data']                                                         =   $this->_trabajandofet_model->trace_register('git_worker_extensions', 'id_extension', $param['id_extension']);
+        $result['data_global']                                                  =   $this->_trabajandofet_model->global_trace_register('git_worker_extensions_history', 'id_extension', $param['id_extension']);
 
         if (count($result['data']) > 0)
         {
