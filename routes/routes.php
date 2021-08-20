@@ -287,6 +287,8 @@ $route['extensions/add']                                                        
 
 $route['extensions/edit']                                                       =   'extensions_controller/edit';
 
+$route['extensions/detail']                                                     =   'extensions_controller/detail';
+
 $route['extensions/userflags']                                                  =   'extensions_controller/user_flags';
 
 $route['extensions/udrop']                                                      =   'extensions_controller/udrop';
@@ -296,5 +298,9 @@ $route['extensions/trace']                                                      
 $route['extensions/workers']                                                    =   'extensions_controller/workers';
 
 $route['extensions/areas']                                                      =   'extensions_controller/areas';
+
+$route['extensions/telephones']                                                 =   'extensions_controller/telephones';
+
+$route['extensions/cellphones']                                                 =   'extensions_controller/cellphones';
 
 $route['extensions/exportxlsx']                                                 =   'extensions_controller/export_xlsx';

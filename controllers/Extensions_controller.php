@@ -80,11 +80,14 @@ class Extensions_controller extends CI_Controller
             $this->_view->assign('path_view',                                   site_url('extensions/datatable'));
             $this->_view->assign('path_add',                                    site_url('extensions/add'));
             $this->_view->assign('path_edit',                                   site_url('extensions/edit'));
+            $this->_view->assign('path_detail',                                 site_url('extensions/detail'));
             $this->_view->assign('path_userflags',                              site_url('extensions/userflags'));
             $this->_view->assign('path_drop',                                   site_url('extensions/udrop'));
             $this->_view->assign('path_trace',                                  site_url('extensions/trace'));
             $this->_view->assign('path_workers',                                site_url('extensions/workers'));
             $this->_view->assign('path_areas',                                  site_url('extensions/areas'));
+            $this->_view->assign('path_telephones',                             site_url('extensions/telephones'));
+            $this->_view->assign('path_cellphones',                             site_url('extensions/cellphones'));
             $this->_view->assign('path_export_xlsx',                            site_url('extensions/exportxlsx'));
 
             $this->_view->display('admin/extensions.tpl');
@@ -217,6 +220,55 @@ class Extensions_controller extends CI_Controller
 
             exit();
         } 
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $params
+    * @return    json array
+    **/
+    public function detail() // Eliminar -> Pendiente
+    {
+        if(in_array('DETAILS', $this->actions))
+        {
+            $params                                                             =   $this->security->xss_clean($_POST);
+
+            if ($params)
+            {
+                    $detail                                                     =   $this->_extensions_model->detail($params);
+
+                    echo json_encode($detail);
+                    exit();
+            }
+            else
+            {
+                if ($this->input->method(TRUE) == 'GET')
+                {
+                    header("Location: " . site_url('extensions'));
+                }
+                else
+                {
+                    echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+                }
+
+                exit();
+            }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();  
+        }
     }
 
     /**
@@ -443,14 +495,14 @@ class Extensions_controller extends CI_Controller
         }
     }
 
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
     * @since     v2.0.1
     * @param     array $param
     * @return    json array
     **/
-    public function telephones() // Eliminar -> Pendiente
+    public function telephones() // Eliminar -> Revisado
     {
         $params                                                                 =   $this->security->xss_clean($_GET);
 
@@ -459,6 +511,39 @@ class Extensions_controller extends CI_Controller
             $telephones                                                         =   $this->_extensions_model->telephones_select($params);
 
             echo json_encode($telephones);
+            exit();
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'Los campos enviados no corresponden a los necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+        /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function cellphones() // Eliminar -> Revisado
+    {
+        $params                                                                 =   $this->security->xss_clean($_GET);
+
+        if ($params)
+        {
+            $cellphones                                                         =   $this->_extensions_model->cellphones_select($params);
+
+            echo json_encode($cellphones);
             exit();
         }
         else
@@ -532,7 +617,7 @@ class Extensions_controller extends CI_Controller
     * @param
     * @return    file
     **/
-    public function export_xlsx() // Eliminar > Pendiente
+    public function export_xlsx() // Eliminar > Revisado 20/082021
     {
         if(in_array('EXPORTXLSX', $this->actions))
         {
@@ -549,26 +634,36 @@ class Extensions_controller extends CI_Controller
             $sheet                                                              =   $spreadsheet->getActiveSheet();
 
             $sheet->setCellValue('A1', 'No')
-                  ->setCellValue('B1', 'Nombre')
-                  ->setCellValue('C1', 'Apellido')
-                  ->setCellValue('D1', 'Rol')
-                  ->setCellValue('E1', 'Usuario')
-                  ->setCellValue('F1', 'Correo')
-                  ->setCellValue('G1', 'Último ingreso')
-                  ->setCellValue('H1', 'Aspirante');
+                  ->setCellValue('B1', 'Nombre completo')
+                  ->setCellValue('C1', 'Documento de identidad')
+                  ->setCellValue('D1', 'Área')
+                  ->setCellValue('E1', 'Ext. Interna')
+                  ->setCellValue('F1', 'Ext. Externa')
+                  ->setCellValue('G1', 'Número de celular')
+                  ->setCellValue('H1', 'Correo corporativo')
+                  ->setCellValue('I1', 'Serial de teléfono')
+                  ->setCellValue('J1', 'Descripción de teléfono')
+                  ->setCellValue('K1', 'Serial de celular')
+                  ->setCellValue('L1', 'Descripción de celular')
+                  ->setCellValue('M1', 'Dirección IP');
 
-            $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+            $sheet->getStyle('A1:M1')->getFont()->setBold(true);
 
-            $sheet->getColumnDimension('A')->setWidth(10);
-            $sheet->getColumnDimension('B')->setWidth(20);
-            $sheet->getColumnDimension('C')->setWidth(20);
-            $sheet->getColumnDimension('D')->setWidth(20);
-            $sheet->getColumnDimension('E')->setWidth(20);
-            $sheet->getColumnDimension('F')->setWidth(30);
-            $sheet->getColumnDimension('G')->setWidth(30);
+            $sheet->getColumnDimension('A')->setWidth(5);
+            $sheet->getColumnDimension('B')->setWidth(35);
+            $sheet->getColumnDimension('C')->setWidth(15);
+            $sheet->getColumnDimension('D')->setWidth(30);
+            $sheet->getColumnDimension('E')->setWidth(10);
+            $sheet->getColumnDimension('F')->setWidth(10);
+            $sheet->getColumnDimension('G')->setWidth(20);
             $sheet->getColumnDimension('H')->setWidth(30);
+            $sheet->getColumnDimension('I')->setWidth(30);
+            $sheet->getColumnDimension('J')->setWidth(30);
+            $sheet->getColumnDimension('K')->setWidth(30);
+            $sheet->getColumnDimension('L')->setWidth(30);
+            $sheet->getColumnDimension('M')->setWidth(30);
 
-            $export_xlsx                                                        =   $this->_users_model->export_xlsx($search);
+            $export_xlsx                                                        =   $this->_extensions_model->export_xlsx($search);
             $count                                                              =   2;
 
             for ($i = 0; $i < count($export_xlsx['data']); $i++)
@@ -586,10 +681,10 @@ class Extensions_controller extends CI_Controller
             }
 
             $writer                                                             =   new Xlsx($spreadsheet);
-            $sheet->setTitle('Usuarios');
+            $sheet->setTitle('Extensiones');
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="trabajandofet_usuarios_' . date('dmY') . '.xlsx"');
+            header('Content-Disposition: attachment;filename="trabajandofet_extensiones' . date('dmY') . '.xlsx"');
             header('Cache-Control: max-age=0');
             header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
             header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
@@ -603,7 +698,7 @@ class Extensions_controller extends CI_Controller
         {
             if ($this->input->method(TRUE) == 'GET')
             {
-                header("Location: " . site_url('users'));
+                header("Location: " . site_url('extensions'));
             }
             else
             {

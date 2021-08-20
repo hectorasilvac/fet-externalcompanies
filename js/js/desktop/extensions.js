@@ -20,28 +20,47 @@ $(function ($) {
         targets: [0],
         data: "id_worker",
         render: function (data, type, row) {
-          return `<span>${data}</span>`;
+          return `
+            <span data-placement="top" data-title="${row.name_area}" class="mr-1"><i class="fas fa-university"></i></span>
+            <span data-name='id_worker' data-type='select2' data-pk='${row.id_extension}' data-url='${$path_edit}' data-value='${data}'>${data}</span>
+            `;
         },
       },
       {
         targets: [1],
         data: "email_extension",
         render: function (data, type, row) {
-          return `<span>${data}</span>`;
+          return `<span data-name="email_extension" data-type="text" data-pk="${row.id_extension}" data-url="${$path_edit}">${data}</span>`;
         },
       },
       {
         targets: [2],
         data: "internal_extension",
         render: function (data, type, row) {
-          return `<span>${data}</span>`;
+          return `
+          <span
+          data-name="internal_extension" 
+          data-type="number" 
+          data-pk="${row.id_extension}" 
+          data-url="${$path_edit}" 
+          data-title="${row.ip_extension ?? "No hay IP registrada"}">
+          ${data}
+          </span>
+          `;
         },
       },
       {
         targets: [3],
         data: "external_extension",
         render: function (data, type, row) {
-          return `<span>${data}</span>`;
+          return `<span 
+          data-name="external_extension" 
+          data-type="number" 
+          data-pk="${row.id_extension}" 
+          data-url="${$path_edit}"
+          data-title="${row.ip_extension ?? "No hay IP registrada"}">
+          ${data}
+          </span>`;
         },
       },
       {
@@ -53,7 +72,7 @@ $(function ($) {
 
           if (act_edit) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Editar" href="javascript:void(0)" class="edit-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" data-title="Editar" href="javascript:void(0)" class="edit-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-pencil-alt"></i></a>';
           }
@@ -76,31 +95,37 @@ $(function ($) {
 
           if (act_drop) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Eliminar" href="javascript:void(0)" class="remove-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" data-title="Eliminar" href="javascript:void(0)" class="remove-row pd-x-5-force" data-id="' +
               data +
               '"><i class="fas fa-trash"></i></a>';
           }
 
           if (act_trace) {
             content +=
-              '<a data-toggle="tooltip" data-placement="top" title="Trazabilidad" href="javascript:void(0)" class="trace-row pd-x-5-force" data-id="' +
+              '<a data-toggle="tooltip" data-placement="top" data-title="Trazabilidad" href="javascript:void(0)" class="trace-row pd-x-5-force" data-id="' +
               data +
               '" onclick="trace(\'' +
               $path_trace +
-              "', 'id_bankentity'," +
+              "', 'id_extension'," +
               data +
               ')"><i class="fas fa-history"></i></a>';
           }
 
           return content + "</div>";
         },
-        visible: act_edit || act_detail || act_assign || act_drop || act_trace ? true : false,
+        visible:
+          act_edit || act_detail || act_assign || act_drop || act_trace
+            ? true
+            : false,
       },
     ],
     drawCallback: function (settings) {
       var rows = this.fnGetData();
       var inputSearch = $(".dataTables_filter input").val();
-      $('[data-toggle="tooltip"]').tooltip();
+
+      $("body").tooltip({
+        selector: "[data-title]",
+      });
 
       if (rows.length == 0) {
         $("#btn_export_xlsx").removeAttr("href");
@@ -113,6 +138,112 @@ $(function ($) {
         } else {
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
+      }
+
+      if (act_edit) {
+        $('#default_table td span[data-name="id_worker"]').editable({
+          validate: function (value) {
+            if (value === null || value === "") {
+              return "Campo obligatorio";
+            }
+          },
+          success: function (response, newValue) {
+            response = $.parseJSON(response);
+            modal_alert(response.data, response.message);
+          },
+          tpl: "<select></select>",
+          select2: {
+            theme: "bootstrap4",
+            width: "200px",
+            language: "es",
+            ajax: {
+              url: $path_workers,
+              dataType: "json",
+              delay: 250,
+              data: function (params) {
+                return {
+                  q: params.term,
+                  page: params.page || 1,
+                };
+              },
+              processResults: function (data, params) {
+                var page = params.page || 1;
+                return {
+                  results: data.items,
+                  pagination: {
+                    more: page * 10 <= data.total_count,
+                  },
+                };
+              },
+              cache: true,
+            },
+          },
+        });
+
+        $("#default_table td span[data-type='text']").editable({
+          emptytext: "Vacío",
+          validate: function (value) {
+            switch ($(this).attr("data-name")) {
+              case "email_extension":
+                if (value.length < 3) return "Mínimo se permiten 3 caracteres.";
+                if (value.length > 80) return "Solo se permiten 80 caracteres.";
+                if (!value.match(/^\S+@\S+\.\S+\D$/))
+                  return "Ingresa una cuenta válida de correo.";
+                if (value === null || value.trim() === "")
+                  return "Campo obligatorio.";
+                break;
+            }
+          },
+          success: function (response) {
+            var { data, message } = $.parseJSON(response);
+            var successful_update = data === true;
+
+            if (successful_update) {
+              modal_alert(data, message);
+              return true;
+            }
+
+            modal_alert(data, message);
+            return false;
+          },
+        });
+
+        $("#default_table td span[data-type='number']").editable({
+          emptytext: "Vacío",
+          validate: function (value) {
+            switch ($(this).attr("data-name")) {
+              case "internal_extension":
+                if (!value === null || value.trim() !== "") {
+                  if (value.length < 1) return "Mínimo permiten 1 carácter.";
+                  if (value.length > 3) return "Solo se permiten 3 caracteres.";
+                  if (!value.match(/^[0-9]+$/))
+                    return "Solo se permiten números.";
+                }
+                break;
+
+              case "external_extension":
+                if (!value === null || value.trim() !== "") {
+                  if (value.length < 1) return "Mínimo permiten 1 carácter.";
+                  if (value.length > 3) return "Solo se permiten 3 caracteres.";
+                  if (!value.match(/^[0-9]+$/))
+                    return "Solo se permiten números.";
+                }
+                break;
+            }
+          },
+          success: function (response) {
+            var { data, message } = $.parseJSON(response);
+            var successful_update = data === true;
+
+            if (successful_update) {
+              modal_alert(data, message);
+              return true;
+            }
+
+            modal_alert(data, message);
+            return false;
+          },
+        });
       }
     },
   });
@@ -131,333 +262,343 @@ $(function ($) {
   jQuery.validator.addMethod(
     "email",
     function (value, element) {
-      return (
-        this.optional(element) ||
-        /^\S+@\S+\.\S+\D$/.test(value)
-      );
+      return this.optional(element) || /^\S+@\S+\.\S+\D$/.test(value);
     },
     "Ingresa una cuenta válida de correo."
   );
 
+  jQuery.validator.addMethod(
+    "ip",
+    function (value, element) {
+      return (
+        this.optional(element) ||
+        /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+          value
+        )
+      );
+    },
+    "Ingresa una IP válida."
+  );
+
   var validate = $("#form_add").validate({
     rules: {
-      name_bankentity: {
-        required: true,
-        minlength: 3,
-        maxlength: 50,
-        lettersonly_es: true,
-      },
-      abbreviation_bankentity: {
-        required: true,
-        minlength: 2,
-        maxlength: 15,
-        lettersonly_es: true,
-      },
-      nit_bankentity: {
-        required: true,
-        digits: true,
-        minlength: 9,
-        maxlength: 9,
-      },
-      digit_bankentity: {
+      id_worker: {
         required: true,
         digits: true,
         minlength: 1,
-        maxlength: 1,
+        maxlength: 11,
       },
-      code_bankentity: {
+      id_area: {
         required: true,
         digits: true,
         minlength: 1,
-        maxlength: 4,
+        maxlength: 11,
       },
-      address_bankentity: {
-        required: true,
-        minlength: 5,
-        maxlength: 70,
-      },
-      contact_bankentity: {
-        required: true,
-        lettersonly_es: true,
-        minlength: 3,
-        maxlength: 50,
-      },
-      phone_bankentity: {
-        required: true,
+      id_element1: {
         digits: true,
-        minlength: 7,
-        maxlength: 13,
+        maxlength: 11,
       },
-      email_bankentity: {
+      id_element2: {
+        digits: true,
+        maxlength: 11,
+      },
+      email_extension: {
         required: true,
         email: true,
-        minlength: 5,
-        maxlength: 50,
+        minlength: 3,
+        maxlength: 80,
+      },
+      phone_extension: {
+        digits: true,
+        minlength: 7,
+        maxlength: 12,
+      },
+      internal_extension: {
+        digits: true,
+        minlength: 1,
+        maxlength: 3,
+      },
+      external_extension: {
+        digits: true,
+        minlength: 1,
+        maxlength: 3,
+      },
+      ip_extension: {
+        ip: true,
+        maxlength: 15,
+      },
+      git_company: {
+        maxlength: 1,
       },
     },
     messages: {
-      name_bankentity: {
-        required: "Por favor ingresa el nombre.",
-        minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
+      id_worker: {
+        required: "Por favor selecciona el trabajador",
       },
-      abbreviation_bankentity: {
-        required: "Por favor ingresa la abreviatura.",
-        minlength: "Mínimo se permiten 2 caracteres.",
-        maxlength: "Solo se permiten 15 caracteres.",
+      id_area: {
+        required: "Por favor selecciona el área.",
       },
-      nit_bankentity: {
-        required: "Por favor ingresa el NIT.",
-        digits: "Solo se permiten números.",
-        minlength: "Solo se permiten 9 caracteres.",
-        maxlength: "Solo se permiten 9 caracteres.",
-      },
-      digit_bankentity: {
-        required: "Por favor ingresa el dígito de verificación.",
-        digits: "Solo se permiten números.",
-        minlength: "Solo se permite 1 carácter",
-        maxlength: "Solo se permite 1 carácter",
-      },
-      code_bankentity: {
-        required: "Por favor ingresa el código.",
-        digits: "Solo se permiten números.",
-        minlength: "Mínimo se permite 1 carácter.",
-        maxlength: "Solo se permiten 4 caracteres.",
-      },
-      address_bankentity: {
-        required: "Por favor ingresa la dirección.",
-        minlength: "Mínimo se permiten 5 caracteres.",
-        maxlength: "Solo se permiten 70 caracteres.",
-      },
-      contact_bankentity: {
-        required: "Por favor ingresa el contacto.",
-        minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
-      },
-      phone_bankentity: {
-        required: "Por favor ingresa el número del contacto.",
-        digits: "Solo se permiten números.",
-        minlength: "Mínimo se permiten 7 caracteres.",
-        maxlength: "Solo se permiten 13 caracteres.",
-      },
-      email_bankentity: {
+      email_extension: {
         required: "Por favor ingresa el correo electrónico.",
         minlength: "Mínimo se permiten 3 caracteres",
-        maxlength: "Solo se permiten 50 caracteres",
+        maxlength: "Solo se permiten 80 caracteres",
+      },
+      phone_extension: {
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permiten 7 caracteres.",
+        maxlength: "Solo se permiten 12 caracteres.",
+      },
+      internal_extension: {
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permiten 1 carácter.",
+        maxlength: "Solo se permiten 3 caracteres.",
+      },
+      external_extension: {
+        digits: "Solo se permiten números.",
+        minlength: "Mínimo se permiten 1 carácter.",
+        maxlength: "Solo se permiten 3 caracteres.",
+      },
+      ip_extension: {
+        maxlength: "Solo se permiten 15 caracteres.",
       },
     },
     errorPlacement: function (error, element) {
       error.addClass("invalid-feedback");
-      error.insertAfter(element);
+
+      var selects = ["id_worker", "id_area", "id_element1", "id_element2"];
+
+      if (selects.includes(element.prop("name"))) {
+        error.insertAfter(element.next(".select2-container"));
+      } else {
+        error.insertAfter(element);
+      }
     },
   });
 
   var validate_edit = $("#form_edit").validate({
     rules: {
-      name_bankentity: {
-        required: true,
-        minlength: 3,
-        maxlength: 50,
-        lettersonly_es: true,
-      },
-      abbreviation_bankentity: {
-        required: true,
-        minlength: 2,
-        maxlength: 15,
-        lettersonly_es: true,
-      },
-      nit_bankentity: {
-        required: true,
-        digits: true,
-        minlength: 9,
-        maxlength: 9,
-      },
-      digit_bankentity: {
+      id_area: {
         required: true,
         digits: true,
         minlength: 1,
-        maxlength: 1,
+        maxlength: 11,
       },
-      code_bankentity: {
-        required: true,
+      id_element1: {
         digits: true,
-        minlength: 1,
-        maxlength: 4,
+        maxlength: 11,
       },
-      address_bankentity: {
-        required: true,
-        minlength: 5,
-        maxlength: 70,
+      id_element2: {
+        digits: true,
+        maxlength: 11,
       },
-      contact_bankentity: {
-        required: true,
-        lettersonly_es: true,
-        minlength: 3,
-        maxlength: 50,
-      },
-      phone_bankentity: {
-        required: true,
+      phone_extension: {
         digits: true,
         minlength: 7,
-        maxlength: 13,
+        maxlength: 12,
       },
-      email_bankentity: {
-        required: true,
-        email: true,
-        minlength: 5,
-        maxlength: 50,
+      ip_extension: {
+        ip: true,
+        maxlength: 15,
+      },
+      git_company: {
+        maxlength: 1,
       },
     },
     messages: {
-      name_bankentity: {
-        required: "Por favor ingresa el nombre.",
-        minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
+      id_area: {
+        required: "Por favor selecciona el área.",
       },
-      abbreviation_bankentity: {
-        required: "Por favor ingresa la abreviatura.",
-        minlength: "Mínimo se permiten 2 caracteres.",
-        maxlength: "Solo se permiten 15 caracteres.",
-      },
-      nit_bankentity: {
-        required: "Por favor ingresa el NIT.",
-        digits: "Solo se permiten números.",
-        minlength: "Solo se permiten 9 caracteres.",
-        maxlength: "Solo se permiten 9 caracteres.",
-      },
-      digit_bankentity: {
-        required: "Por favor ingresa el dígito de verificación.",
-        digits: "Solo se permiten números.",
-        minlength: "Solo se permite 1 carácter",
-        maxlength: "Solo se permite 1 carácter",
-      },
-      code_bankentity: {
-        required: "Por favor ingresa el código.",
-        digits: "Solo se permiten números.",
-        minlength: "Mínimo se permite 1 carácter.",
-        maxlength: "Solo se permiten 4 caracteres.",
-      },
-      address_bankentity: {
-        required: "Por favor ingresa la dirección.",
-        minlength: "Mínimo se permiten 5 caracteres.",
-        maxlength: "Solo se permiten 70 caracteres.",
-      },
-      contact_bankentity: {
-        required: "Por favor ingresa el contacto.",
-        minlength: "Mínimo se permiten 3 caracteres.",
-        maxlength: "Solo se permiten 50 caracteres.",
-      },
-      phone_bankentity: {
-        required: "Por favor ingresa el número del contacto.",
+      phone_extension: {
         digits: "Solo se permiten números.",
         minlength: "Mínimo se permiten 7 caracteres.",
-        maxlength: "Solo se permiten 13 caracteres.",
+        maxlength: "Solo se permiten 12 caracteres.",
       },
-      email_bankentity: {
-        required: "Por favor ingresa el correo electrónico.",
-        minlength: "Mínimo se permiten 3 caracteres",
-        maxlength: "Solo se permiten 50 caracteres",
+      ip_extension: {
+        maxlength: "Solo se permiten 15 caracteres.",
       },
     },
     errorPlacement: function (error, element) {
       error.addClass("invalid-feedback");
-      error.insertAfter(element);
+
+      var selects = ["id_worker", "id_area", "id_element1", "id_element2"];
+
+      if (selects.includes(element.prop("name"))) {
+        error.insertAfter(element.next(".select2-container"));
+      } else {
+        error.insertAfter(element);
+      }
     },
   });
 
   $("select[name='id_worker']")
-  .select2({
-    theme: "bootstrap4",
-    width: "100%",
-    language: "es",
-    placeholder: "Selecciona el trabajador",
-    allowClear: true,
-    ajax: {
-      url: $path_workers,
-      dataType: "json",
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term,
-          page: params.page || 1,
-        };
+    .select2({
+      theme: "bootstrap4",
+      width: "100%",
+      language: "es",
+      placeholder: "Selecciona el trabajador",
+      allowClear: true,
+      ajax: {
+        url: $path_workers,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            page: params.page || 1,
+          };
+        },
+        processResults: function (data, params) {
+          var page = params.page || 1;
+          return {
+            results: $.map(data.items, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+              };
+            }),
+            pagination: {
+              more: page * 10 <= data.total_count,
+            },
+          };
+        },
       },
-      processResults: function (data, params) {
-        var page = params.page || 1;
-        return {
-          results: $.map(data.items, function (item) {
-            return {
-              id: item.id,
-              text: item.text,
-            };
-          }),
-          pagination: {
-            more: page * 10 <= data.total_count,
-          },
-        };
+      escapeMarkup: function (markup) {
+        return markup;
       },
-    },
-    escapeMarkup: function (markup) {
-      return markup;
-    },
-  })
-  .on("change", function (e) {
-    // $(this).valid();
-    // $("select[name='department_cv_ec']").val("");
-    // $("select[name='department_cv_ec']").val(null).trigger("change");
-    // $("select[name='city_cv_ec']").val("");
-    // $("select[name='city_cv_ec']").val(null).trigger("change");
-  });
+    })
+    .on("change", function (e) {
+      $(this).valid();
+    });
 
   $("select[name='id_area']")
-  .select2({
-    theme: "bootstrap4",
-    width: "100%",
-    language: "es",
-    placeholder: "Selecciona el área",
-    allowClear: true,
-    ajax: {
-      url: $path_areas,
-      dataType: "json",
-      delay: 250,
-      data: function (params) {
-        return {
-          q: params.term,
-          page: params.page || 1,
-        };
+    .select2({
+      theme: "bootstrap4",
+      width: "100%",
+      language: "es",
+      placeholder: "Selecciona el área",
+      allowClear: true,
+      ajax: {
+        url: $path_areas,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            page: params.page || 1,
+          };
+        },
+        processResults: function (data, params) {
+          var page = params.page || 1;
+          return {
+            results: $.map(data.items, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+              };
+            }),
+            pagination: {
+              more: page * 10 <= data.total_count,
+            },
+          };
+        },
       },
-      processResults: function (data, params) {
-        var page = params.page || 1;
-        return {
-          results: $.map(data.items, function (item) {
-            return {
-              id: item.id,
-              text: item.text,
-            };
-          }),
-          pagination: {
-            more: page * 10 <= data.total_count,
-          },
-        };
+      escapeMarkup: function (markup) {
+        return markup;
       },
-    },
-    escapeMarkup: function (markup) {
-      return markup;
-    },
-  })
-  .on("change", function (e) {
-    // $(this).valid();
-    // $("select[name='department_cv_ec']").val("");
-    // $("select[name='department_cv_ec']").val(null).trigger("change");
-    // $("select[name='city_cv_ec']").val("");
-    // $("select[name='city_cv_ec']").val(null).trigger("change");
-  });
+    })
+    .on("change", function (e) {
+      $(this).valid();
+    });
+
+  $("select[name='id_element1']")
+    .select2({
+      theme: "bootstrap4",
+      width: "100%",
+      language: "es",
+      placeholder: "Selecciona el teléfono asignado",
+      allowClear: true,
+      ajax: {
+        url: $path_telephones,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            page: params.page || 1,
+          };
+        },
+        processResults: function (data, params) {
+          var page = params.page || 1;
+          return {
+            results: $.map(data.items, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+              };
+            }),
+            pagination: {
+              more: page * 10 <= data.total_count,
+            },
+          };
+        },
+      },
+      escapeMarkup: function (markup) {
+        return markup;
+      },
+    })
+    .on("change", function (e) {
+      $(this).valid();
+    });
+
+  $("select[name='id_element2']")
+    .select2({
+      theme: "bootstrap4",
+      width: "100%",
+      language: "es",
+      placeholder: "Selecciona el celular asignado",
+      allowClear: true,
+      ajax: {
+        url: $path_cellphones,
+        dataType: "json",
+        delay: 250,
+        data: function (params) {
+          return {
+            q: params.term,
+            page: params.page || 1,
+          };
+        },
+        processResults: function (data, params) {
+          var page = params.page || 1;
+          return {
+            results: $.map(data.items, function (item) {
+              return {
+                id: item.id,
+                text: item.text,
+              };
+            }),
+            pagination: {
+              more: page * 10 <= data.total_count,
+            },
+          };
+        },
+      },
+      escapeMarkup: function (markup) {
+        return markup;
+      },
+    })
+    .on("change", function (e) {
+      $(this).valid();
+    });
 
   // Add
 
   $("#btn_add").on("click", function () {
     $("#view_table").addClass("d-none");
     $("#view_form_add").removeClass("d-none");
+    $("#id_worker").empty().trigger("change");
+    $("#id_area").empty().trigger("change");
+    $("#id_element1").empty().trigger("change");
+    $("#id_element2").empty().trigger("change");
     validate.resetForm();
     $("#form_add")[0].reset();
   });
@@ -481,6 +622,10 @@ $(function ($) {
     $("#form_add")[0].reset();
     $("#view_form_add").addClass("d-none");
     $("#view_table").removeClass("d-none");
+    $("#id_worker").empty().trigger("change");
+    $("#id_area").empty().trigger("change");
+    $("#id_element1").empty().trigger("change");
+    $("#id_element2").empty().trigger("change");
   });
 
   // Edit
@@ -491,26 +636,67 @@ $(function ($) {
     validate_edit.resetForm();
     $("#form_edit")[0].reset();
 
-    var bankId = $(this).attr("data-id");
+    var extensionId = $(this).attr("data-id");
 
     $.ajax({
       url: $path_detail,
       type: "POST",
       dataType: "json",
       data: {
-        pk: "id_bankentity",
-        value: bankId,
+        pk: "id_extension",
+        value: extensionId,
       },
       beforeSend: function () {
         $("#loading").removeClass("d-none");
       },
       success: function ({ data }) {
-        $('#form_edit input[name="pk"]').attr("value", data.id_bankentity);
+        $('#form_edit input[name="pk"]').attr("value", data.id_extension);
 
-        $.each(data, function (index, value) {
-          $(`#form_edit input[name="${index}"]`).attr("value", value);
-        });
+        $('#form_edit input[name="phone_extension"]').attr(
+          "value",
+          data.phone_extension
+        );
 
+        $('#form_edit input[name="ip_extension"]').attr(
+          "value",
+          data.ip_extension
+        );
+
+        $('#form_edit select[name="id_area"]').val(data.id_area);
+        var id_area = new Option(data.name_area, data.id_area, true, true);
+        $('#form_edit select[name="id_area"]')
+          .append(id_area)
+          .trigger("change");
+
+        if (data.id_element1) {
+          $('#form_edit select[name="id_element1"]').val(data.id_element1);
+          var id_element1 = new Option(
+            data.name_element1,
+            data.id_element1,
+            true,
+            true
+          );
+          $('#form_edit select[name="id_element1"]')
+            .append(id_element1)
+            .trigger("change");
+        }
+
+        if (data.id_element2) {
+          $('#form_edit select[name="id_element2"]').val(data.id_element2);
+          var id_element2 = new Option(
+            data.name_element2,
+            data.id_element2,
+            true,
+            true
+          );
+          $('#form_edit select[name="id_element2"]')
+            .append(id_element2)
+            .trigger("change");
+        }
+
+        if (data.git_company === "A") {
+          $("#git_company_edit").prop("checked", true);
+        }
         $("#loading").addClass("d-none");
       },
     });
@@ -537,96 +723,13 @@ $(function ($) {
     $("#view_table").removeClass("d-none");
   });
 
-  // Detail
-
-  $("#default_table").on("click", "a.detail-row", function () {
-    var bankById = $(this).attr("data-id");
-
-    $.ajax({
-      url: $path_detail,
-      type: "POST",
-      dataType: "json",
-      data: {
-        pk: "id_bankentity",
-        value: bankById,
-      },
-      beforeSend: function () {
-        $("#loading").removeClass("d-none");
-      },
-      success: function ({ data, message }) {
-        $("#view_table").toggleClass("d-none");
-        $("#view_detail").removeClass("d-none");
-
-        $.each(data, function (index, value) {
-          $(`#view_detail td[data-name="${index}"]`).text(value);
-        });
-
-        $("#loading").toggleClass("d-none");
-      },
-    });
-  });
-
-  $("#btn_cancel_detail").on("click", function () {
-    $("#view_detail").addClass("d-none");
-    $("#view_table").toggleClass("d-none");
-  });
-
-  // Assign
-  
-  $("#default_table").on("click", "a.assign-row", function () {
-    $("#view_assign").toggleClass("d-none");
-    $("#view_table").toggleClass("d-none");
-
-    var bankId = $(this).attr("data-id");
-
-    $.ajax({
-      url: $path_affiliated_workers,
-      type: "POST",
-      dataType: "json",
-      data: {
-        pk: "id_bankentity",
-        value: bankId,
-      },
-      beforeSend: function () {
-        $("#loading").toggleClass("d-none");
-      },
-      success: function ({ data, message }) {
-        $("#loading").toggleClass("d-none");
-        $("tbody#assign_content").empty();
-        $("thead#assign_head").removeClass("d-none");
-
-        if (data) {
-          $.each(data, function (index, user) {
-            $("tbody#assign_content").append(`
-            <tr>
-              <td>${user.full_name}</td>
-              <td>${user.number_dcv}</td>
-            </tr>`);
-          });
-        } else {
-          $("thead#assign_head").addClass("d-none");
-          $("tbody#assign_content").append(`
-                <tr>
-                  <td colspan="2">No hay trabajadores afiliados a esta entidad bancaria.</td>
-                </tr>
-                `);
-        }
-      },
-    });
-  });
-
-  $("#btn_cancel_assign").on("click", function () {
-    $("#view_assign").toggleClass("d-none");
-    $("#view_table").toggleClass("d-none");
-  });
-
   // Udrop
 
   $("#default_table").on("click", "a.remove-row", function () {
-    var bankId = $(this).attr("data-id");
+    var extensionId = $(this).attr("data-id");
 
     $("#modal_delete").iziModal({
-      title: "Eliminar entidad bancaria",
+      title: "Eliminar extensión",
       icon: "fas fa-trash-alt",
       headerColor: "#DC3545",
       zindex: 9999,
@@ -642,7 +745,7 @@ $(function ($) {
             type: "POST",
             url: $path_drop,
             data: {
-              id_bankentity: bankId,
+              id_extension: extensionId,
             },
             dataType: "json",
             success: function (response) {

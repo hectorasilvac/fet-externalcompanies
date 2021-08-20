@@ -78,7 +78,7 @@
                         <div class="d-flex align-items-center justify-content-center wd-410">
                             <div class="wd-fill login-banner{$random}"></div>
                         </div>
-                        <div class="wd-350 wd-xs-450 pd-40">
+                        <div class="wd-350 wd-xs-450 pd-25">
                 {/if}
                             <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-40 mg-t-40">
                                 Afiliados
@@ -115,14 +115,14 @@
                     <div class="login-wrapper pd-25 bg-white">
                         <div class="wd-250">
                             <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-40">
-                                <span class="tx-normal">. :</span> Afiliados <span class="tx-normal">: .</span><br>Registro
+                                <span class="tx-normal"></span> Afiliados <span class="tx-normal"></span><br>Registro
                             </div>
                 {else}
                 <div class="d-flex align-items-center justify-content-center bg-br-primary ht-100v bg-desktop-login1">
-                    <div class="login-wrapper pd-25 bg-white d-flex justify-content-between">
-                        <div class="wd-350 wd-xs-450 pd-r-40">
+                    <div class="login-wrapper bg-white d-flex justify-content-between">
+                        <div class="wd-350 wd-xs-450 pd-25">
                             <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-40">
-                                <span class="tx-normal">. :</span> Afiliados - Registro <span class="tx-normal">: .</span>
+                                <span class="tx-normal"></span> Afiliados - Registro <span class="tx-normal"></span>
                             </div>
                 {/if}
                             <form id="form_register_aspirants" method="post" action="{$path_register_aspirants}">
@@ -182,8 +182,8 @@
                             </form>
                         </div>
                         {if !$mobile}
-                        <div class="d-flex align-items-center justify-content-center">
-                            <img src="{$RESOURCES}img/login/pieces/aspirants2.png" class="wd-350">
+                            <div class="d-flex align-items-center justify-content-center wd-410">
+                            <div class="wd-fill login-banner{$random_register}"></div>
                         </div>
                         {/if}  
                     </div>
