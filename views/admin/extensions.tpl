@@ -22,6 +22,11 @@
                 </div>
                 <div id="view_table">
                     <div class="ft-right">
+                    {if $act_export_pdf}
+                        <a id="btn_export_pdf" class="btn btn-primary ft-right ml-1" data-toggle="tooltip" data-placement="top" title="Exportar PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </a>
+                        {/if}
                         {if $act_export_xlsx}
                             <a id="btn_export_xlsx" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
                                 data-placement="top" title="Exportar">
@@ -304,6 +309,7 @@
         var $path_telephones                                                    =   '{$path_telephones}';
         var $path_cellphones                                                    =   '{$path_cellphones}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
+        var $path_export_pdf                                                    =   '{$path_export_pdf}';
 
         var act_view                                                            =   '{$act_view}';
         var act_add                                                             =   '{$act_add}';
@@ -311,6 +317,7 @@
         var act_drop                                                            =   '{$act_drop}';
         var act_trace                                                           =   '{$act_trace}';
         var act_export_xlsx                                                     =   '{$act_export_xlsx}';
+        var act_export_pdf                                                      =   '{$act_export_pdf}';
     </script>
     {if $mobile}
         <script src="{$RESOURCES}js/mobile/extensions.js"></script>

@@ -304,3 +304,5 @@ $route['extensions/telephones']                                                 
 $route['extensions/cellphones']                                                 =   'extensions_controller/cellphones';
 
 $route['extensions/exportxlsx']                                                 =   'extensions_controller/export_xlsx';
+
+$route['extensions/exportpdf']                                                 =   'extensions_controller/export_pdf';

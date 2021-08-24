@@ -22,7 +22,7 @@ $(function ($) {
         render: function (data, type, row) {
           return `
             <span data-placement="top" data-title="${row.name_area}" class="mr-1"><i class="fas fa-university"></i></span>
-            <span data-name='id_worker' data-type='select2' data-pk='${row.id_extension}' data-url='${$path_edit}' data-value='${data}'>${data}</span>
+            <span data-type='select2' data-name='id_worker' class="border-bottom-0" data-pk='${row.id_extension}' data-url='${$path_edit}' data-value='${data}'>${data}</span>
             `;
         },
       },
@@ -30,7 +30,7 @@ $(function ($) {
         targets: [1],
         data: "email_extension",
         render: function (data, type, row) {
-          return `<span data-name="email_extension" data-type="text" data-pk="${row.id_extension}" data-url="${$path_edit}">${data}</span>`;
+          return `<span data-type='text' data-name="email_extension" class="border-bottom-0" data-pk="${row.id_extension}" data-url="${$path_edit}">${data}</span>`;
         },
       },
       {
@@ -40,7 +40,8 @@ $(function ($) {
           return `
           <span
           data-name="internal_extension" 
-          data-type="number" 
+          class="border-bottom-0"
+          data-type='number'
           data-pk="${row.id_extension}" 
           data-url="${$path_edit}" 
           data-title="${row.ip_extension ?? "No hay IP registrada"}">
@@ -55,7 +56,8 @@ $(function ($) {
         render: function (data, type, row) {
           return `<span 
           data-name="external_extension" 
-          data-type="number" 
+          class="border-bottom-0"
+          data-type='number'
           data-pk="${row.id_extension}" 
           data-url="${$path_edit}"
           data-title="${row.ip_extension ?? "No hay IP registrada"}">
@@ -127,21 +129,27 @@ $(function ($) {
         selector: "[data-title]",
       });
 
-      if (rows.length == 0) {
+      if (rows.length == 0)
+      {
+        $('#btn_export_pdf').removeAttr('href');
         $("#btn_export_xlsx").removeAttr("href");
-      } else {
-        if (inputSearch != "") {
-          $("#btn_export_xlsx").attr(
-            "href",
-            $path_export_xlsx + "/?search=" + inputSearch
-          );
-        } else {
+      } 
+      else 
+      {
+        if (inputSearch != "") 
+        {
+          $('#btn_export_pdf').attr('href', $path_export_pdf + '/?search=' + inputSearch  + '&multiplepdf=0');
+          $("#btn_export_xlsx").attr("href", $path_export_xlsx + "/?search=" + inputSearch);
+        } 
+        else 
+        {
+          $('#btn_export_pdf').attr("href", $path_export_pdf);
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
       }
 
       if (act_edit) {
-        $('#default_table td span[data-name="id_worker"]').editable({
+        $('#default_table td span[data-type="select2"]').editable({
           validate: function (value) {
             if (value === null || value === "") {
               return "Campo obligatorio";
@@ -623,9 +631,13 @@ $(function ($) {
     $("#view_form_add").addClass("d-none");
     $("#view_table").removeClass("d-none");
     $("#id_worker").empty().trigger("change");
+    $("#id_worker").val(null).trigger("change");
     $("#id_area").empty().trigger("change");
+    $("#id_area").val(null).trigger("change");
     $("#id_element1").empty().trigger("change");
+    $("#id_element1").val(null).trigger("change");
     $("#id_element2").empty().trigger("change");
+    $("#id_element2").val(null).trigger("change");
   });
 
   // Edit
@@ -635,6 +647,12 @@ $(function ($) {
     $("#view_form_edit").removeClass("d-none");
     validate_edit.resetForm();
     $("#form_edit")[0].reset();
+    $("#id_area_edit").empty().trigger("change");
+    $("#id_area_edit").val(null).trigger("change");
+    $("#id_element1_edit").empty().trigger("change");
+    $("#id_element1_edit").val(null).trigger("change");
+    $("#id_element2_edit").empty().trigger("change");
+    $("#id_element2_edit").val(null).trigger("change");
 
     var extensionId = $(this).attr("data-id");
 
@@ -721,6 +739,12 @@ $(function ($) {
     $("#form_edit")[0].reset();
     $("#view_form_edit").addClass("d-none");
     $("#view_table").removeClass("d-none");
+    $("#id_area_edit").empty().trigger("change");
+    $("#id_area_edit").val(null).trigger("change");
+    $("#id_element1_edit").empty().trigger("change");
+    $("#id_element1_edit").val(null).trigger("change");
+    $("#id_element2_edit").empty().trigger("change");
+    $("#id_element2_edit").val(null).trigger("change");
   });
 
   // Udrop

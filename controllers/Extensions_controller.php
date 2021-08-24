@@ -73,7 +73,7 @@ class Extensions_controller extends CI_Controller
             $this->_view->assign('act_drop',                                    in_array('UDROP', $this->actions));
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
             $this->_view->assign('act_export_xlsx',                             in_array('EXPORTXLSX', $this->actions));
-            // Eliminar -> PENDING: EXPORT TO PDF
+            $this->_view->assign('act_export_pdf',                              in_array('EXPORTPDF', $this->actions));
 
             $this->_view->assign('all_flags',                                   $this->_extensions_model->flags_select());
 
@@ -89,6 +89,7 @@ class Extensions_controller extends CI_Controller
             $this->_view->assign('path_telephones',                             site_url('extensions/telephones'));
             $this->_view->assign('path_cellphones',                             site_url('extensions/cellphones'));
             $this->_view->assign('path_export_xlsx',                            site_url('extensions/exportxlsx'));
+            $this->_view->assign('path_export_pdf',                             site_url('extensions/exportpdf'));
 
             $this->_view->display('admin/extensions.tpl');
         }
@@ -594,6 +595,61 @@ class Extensions_controller extends CI_Controller
 
                 exit();
             }
+        }
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param
+    * @return    file
+    **/
+    public function export_pdf()
+    {
+        if(in_array('EXPORTPDF', $this->actions))
+        {
+            if ((isset($_GET["search"])) && ($_GET["search"] != "null") && ($_GET["search"] != ""))
+            {
+                $search                                                         =   $_GET["search"];
+            }
+            else
+            {
+                $search                                                         =   NULL;
+            }
+
+            if ((isset($_GET["id"])) && ($_GET["id"] != "null") && ($_GET["id"] != ""))
+            {
+                $id                                                             =   $_GET["id"];
+            }
+            else
+            {
+                $id                                                             =   NULL;
+            }
+
+            if ((isset($_GET["multiplepdf"])) && ($_GET["multiplepdf"] != "null") && ($_GET["multiplepdf"] != ""))
+            {
+                $multiple_pdf                                                   =   $_GET["multiplepdf"];
+            }
+            else
+            {
+                $multiple_pdf                                                   =   NULL;
+            }
+
+            $export_pdf                                                         =   $this->_extensions_model->export_pdf($search, $id, $multiple_pdf);
         }
         else
         {
