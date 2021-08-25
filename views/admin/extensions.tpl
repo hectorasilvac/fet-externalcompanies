@@ -22,10 +22,11 @@
                 </div>
                 <div id="view_table">
                     <div class="ft-right">
-                    {if $act_export_pdf}
-                        <a id="btn_export_pdf" class="btn btn-primary ft-right ml-1" data-toggle="tooltip" data-placement="top" title="Exportar PDF">
-                            <i class="fas fa-file-pdf"></i>
-                        </a>
+                        {if $act_export_pdf}
+                            <a id="btn_export_pdf" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
+                                data-placement="top" title="Exportar PDF">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
                         {/if}
                         {if $act_export_xlsx}
                             <a id="btn_export_xlsx" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
@@ -71,13 +72,6 @@
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Trabajador: </label>
                                             <select class="form-control" id="id_worker" name="id_worker">
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Área: </label>
-                                            <select class="form-control" id="id_area" name="id_area">
                                             </select>
                                         </div>
                                     </div>
@@ -153,6 +147,14 @@
                                             </label>
                                         </div>
                                     </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="ckbox">
+                                                <input class="flags" type="checkbox" id="flag_pdf" name="flag_pdf" value="0">
+                                                <span>Mostrar en el directorio PDF</span>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                         </div>
                         <button id="btn_confirm_add" type="button" class="btn btn-info">Agregar</button>
@@ -166,13 +168,6 @@
                             <form id="form_edit" method="post" action="{$path_edit}">
                                 <input class="form-control" type="hidden" id="id_extension_edit" name="pk">
                                 <div class="row mg-b-25">
-                                    <div class="col-lg-12">
-                                        <div class="form-group pos-relative">
-                                            <label class="form-control-label">Área: </label>
-                                            <select class="form-control" id="id_area_edit" name="id_area">
-                                            </select>
-                                        </div>
-                                    </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="form-control-label">Teléfono asignado:
@@ -216,6 +211,14 @@
                                                 <input class="flags" type="checkbox" id="git_company_edit" name="git_company"
                                                     value="A">
                                                 <span>¿El registro es multiplataforma?</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group pos-relative">
+                                            <label class="ckbox">
+                                                <input class="flags" type="checkbox" id="flag_pdf_edit" name="flag_pdf" value="0">
+                                                <span>Mostrar en el directorio PDF</span>
                                             </label>
                                         </div>
                                     </div>

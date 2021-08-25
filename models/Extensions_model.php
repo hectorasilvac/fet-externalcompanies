@@ -98,14 +98,6 @@ class Extensions_model extends CI_Model
     **/
     public function all_rows($limit, $start, $search, $col, $dir) // Eliminar -> Pendiente
     {
-        if ( $this->session->userdata('id_role') === "11" )
-        {
-            $this->db->select('"TRUE" as allowed_edition');
-        }
-        else
-        {
-            $this->db->select("IF(STRCMP(git_worker_extensions.user_insert, {$this->session->userdata['id_user']}) = 0, 'TRUE', 'FALSE') as allowed_edition");
-        }
         $this->db->select('id_extension, CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv) AS id_worker, email_extension, internal_extension, external_extension, ip_extension, name_area');
         $this->db->select('CONCAT(gel1.serial_element, " - ", gel1.name_element) AS element1');
         $this->db->select('CONCAT(gel2.serial_element, " - ", gel2.name_element) AS element2');
@@ -383,7 +375,7 @@ class Extensions_model extends CI_Model
         $this->db->select('id_worker, id_element1, id_element2, external_extension, internal_extension, email_extension, phone_extension, ip_extension');
         $this->db->where('flag_drop', 0);
 
-        $additional_params                                                      =   count(array_filter($params)) > 2;
+        $additional_params                                                      =   count(array_filter($params)) >= 2;
 
         if (isset($params['name']) || $additional_params)
         {
@@ -612,7 +604,6 @@ class Extensions_model extends CI_Model
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Completa todos los campos.';
         }
-
         return $result;
         exit();
     }
@@ -635,19 +626,19 @@ class Extensions_model extends CI_Model
                 switch ($params['name'])
                 {
                     case 'id_worker':
-                        $params['id_worker']                                          =   trim($params['value']);
+                        $params['id_worker']                                    =   trim($params['value']);
                         break;
 
                     case 'email_extension':
-                        $params['email_extension']                                    =   $this->_trabajandofet_model->user_name($params['value']);
+                        $params['email_extension']                              =   $this->_trabajandofet_model->user_name($params['value']);
                         break;
 
                     case 'internal_extension':
-                        $params['internal_extension']                                 =   trim($params['value']) ?: NULL;
+                        $params['internal_extension']                           =   trim($params['value']) ?: NULL;
                         break;
 
                     case 'external_extension':
-                        $params['external_extension']                                 =   trim($params['value']) ?: NULL;
+                        $params['external_extension']                           =   trim($params['value']) ?: NULL;
                         break;
                 }
                 unset($params['value'], $params['name']);
@@ -660,7 +651,7 @@ class Extensions_model extends CI_Model
                 $params['id_element2']                                          =   $params['id_element2'] ?? NULL;
                 $params['ip_extension']                                         =   $params['ip_extension'] ?: NULL;
                 $params['phone_extension']                                      =   $params['phone_extension'] ?: NULL;
-
+                $params['flag_pdf']                                             =   $params['flag_pdf'] ?? NULL;
             } 
 
             $params['id']                                                       =   $params['pk'];

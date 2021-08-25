@@ -15,7 +15,7 @@ class Extensions_controller extends CI_Controller
 {
     private $actions;
 
-    public function __construct() // Eliminar -> Revisado
+    public function __construct()
     {
         parent::__construct();
 
@@ -122,12 +122,12 @@ class Extensions_controller extends CI_Controller
             }
             else
             {
-                // $columns                                                        =   array(
-                //     0                                                                   =>  'worker_info',
-                //     1                                                                   =>  'email_extension',
-                //     2                                                                   =>  'internal_extension',
-                //     3                                                                   =>  'external_extension',
-                //                                                                     );
+                $columns                                                        =   array(
+                    0                                                                   =>  'id_worker',
+                    1                                                                   =>  'email_extension',
+                    2                                                                   =>  'internal_extension',
+                    3                                                                   =>  'external_extension',
+                                                                                    );
             }
 
             $limit                                                              =   $this->input->post('length');

@@ -2,23 +2,47 @@ $(function ($) {
   //BUILD - DESKTOP
   $.fn.editable.defaults.mode = "inline";
 
+  var height = ($(window).height() - 380);
+
   $("#default_table").DataTable({
     language: {
       sUrl: "resources/lib/datatables/Spanish.json",
     },
     info: true,
     lengthChange: true,
-    processing: true,
     serverSide: true,
-    ajax: {
-      url: $path_view,
-      dataType: "json",
-      type: "POST",
+    scrollY: height,
+    scroller:
+    {
+        loadingIndicator: true
+    },
+    ajax: function(data, callback, settings) 
+    {
+      $.ajax({
+        url: $path_view,
+        dataType: "json",
+        type: "POST",
+        data: data,
+        success: function(data)
+        {
+          callback(
+            {
+                draw: data.draw,
+                data: data.data,
+                recordsTotal: data.recordsTotal,
+                recordsFiltered: data.recordsFiltered
+            });
+        }
+      })
     },
     columnDefs: [
       {
         targets: [0],
         data: "id_worker",
+        createdCell:  function(td, cellData, rowData, row, col)
+        {
+           $(td).attr('data-label', 'Nombre');
+        },
         render: function (data, type, row) {
           return `
             <span data-placement="top" data-title="${row.name_area}" class="mr-1"><i class="fas fa-university"></i></span>
@@ -29,6 +53,10 @@ $(function ($) {
       {
         targets: [1],
         data: "email_extension",
+        createdCell:  function(td, cellData, rowData, row, col)
+        {
+           $(td).attr('data-label', 'Correo');
+        },
         render: function (data, type, row) {
           return `<span data-type='text' data-name="email_extension" class="border-bottom-0" data-pk="${row.id_extension}" data-url="${$path_edit}">${data}</span>`;
         },
@@ -36,6 +64,10 @@ $(function ($) {
       {
         targets: [2],
         data: "internal_extension",
+        createdCell:  function(td, cellData, rowData, row, col)
+        {
+           $(td).attr('data-label', 'Ext. Interna');
+        },
         render: function (data, type, row) {
           return `
           <span data-name="internal_extension" class="border-bottom-0" data-type='number' data-pk="${row.id_extension}" data-url="${$path_edit}" data-title="${row.ip_extension ?? "No hay IP registrada"}">
@@ -47,6 +79,10 @@ $(function ($) {
       {
         targets: [3],
         data: "external_extension",
+        createdCell:  function(td, cellData, rowData, row, col)
+        {
+           $(td).attr('data-label', 'Ext. Externa');
+        },
         render: function (data, type, row) {
           return `
           <span data-name="external_extension" class="border-bottom-0" data-type='number' data-pk="${row.id_extension}" data-url="${$path_edit}" data-title="${row.ip_extension ?? "No hay IP registrada"}">
@@ -94,10 +130,6 @@ $(function ($) {
     drawCallback: function (settings) {
       var rows = this.fnGetData();
       var inputSearch = $(".dataTables_filter input").val();
-
-      $("body").tooltip({
-        selector: "[data-title]",
-      });
 
       if (rows.length == 0) {
         $("#btn_export_pdf").removeAttr("href");
