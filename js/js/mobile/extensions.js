@@ -1,4 +1,67 @@
 $(function ($) {
+    // Show Directory
+    var directory = function () {
+      return $.ajax({
+        url: $path_directory,
+        type: "POST",
+        dataType: "json",
+        beforeSend: function () {
+          $("#loading").removeClass("d-none");
+        },
+        success: function ({ data, message }) {
+          $("#dir-container").children("[data-tag='dir-remove']").empty();
+          $("#dir-banner-container").addClass("d-none-force");
+  
+          if (data) {
+            $("#view_directory").children("[data-tag='dir-remove']").remove();
+            $("#dir-banner-container").addClass("d-none-force");
+  
+            count = 0;
+            $.each(data, function (index, value) {
+              table = `<table class='table mb-0 tx-12 dir-outer-border fit-content'>
+                     <thead>
+                       <tr class='dir-background '>
+                         <th class='text-white wd-40p pd-6 tx-center tx-uppercase tx-ubuntu-italic text-capitalize valign-middle break-word'>${index}</th>
+                         <th class='text-white wd-20p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>Línea Corporativa</th>
+                         <th class='text-white wd-10p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>EXT</th>
+                         ${!!$mobile ? "" : "<th class='text-white wd-30p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>Correo Corporativo</th>"}
+                       </tr>
+                     </thead>
+                   <tbody>`;
+  
+              $.each(value, function (name, content) {
+                table += `<tr>
+                         <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 text-capitalize'>${content.worker_name ?? ""}</td>
+                         <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 tx-center'>${content.phone_extension ?? ""}</td>
+                         <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 tx-center'>${content.internal_extension ?? ""}</td>
+                         ${!!$mobile ? '' : "<td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 break-word'>" + content.email_extension + "/td>"}
+                       </tr>`;
+              });
+  
+              table += `</tbody>
+                 </table>`;
+  
+              if (count % 2 === 0) {
+                $("#dir-first-column").append(table);
+              } else {
+                $("#dir-second-column").append(table);
+              }
+  
+              count++;
+            });
+  
+            $("#dir-banner-container").removeClass("d-none-force");
+          } else {
+            $("#dir-empty-error").append(`<p class="tx-center">${message}</p>`);
+          }
+  
+          $("#loading").addClass("d-none");
+        },
+      });
+    };
+
+    directory();
+
   //BUILD - DESKTOP
   $.fn.editable.defaults.mode = "inline";
 
@@ -8,7 +71,7 @@ $(function ($) {
     language: {
       sUrl: "resources/lib/datatables/Spanish.json",
     },
-    info: true,
+    info: false,
     lengthChange: true,
     serverSide: true,
     scrollY: height,
@@ -41,11 +104,10 @@ $(function ($) {
         data: "id_worker",
         createdCell:  function(td, cellData, rowData, row, col)
         {
-           $(td).attr('data-label', 'Nombre');
+           $(td).attr('data-label', 'Trabajador');
         },
         render: function (data, type, row) {
           return `
-            <span data-placement="top" data-title="${row.name_area}" class="mr-1"><i class="fas fa-university"></i></span>
             <span data-type='select2' data-name='id_worker' class="border-bottom-0" data-pk='${row.id_extension}' data-url='${$path_edit}' data-value='${data}'>${data}</span>
             `;
         },
@@ -131,6 +193,8 @@ $(function ($) {
       var rows = this.fnGetData();
       var inputSearch = $(".dataTables_filter input").val();
 
+      $('[data-toggle]').tooltip('disable')
+
       if (rows.length == 0) {
         $("#btn_export_pdf").removeAttr("href");
         $("#btn_export_xlsx").removeAttr("href");
@@ -149,6 +213,29 @@ $(function ($) {
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
       }
+
+      if (act_add) {
+        $("#btn_view_table").attr("href", "#");
+
+        $("#btn_view_table").unbind("click");
+
+        $("#btn_view_table").on("click", function () {
+          directory();
+
+          if ($("#view_directory").hasClass("d-none")) {
+            $("#view_directory").removeClass("d-none");
+            $("#view_table").addClass("d-none");
+            $("#view_form_edit").addClass("d-none");
+            $("#view_form_add").addClass("d-none");
+          } else {
+            $("#view_directory").addClass("d-none");
+            $("#view_table").removeClass("d-none");
+            $("#view_form_edit").addClass("d-none");
+            $("#view_form_add").addClass("d-none");
+          }
+        });
+      }
+
 
       if (act_edit) {
         $('#default_table td span[data-type="select2"]').editable({
@@ -449,46 +536,6 @@ $(function ($) {
       allowClear: true,
       ajax: {
         url: $path_workers,
-        dataType: "json",
-        delay: 250,
-        data: function (params) {
-          return {
-            q: params.term,
-            page: params.page || 1,
-          };
-        },
-        processResults: function (data, params) {
-          var page = params.page || 1;
-          return {
-            results: $.map(data.items, function (item) {
-              return {
-                id: item.id,
-                text: item.text,
-              };
-            }),
-            pagination: {
-              more: page * 10 <= data.total_count,
-            },
-          };
-        },
-      },
-      escapeMarkup: function (markup) {
-        return markup;
-      },
-    })
-    .on("change", function (e) {
-      $(this).valid();
-    });
-
-  $("select[name='id_area']")
-    .select2({
-      theme: "bootstrap4",
-      width: "100%",
-      language: "es",
-      placeholder: "Selecciona el área",
-      allowClear: true,
-      ajax: {
-        url: $path_areas,
         dataType: "json",
         delay: 250,
         data: function (params) {

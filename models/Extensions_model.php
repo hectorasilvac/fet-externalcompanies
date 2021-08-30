@@ -47,11 +47,10 @@ class Extensions_model extends CI_Model
     * @param     string $search
     * @return    array $result
     **/
-    public function count_rows($search) // Eliminar -> Revisado 23/08/2021
+    public function count_rows($search) // Eliminar -> Revisado 27/08/2021 -> OK
     {
         $result                                                                 =   array();
 
-        $this->db->where('git_worker_extensions.flag_drop', 0);
         $this->db->from('git_worker_extensions');
 
         $result['total']                                                        =   $this->db->count_all_results();
@@ -60,22 +59,21 @@ class Extensions_model extends CI_Model
         {
             $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+            $this->db->join('git_areas', 'fet_workers.id_area = git_areas.id_area', 'left');
             $this->db->join('git_elements AS gel1', 'git_worker_extensions.id_element1 = gel1.id_element', 'left');
             $this->db->join('git_elements AS gel2', 'git_worker_extensions.id_element2 = gel2.id_element', 'left');
-            $this->db->join('git_areas', 'git_worker_extensions.id_area = git_areas.id_area');
 
             $this->db->group_start();
             $this->db->like('CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv)', $search);
             $this->db->or_like('CONCAT(gel1.serial_element, " - ", gel1.name_element)', $search);
             $this->db->or_like('CONCAT(gel2.serial_element, " - ", gel2.name_element)', $search);
-            $this->db->or_like('name_area', $search);
+            $this->db->or_like('git_areas.name_area', $search);
             $this->db->or_like('email_extension', $search);
             $this->db->or_like('internal_extension', $search);
             $this->db->or_like('external_extension', $search);
             $this->db->or_like('ip_extension', $search);
             $this->db->group_end();
 
-            $this->db->where('git_worker_extensions.flag_drop', 0);
             $this->db->from('git_worker_extensions');
 
             $result['total_filtered']                                           =   $this->db->count_all_results();
@@ -96,17 +94,17 @@ class Extensions_model extends CI_Model
     * @param     int $limit, int $start, string $search, int $col, string $dir
     * @return    array $query->result_array()
     **/
-    public function all_rows($limit, $start, $search, $col, $dir) // Eliminar -> Pendiente
+    public function all_rows($limit, $start, $search, $col, $dir) // Eliminar -> Revisado 27/08/2021 -> OK
     {
-        $this->db->select('id_extension, CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv) AS id_worker, email_extension, internal_extension, external_extension, ip_extension, name_area');
+        $this->db->select('id_extension, CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv) AS id_worker, email_extension, internal_extension, external_extension, ip_extension');
+        $this->db->select('git_areas.name_area AS worker_area');
         $this->db->select('CONCAT(gel1.serial_element, " - ", gel1.name_element) AS element1');
         $this->db->select('CONCAT(gel2.serial_element, " - ", gel2.name_element) AS element2');
         $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
+        $this->db->join('git_areas', 'fet_workers.id_area = git_areas.id_area', 'left');
         $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
         $this->db->join('git_elements AS gel1', 'git_worker_extensions.id_element1 = gel1.id_element', 'left');
         $this->db->join('git_elements AS gel2', 'git_worker_extensions.id_element2 = gel2.id_element', 'left');
-        $this->db->join('git_areas', 'git_worker_extensions.id_area = git_areas.id_area');
-        $this->db->where('git_worker_extensions.flag_drop', 0);
 
         if ( ! empty($search))
         {
@@ -114,7 +112,7 @@ class Extensions_model extends CI_Model
             $this->db->like('CONCAT(name_cv, " ", first_lcv, " ", second_lcv, " - ", number_dcv)', $search);
             $this->db->or_like('CONCAT(gel1.serial_element, " - ", gel1.name_element)', $search);
             $this->db->or_like('CONCAT(gel2.serial_element, " - ", gel2.name_element)', $search);
-            $this->db->or_like('name_area', $search);
+            $this->db->or_like('git_areas.name_area', $search);
             $this->db->or_like('email_extension', $search);
             $this->db->or_like('internal_extension', $search);
             $this->db->or_like('external_extension', $search);
@@ -140,6 +138,57 @@ class Extensions_model extends CI_Model
         }
 
         return $extensions;
+        exit();
+    }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     
+    * @return    array $result
+    **/
+    public function directory() // Eliminar -> Revisado 26/08/2021 -> OK
+    {
+        $result                                                                 =   array();
+
+        $this->db->select('LOWER(CONCAT(name_cv, " ", first_lcv, " ", second_lcv)) AS worker_name');
+        $this->db->select('internal_extension, phone_extension, email_extension');
+        $this->db->select('LOWER(git_areas.name_area) AS worker_area');
+        $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
+        $this->db->join('git_areas', 'fet_workers.id_area = git_areas.id_area', 'left');
+        $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+        $this->db->where('git_worker_extensions.flag_pdf', 0);
+
+        $query                                                                  =   $this->db->get('git_worker_extensions');
+        $data                                                                   =   $query->result_array();
+
+        if (count($data) > 0)
+        {
+            $workers_by_area = [];
+
+            foreach ($data as $key => $value)
+            {
+                if (array_key_exists($value['worker_area'], $workers_by_area))
+                {
+                    array_push($workers_by_area[$value['worker_area']], $value);
+                }
+                else
+                {
+                    $workers_by_area[$value['worker_area']] = [$value];
+                }
+            }
+
+            $result['data']                                                     =   $workers_by_area;
+            $result['message']                                                  =   FALSE;
+        }
+        else
+        {
+            $result['data']                                                     =   FALSE;
+            $result['message']                                                  =   'No se encontraron registros en el directorio.';
+        }
+
+        return $result;
         exit();
     }
 
@@ -198,52 +247,6 @@ class Extensions_model extends CI_Model
         $this->db->limit($limit, $start);
 
         $query                                                                  =   $this->db->get('fet_workers');
-
-        $result['total_count']                                                  =   $query->num_rows();
-
-        if ($result['total_count'] > 0)
-        {
-            $result['items']                                                    =   $query->result_array();
-        }
-        else
-        {
-            $result['items']                                                    =   array();
-        }
-
-        return $result;
-        exit();
-    }
-
-    /**
-    * @author    Innovación y Tecnología
-    * @copyright 2021 Fábrica de Desarrollo
-    * @since     v2.0.1
-    * @param     array $params
-    * @return    array $result
-    **/
-    public function areas_select($params) // Eliminar -> Revisado
-    {
-        $result                                                                 =   array();
-
-        $page                                                                   =   $params['page'];
-        $range                                                                  =   10;
-
-        $start                                                                  =   ($page - 1) * $range;
-        $limit                                                                  =   $start + $range;
-
-        $this->db->select('id_area AS id, name_area AS text');
-        $this->db->where('flag_drop', 0);
-
-
-        if (isset($params['q']) && $params['q'] != '')
-        {
-            $this->db->like('name_area', $params['q']);
-        }
-
-        $this->db->order_by('id_area', 'asc');
-        $this->db->limit($limit, $start);
-
-        $query                                                                  =   $this->db->get('git_areas');
 
         $result['total_count']                                                  =   $query->num_rows();
 
@@ -364,20 +367,21 @@ class Extensions_model extends CI_Model
     {
         $result                                                                 =   array();
 
-        if (isset($params['git_company'])) {
+        if (isset($params['git_company']))
+        {
             unset($params['git_company']);
         }
 
-        if (isset($params['id_area'])) {
-            unset($params['id_area']);
+        if (isset($params['flag_pdf']))
+        {
+            unset($params['flag_pdf']);
         }
 
         $this->db->select('id_worker, id_element1, id_element2, external_extension, internal_extension, email_extension, phone_extension, ip_extension');
-        $this->db->where('flag_drop', 0);
 
-        $additional_params                                                      =   count(array_filter($params)) >= 2;
+        $params_to_validate                                                     =   count(array_filter($params)) >= 2;
 
-        if (isset($params['name']) || $additional_params)
+        if (isset($params['name']) || $params_to_validate)
         {
             if (isset($params['name'])) 
             {
@@ -492,12 +496,11 @@ class Extensions_model extends CI_Model
     * @param     array $params
     * @return    array $result
     **/
-    public function add($params) // Eliminar -> Pendiente
+    public function add($params) // Eliminar -> Revisado 25/08/2021
     {
         $result                                                                 =   array();
 
         $this->form_validation->set_rules('id_worker', 'Trabajador', 'required');
-        $this->form_validation->set_rules('id_area', 'Área', 'required');
         $this->form_validation->set_rules('id_element1', 'Teléfono', 'numeric');
         $this->form_validation->set_rules('id_element2', 'Celular', 'numeric');
         $this->form_validation->set_rules('external_extension', 'Extensión externa', 'numeric');
@@ -509,19 +512,13 @@ class Extensions_model extends CI_Model
         if ($this->form_validation->run())
         {
             $params['id_worker']                                                =   trim($params['id_worker']);
-            $params['id_area']                                                  =   trim($params['id_area']);
+            $params['email_extension']                                          =   $this->_trabajandofet_model->user_name($params['email_extension']);
+            $params['ip_extension']                                             =   trim($params['ip_extension']) ?: NULL;
+            $params['phone_extension']                                          =   trim($params['phone_extension']) ?: NULL;
             $params['external_extension']                                       =   trim($params['external_extension']) ?: NULL;
             $params['internal_extension']                                       =   trim($params['internal_extension']) ?: NULL;
-            $params['email_extension']                                          =   $this->_trabajandofet_model->user_name($params['email_extension']);
-            $params['phone_extension']                                          =   trim($params['phone_extension']) ?: NULL;
-            $params['ip_extension']                                             =   trim($params['ip_extension']) ?: NULL;
             $params['user_insert']                                              =   $this->session->userdata['id_user'];
             $params['date_insert']                                              =   date('Y-m-d H:i:s');
-
-            if (isset($params['git_company']) && !empty(trim($params['git_company'])))
-            {
-                $params['git_company']                                          =   trim($params['git_company']);
-            }
 
             if (isset($params['id_element1']) && !empty(trim($params['id_element1']))) 
             {
@@ -531,6 +528,16 @@ class Extensions_model extends CI_Model
             if (isset($params['id_element2']) && !empty(trim($params['id_element2'])))
             {
                 $params['id_element2']                                          =   trim($params['id_element2']);
+            }
+
+            if (isset($params['git_company']) && !empty(trim($params['git_company'])))
+            {
+                $params['git_company']                                          =   trim($params['git_company']);
+            }
+
+            if (isset($params['flag_pdf']) && !empty($params['flag_pdf']))
+            {
+                $params['flag_pdf']                                             =   0;
             }
 
             $query                                                              =   $this->_trabajandofet_model->insert_data($params, 'git_worker_extensions');
@@ -564,7 +571,7 @@ class Extensions_model extends CI_Model
         exit();
     }
 
-        /**
+    /**
      * @author    Innovación y Tecnología
      * @copyright 2021 Fábrica de Desarrollo
      * @since     v2.0.1
@@ -576,16 +583,15 @@ class Extensions_model extends CI_Model
 
         if (isset($params['value']))
         {
-            $this->db->select('id_extension, ip_extension, name_area, git_worker_extensions.id_area, id_element1, id_element2, phone_extension, git_worker_extensions.git_company');
+            $this->db->select('id_extension, ip_extension, id_element1, id_element2, phone_extension, git_worker_extensions.git_company, flag_pdf');
             $this->db->select('CONCAT(gel1.serial_element, " - ", gel1.name_element) AS name_element1');
             $this->db->select('CONCAT(gel2.serial_element, " - ", gel2.name_element) AS name_element2');
             $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
             $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
             $this->db->join('git_elements AS gel1', 'git_worker_extensions.id_element1 = gel1.id_element', 'left');
             $this->db->join('git_elements AS gel2', 'git_worker_extensions.id_element2 = gel2.id_element', 'left');
-            $this->db->join('git_areas', 'git_worker_extensions.id_area = git_areas.id_area');
             $this->db->where('id_extension', $params['value']);
-            $this->db->where('git_worker_extensions.flag_drop', 0);
+            
 
             $query                                                              =   $this->db->get('git_worker_extensions');
 
@@ -645,13 +651,12 @@ class Extensions_model extends CI_Model
             } 
             else 
             {
-                $params['id_area']                                              =   $params['id_area'];
                 $params['git_company']                                          =   $params['git_company'] ?? 'T';
+                $params['flag_pdf']                                             =   $params['flag_pdf'] ?? 1;
                 $params['id_element1']                                          =   $params['id_element1'] ?? NULL;
                 $params['id_element2']                                          =   $params['id_element2'] ?? NULL;
                 $params['ip_extension']                                         =   $params['ip_extension'] ?: NULL;
                 $params['phone_extension']                                      =   $params['phone_extension'] ?: NULL;
-                $params['flag_pdf']                                             =   $params['flag_pdf'] ?? NULL;
             } 
 
             $params['id']                                                       =   $params['pk'];
@@ -724,38 +729,17 @@ class Extensions_model extends CI_Model
     * @param     arraay $param
     * @return    array $result
     **/
-    public function udrop($param) // Eliminar -> Revisado 20/08/2021
+    public function drop($param) // Eliminar -> Revisado 25/08/2021
     {
-        $data                                                                   =   array(
-            'id'                                                                        =>  $param['id_extension'],
-            'id_element1'                                                               =>  NULL,
-            'id_element2'                                                               =>  NULL,
-            'email_extension'                                                           =>  NULL,
-            'ip_extension'                                                              =>  NULL,
-            'phone_extension'                                                           =>  NULL,
-            'internal_extension'                                                        =>  NULL,
-            'external_extension'                                                        =>  NULL,
-            'flag_drop'                                                                 =>  1,
-            'user_update'                                                               =>  $this->session->userdata['id_user'],
-            'date_update'                                                               =>  date('Y-m-d H:i:s')
-                                                                                    );
-
         $result                                                                 =   array();
+        $query                                                                  =   $this->db->delete('git_worker_extensions', array('id_extension' => $param['id_extension']));
 
-        $answer                                                                 =   $this->_trabajandofet_model->update_data($data, 'id_extension', 'git_worker_extensions');
-
-        if ($answer)
+        if ($query) 
         {
-            $data_history                                                       =   $data;
-            $data_history['id_extension']                                       =   $data_history['id'];
-            unset($data_history['id']);
-
-            $this->_trabajandofet_model->insert_data($data_history, 'git_worker_extensions_history');
-
             $result['data']                                                     =   TRUE;
             $result['message']                                                  =   'Acción realizada con éxito!';
-        }
-        else
+        } 
+        else 
         {
             $result['data']                                                     =   FALSE;
             $result['message']                                                  =   'Problemas al eliminar la extensión.';
@@ -772,7 +756,7 @@ class Extensions_model extends CI_Model
     *@param     array $param
     *@return    array $result
     **/
-    public function trace_register($param) // Eliminar -> Revisado 20/08/2021
+    public function trace_register($param) // Eliminar -> Revisado 25/08/2021
     {
         $result                                                                 =   array();
 
@@ -806,25 +790,17 @@ class Extensions_model extends CI_Model
     * @param     string $search
     * @return    array $result
     **/
-    public function export_xlsx($search) // Eliminar -> Pendiente
+    public function export_xlsx($search) // Eliminar -> Revisado 27/08/2021 -> OK
     {
         $this->db->select('CONCAT(name_cv, " ", first_lcv, " ", second_lcv) AS worker_name');
         $this->db->select('number_dcv, name_area, internal_extension, external_extension, phone_extension, email_extension');
         $this->db->select('gel1.serial_element AS telephone_serial, gel1.name_element AS telephone_name');
         $this->db->select('gel2.serial_element AS cellphone_serial, gel2.name_element AS cellphone_name, ip_extension');
         $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
+        $this->db->join('git_areas', 'fet_workers.id_area = git_areas.id_area');
         $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
         $this->db->join('git_elements AS gel1', 'git_worker_extensions.id_element1 = gel1.id_element', 'left');
         $this->db->join('git_elements AS gel2', 'git_worker_extensions.id_element2 = gel2.id_element', 'left');
-        $this->db->join('git_areas', 'git_worker_extensions.id_area = git_areas.id_area');
-        $this->db->where('git_worker_extensions.flag_drop', 0);
-        // $this->db->where('git_worker_extensions.flag_drop', 0);
-        // $this->db->where('fu.id_user !=', $this->session->userdata['id_user']);
-
-        // if($this->session->userdata['id_role'] != "11")
-        // {
-        //     $this->db->where('fu.id_role !=', 11);
-        // }
 
         if (!empty($search))
         {
@@ -843,7 +819,7 @@ class Extensions_model extends CI_Model
             $this->db->or_like('gel2.name_element', $search);
             $this->db->group_end();
         }
-
+        
         $this->db->order_by('fet_cv.name_cv', 'ASC');
         $query                                                                  =   $this->db->get('git_worker_extensions');
 
@@ -865,142 +841,71 @@ class Extensions_model extends CI_Model
         exit();
     }
 
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fábrica de Desarrollo
     * @since     v2.0.1
     * @param     string $search
     * @return    array $result
     **/
-    public function export_pdf($search, $id, $multiple_pdf)
+    public function export_pdf() // Eliminar -> Revisado 27/08/2021 -> OK
     {
         $options                                                                =   array();
 
-        // if ($id) 
-        // {
-        //     $this->db->select('A.*');
-        //     $this->db->select('CONCAT(C.name_cv, " ", C.first_lcv, " ", C.second_lcv) AS name_worker, C.number_dcv');
-        //     $this->db->join('fet_workers B', 'B.id_worker = A.worker_insert', 'left');
-        //     $this->db->join('fet_cv C', 'C.id_cv = B.id_cv', 'left');
-        //     $this->db->where('A.id_biomechanical', $id);
+        $this->db->select('LOWER(CONCAT(name_cv, " ", first_lcv, " ", second_lcv)) AS worker_name');
+        $this->db->select('internal_extension, phone_extension, email_extension');
+        $this->db->select('LOWER(git_areas.name_area) AS worker_area');
+        $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
+        $this->db->join('git_areas', 'fet_workers.id_area = git_areas.id_area', 'left');
+        $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
+        $this->db->where('git_worker_extensions.flag_pdf', 0);
 
-        //     $query                                                              =   $this->db->get('fet_biomechanical_form A');
-        //     $options                                                            =   $query->result_array();
+        $query                                                                  =   $this->db->get('git_worker_extensions');
+        $options                                                                =   $query->result_array();
 
-        //     if (count($options) > 0) 
-        //     {
-        //         $html                                                           =   $this->template_pdf($options);
+        if (count($options) > 0)
+        {
+            $workers_by_area = [];
 
-        //         $mpdf                                                           =   new \Mpdf\Mpdf(array('mode' => 'utf-8', 'format' => 'Letter', 'margin_header' => 0, 'margin_footer' => 0));
-        //         $mpdf->showImageErrors                                          =   true;                
-
-        //         $mpdf->WriteHTML($html);
-        //         $mpdf->Output($options[0]['name_worker'] . ' CC ' . $options[0]['number_dcv'] . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-        //     }
-        // }
-        // else
-        // {
-            $this->db->select('CONCAT(name_cv, " ", first_lcv, " ", second_lcv) AS worker_name');
-            $this->db->select('number_dcv, name_area, internal_extension, external_extension, phone_extension, email_extension');
-            $this->db->select('gel1.serial_element AS telephone_serial, gel1.name_element AS telephone_name');
-            $this->db->select('gel2.serial_element AS cellphone_serial, gel2.name_element AS cellphone_name, ip_extension');
-            $this->db->join('fet_workers', 'git_worker_extensions.id_worker = fet_workers.id_worker');
-            $this->db->join('fet_cv', 'fet_workers.id_cv = fet_cv.id_cv');
-            $this->db->join('git_elements AS gel1', 'git_worker_extensions.id_element1 = gel1.id_element', 'left');
-            $this->db->join('git_elements AS gel2', 'git_worker_extensions.id_element2 = gel2.id_element', 'left');
-            $this->db->join('git_areas', 'git_worker_extensions.id_area = git_areas.id_area');
-            $this->db->where('git_worker_extensions.flag_drop', 0);
-            $this->db->where('git_worker_extensions.flag_drop', 0);
-
-            // if (isset($this->session->userdata['user_project']))
-            // {
-            //     $this->db->where('B.id_project', $this->session->userdata['user_project']);
-            // }
-            // else if (isset($this->session->userdata['user_company']))
-            // {
-            //     $this->db->where('git_companies.id_company', $this->session->userdata['user_company']);
-            // }
-
-
-            if (!empty($search))
+            foreach ($options as $key => $value) 
             {
-                // $this->db->group_start();
-                // $this->db->like('CONCAT(C.name_cv, " ", C.first_lcv, " ", C.second_lcv)', $search);
-                // $this->db->or_like('C.number_dcv', $search);
-                // $this->db->or_like('git_projects.name_project', $search);
-                // $this->db->or_like('git_companies.code_company', $search);            
-                // $this->db->group_end();
+                if (array_key_exists($value['worker_area'], $workers_by_area)) 
+                {
+                    array_push($workers_by_area[$value['worker_area']], $value);
+                } 
+                else 
+                {
+                    $workers_by_area[$value['worker_area']]                     =   [$value];
+                }
             }
 
-            $query                                                              =   $this->db->get('git_worker_extensions');
-            $options                                                            =   $query->result_array();
+            $html                                                               =   $this->template_pdf($workers_by_area);
 
-            // if (boolval($multiple_pdf)) 
-            // {
-            //     $zip                                                            =   new ZipArchive();
-            //     $file_name                                                      =   'TRABAJANDOFET - ENCUESTA OSTEOMUSCULAR_' . date('dmY') . '.zip';
-            //     $zip_file                                                       =   tempnam('/tmp', 'zip');
+            $mpdf                                                               =   new \Mpdf\Mpdf(array('mode' => 'utf-8', 'format' => 'Letter', 'margin_header' => 0, 'margin_footer' => 0));
+            $mpdf->showImageErrors                                              =   true;
+    
+            $mpdf->WriteHTML($html);
+            $mpdf->Output('TRABAJANDOFET - DIRECTORIO_' . date('dmY') . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
+        }
+        else
+        {
+            return FALSE;
+            exit();
+        }
 
-            //     $zip->open($zip_file, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
-
-            //     foreach ($options as $key => $option) 
-            //     {
-            //         $html                                                       =   $this->template_pdf(array($option));
-
-            //         $mpdf                                                       =   new \Mpdf\Mpdf(array('mode' => 'utf-8', 'format' => 'Letter', 'margin_header' => 0, 'margin_footer' => 0));
-
-            //         $mpdf->WriteHTML($html);
-            //         $pdf_data                                                   =   $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
-
-            //         $zip->addFromString($option['name_worker'] . ' CC ' . $option['number_dcv'] . '.pdf', $pdf_data);
-            //     }
-
-            //     $zip->close();
-
-            //     header("Content-Type: application/pdf");
-            //     header("Content-Disposition: attachment;filename=$file_name");
-            //     header("Cache-Control: max-age=0");
-            //     header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-            //     header("Last-Modified: " . gmdate('D, d M Y H:i:s') . " GMT");
-            //     header("Cache-Control: cache, must-revalidate");
-            //     header("Pragma: public");
-
-            //     readfile($zip_file);
-            //     unlink($zip_file);
-            // }
-            // else
-            // {
-                $html                                                           =   $this->template_pdf($options);
-
-                $mpdf                                                           =   new \Mpdf\Mpdf(array('mode' => 'utf-8', 'format' => 'Letter', 'margin_header' => 0, 'margin_footer' => 0));
-                $mpdf->showImageErrors                                          =   true;                
-
-                $mpdf->WriteHTML($html);
-                $mpdf->Output('TRABAJANDOFET - DIRECTORIO_' . date('dmY') . '.pdf', \Mpdf\Output\Destination::DOWNLOAD);
-            // }
-        // }
-
-        return true;
+        return TRUE;
         exit();
     }
 
-
-    public function template_pdf($options)
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fábrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $workers_by_area
+    * @return    string $html
+    **/
+    public function template_pdf($workers_by_area) // Eliminar -> Revisado 27/07/2021 -> OK
     {
-        $workers_by_area = [];
-
-        foreach ($options as $key => $value)
-        {
-            if (array_key_exists($value['name_area'], $workers_by_area))
-            {
-                array_push($workers_by_area[$value['name_area']], $value);
-            }
-            else
-            {
-                $workers_by_area[$value['name_area']] = [$value];
-            }
-        }
-
         $html = '<!DOCTYPE html>
         <html lang="es">
         <head>
@@ -1014,133 +919,121 @@ class Extensions_model extends CI_Model
                 body {
                     -webkit-print-color-adjust: exact;
                     color-adjust: exact;
-                }
-
-                .banner {
-                    margin-bottom: 15px;
-                    text-align: center;
-                }
-
-                .phone-book {
-                    width: 683px;
-                    margin: 0 auto;
-                }
-
-                .table-container {
-                    width: 100%;
                     font-family: sans-serif;
-                    font-size: 12px;
                 }
 
-                .table-container-row {
-                    padding-left: 7.5px;
-                    padding-right: 7.5px;
-                    width: 50%;
+                .header {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin-bottom: 20px;
+                }
+
+                .header-logo {
+                    width: 12%;
+                    border: 0;
+                    background-color: white;
+                }
+
+                .logo {
+                  width: 120px;
+                }
+
+                .title {
+                    background-color: #004f9f;
+                    color: white;
+                    border-top-right-radius: 30px;
+                    font-weight: bold;
+                    font-size: 30px;
+                    text-transform: uppercase;
+                    text-align: center;
                 }
 
                 .table-area {
                     width: 100%;
                     border-collapse: collapse;
+                    border-spacing: 0;
                     border: 3px solid #004f9f;
-                    margin-bottom: 15px;
+                    font-size: 12px;
                 }
 
                 .table-area-row {
                     background-color: #004f9f;
                 }
 
-                .table-area-name {
+                .table-area-left {
                     border: 1px solid #004f9f;
                     padding: 4px;
                 }
 
-                .table-area-extension {
+                .table-area-center {
                     border: 1px solid #004f9f;
                     padding: 4px;
                     text-align: center;
                 }
 
-                .text-spacing {
+                .table-header {
                     color: white;
                     font-style: italic;
                     padding: 6px;
-                    text-transform: uppercase;
+                    text-transform: capitalize;
+                }
+
+                .text-capitalize {
+                    text-transform: capitalize !important;
+                  }
+
+                .header-area {
+                    width: 40%;
+                }
+
+                .header-phone {
+                    width: 20%;
+                }
+
+                .header-extension {
+                    width: 10%;
+                }
+
+                .header-email {
+                    width: 30%;
                 }
             </style>
         </head>
         <body>';
 
-        $html .= '<div class="banner">
-                    <img src="resources/img/header.png" alt="Directorio Teléfonico" class="phone-book">
-                    </div>
+        $html .= '<table class="header">
+                    <tr style="border-top-right-radius: 30px;">
+                        <td class="header-logo"><img src="resources/img/logo_fet.png" alt="Directorio Teléfonico" class="logo"></td>
+                        <td class="title">Directorio FET 2021</td>
+                    </tr>
+                </table>';
 
-                    <table class="table-container">
-                    <tbody>
-                    <tr>';
+        foreach ($workers_by_area as $key => $value) {
+            $html .= "<table class='table-area'>
+                        <thead>
+                            <tr class='table-area-row'>
+                                <th class='table-header header-area text-capitalize'>{$key}</th>
+                                <th class='table-header header-phone'>Línea Corporativa</th>
+                                <th class='table-header header-extension'>EXT</th>
+                                <th class='table-header header-email'>Correo Corporativo</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
 
-        $first_column  = "<td class='table-container-row'>";
-        $second_column = "<td class='table-container-row'>";
-        $count = 0;
-
-        foreach ($workers_by_area as $key => $value) 
-        {
-            if ($count % 2 == 0)
-            {
-                $first_column .= "<table class='table-area'>
-                                    <thead>
-                                            <tr class='table-area-row'>
-                                            <th class='text-spacing'>{$key}</th>
-                                            <th class='text-spacing'>Ext</th>
-                                        </tr>
-                                    </thead>
-                                <tbody>";
-
-                foreach ($value as $name => $content)
-                {
-                    $first_column .= "<tr>
-                                        <td class='table-area-name'>{$content['worker_name']}</td>
-                                        <td class='table-area-extension'>{$content['internal_extension']}</td>
-                                    </tr>";
-                }
-
-                $first_column .= "</tbody>
-                                </table>";
+            foreach ($value as $name => $content) {
+                $html .= "<tr>
+                            <td class='table-area-left text-capitalize'>{$content['worker_name']}</td>
+                            <td class='table-area-center'>{$content['phone_extension']}</td>
+                            <td class='table-area-center'>{$content['internal_extension']}</td>
+                            <td class='table-area-left'>{$content['email_extension']}</td>
+                        </tr>";
             }
-            else
-            {
-                $second_column .= "<table class='table-area'>
-                                        <thead>
-                                            <tr class='table-area-row'>
-                                                <th class='text-spacing'>{$key}</th>
-                                                <th class='text-spacing'>Ext</th>
-                                            </tr>
-                                        </thead>
-                                    <tbody>";
-
-                foreach ($value as $name => $content)
-                {
-                    $second_column .= "<tr>
-                                            <td class='table-area-name'>{$content['worker_name']}</td>
-                                            <td class='table-area-extension'>{$content['internal_extension']}</td>
-                                        </tr>";
-                }
-
-                $second_column .= "</tbody>
-                                 </table>";
-            }
-            $count++;
+            $html .= "</tbody>
+                    </table>";
         }
 
-        $first_column .= "</td>";
-        $html .= $first_column;
-        $second_column .= "</td>";
-        $html .= $second_column;
-
-        $html .= "</tr>
-                        </tbody>
-                    </table>
-                </body>
-            </html>";
+        $html .= "</body>
+                </html>";
 
         return $html;
         exit();

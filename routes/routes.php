@@ -291,13 +291,13 @@ $route['extensions/detail']                                                     
 
 $route['extensions/userflags']                                                  =   'extensions_controller/user_flags';
 
-$route['extensions/udrop']                                                      =   'extensions_controller/udrop';
+$route['extensions/drop']                                                       =   'extensions_controller/drop';
 
 $route['extensions/trace']                                                      =   'extensions_controller/trace';
 
 $route['extensions/workers']                                                    =   'extensions_controller/workers';
 
-$route['extensions/areas']                                                      =   'extensions_controller/areas';
+$route['extensions/directory']                                                      =   'extensions_controller/directory';
 
 $route['extensions/telephones']                                                 =   'extensions_controller/telephones';
 
@@ -305,4 +305,4 @@ $route['extensions/cellphones']                                                 
 
 $route['extensions/exportxlsx']                                                 =   'extensions_controller/export_xlsx';
 
-$route['extensions/exportpdf']                                                 =   'extensions_controller/export_pdf';
+$route['extensions/exportpdf']                                                  =   'extensions_controller/export_pdf';

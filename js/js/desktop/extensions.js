@@ -1,4 +1,75 @@
 $(function ($) {
+  // Show Directory
+  var directory = function () {
+    return $.ajax({
+      url: $path_directory,
+      type: "POST",
+      dataType: "json",
+      beforeSend: function () {
+        $("#loading").removeClass("d-none");
+      },
+      success: function ({ data, message }) {
+        $("#dir-container").children("[data-tag='dir-remove']").empty();
+        $("#dir-banner-container").addClass("d-none-force");
+
+        if (data) {
+          $("#view_directory").children("[data-tag='dir-remove']").remove();
+          $("#dir-banner-container").addClass("d-none-force");
+
+          count = 0;
+          $.each(data, function (index, value) {
+            table = `<table class='table mb-0 tx-12 dir-outer-border fit-content'>
+                   <thead>
+                     <tr class='dir-background '>
+                       <th class='text-white wd-40p pd-6 tx-center tx-uppercase tx-ubuntu-italic text-capitalize valign-middle'>${index}</th>
+                       <th class='text-white wd-20p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>Línea Corporativa</th>
+                       <th class='text-white wd-10p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>EXT</th>
+                       <th class='text-white wd-30p pd-6 tx-center tx-uppercase tx-ubuntu-italic valign-middle'>Correo Corporativo</th>
+                     </tr>
+                   </thead>
+                 <tbody>`;
+
+            $.each(value, function (name, content) {
+              table += `<tr>
+                       <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 text-capitalize'>${
+                         content.worker_name ?? ""
+                       }</td>
+                       <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 tx-center'>${
+                         content.phone_extension ?? ""
+                       }</td>
+                       <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4 tx-center'>${
+                         content.internal_extension ?? ""
+                       }</td>
+                       <td class='dir-inner-border tx-ubuntu-medium tx-color-black pd-4'>${
+                         content.email_extension ?? ""
+                       }</td>
+                     </tr>`;
+            });
+
+            table += `</tbody>
+               </table>`;
+
+            if (count % 2 === 0) {
+              $("#dir-first-column").append(table);
+            } else {
+              $("#dir-second-column").append(table);
+            }
+
+            count++;
+          });
+
+          $("#dir-banner-container").removeClass("d-none-force");
+        } else {
+          $("#dir-empty-error").append(`<p class="tx-center">${message}</p>`);
+        }
+
+        $("#loading").addClass("d-none");
+      },
+    });
+  };
+
+  directory();
+
   //BUILD - DESKTOP
   $.fn.editable.defaults.mode = "inline";
 
@@ -21,7 +92,7 @@ $(function ($) {
         data: "id_worker",
         render: function (data, type, row) {
           return `
-            <span data-placement="top" data-title="${row.name_area}" class="mr-1"><i class="fas fa-university"></i></span>
+            <span data-placement="top" data-title="${row.worker_area}" class="mr-1"><i class="fas fa-university"></i></span>
             <span data-type='select2' data-name='id_worker' class="border-bottom-0" data-pk='${row.id_extension}' data-url='${$path_edit}' data-value='${data}'>${data}</span>
             `;
         },
@@ -38,7 +109,11 @@ $(function ($) {
         data: "internal_extension",
         render: function (data, type, row) {
           return `
-          <span data-name="internal_extension" class="border-bottom-0" data-type='number' data-pk="${row.id_extension}" data-url="${$path_edit}" data-title="${row.ip_extension ?? "No hay IP registrada"}">
+          <span data-name="internal_extension" class="border-bottom-0" data-type='number' data-pk="${
+            row.id_extension
+          }" data-url="${$path_edit}" data-title="${
+            row.ip_extension ?? "No hay IP registrada"
+          }">
             ${data}
           </span>
           `;
@@ -49,7 +124,11 @@ $(function ($) {
         data: "external_extension",
         render: function (data, type, row) {
           return `
-          <span data-name="external_extension" class="border-bottom-0" data-type='number' data-pk="${row.id_extension}" data-url="${$path_edit}" data-title="${row.ip_extension ?? "No hay IP registrada"}">
+          <span data-name="external_extension" class="border-bottom-0" data-type='number' data-pk="${
+            row.id_extension
+          }" data-url="${$path_edit}" data-title="${
+            row.ip_extension ?? "No hay IP registrada"
+          }">
             ${data}
           </span>`;
         },
@@ -96,7 +175,7 @@ $(function ($) {
       var inputSearch = $(".dataTables_filter input").val();
 
       $("body").tooltip({
-        selector: "[data-title]",
+        selector: "[data-toggle]",
       });
 
       if (rows.length == 0) {
@@ -116,6 +195,28 @@ $(function ($) {
           $("#btn_export_pdf").attr("href", $path_export_pdf);
           $("#btn_export_xlsx").attr("href", $path_export_xlsx);
         }
+      }
+
+      if (act_add) {
+        $("#btn_view_table").attr("href", "#");
+
+        $("#btn_view_table").unbind("click");
+
+        $("#btn_view_table").on("click", function () {
+          directory();
+
+          if ($("#view_directory").hasClass("d-none")) {
+            $("#view_directory").removeClass("d-none");
+            $("#view_table").addClass("d-none");
+            $("#view_form_edit").addClass("d-none");
+            $("#view_form_add").addClass("d-none");
+          } else {
+            $("#view_directory").addClass("d-none");
+            $("#view_table").removeClass("d-none");
+            $("#view_form_edit").addClass("d-none");
+            $("#view_form_add").addClass("d-none");
+          }
+        });
       }
 
       if (act_edit) {
@@ -266,12 +367,6 @@ $(function ($) {
         minlength: 1,
         maxlength: 11,
       },
-      id_area: {
-        required: true,
-        digits: true,
-        minlength: 1,
-        maxlength: 11,
-      },
       id_element1: {
         digits: true,
         maxlength: 11,
@@ -313,9 +408,6 @@ $(function ($) {
       id_worker: {
         required: "Por favor selecciona el trabajador",
       },
-      id_area: {
-        required: "Por favor selecciona el área.",
-      },
       email_extension: {
         required: "Por favor ingresa el correo electrónico.",
         minlength: "Mínimo se permiten 3 caracteres",
@@ -343,7 +435,7 @@ $(function ($) {
     errorPlacement: function (error, element) {
       error.addClass("invalid-feedback");
 
-      var selects = ["id_worker", "id_area", "id_element1", "id_element2"];
+      var selects = ["id_worker", "id_element1", "id_element2"];
 
       if (selects.includes(element.prop("name"))) {
         error.insertAfter(element.next(".select2-container"));
@@ -355,12 +447,6 @@ $(function ($) {
 
   var validate_edit = $("#form_edit").validate({
     rules: {
-      id_area: {
-        required: true,
-        digits: true,
-        minlength: 1,
-        maxlength: 11,
-      },
       id_element1: {
         digits: true,
         maxlength: 11,
@@ -383,9 +469,6 @@ $(function ($) {
       },
     },
     messages: {
-      id_area: {
-        required: "Por favor selecciona el área.",
-      },
       phone_extension: {
         digits: "Solo se permiten números.",
         minlength: "Mínimo se permiten 7 caracteres.",
@@ -398,7 +481,7 @@ $(function ($) {
     errorPlacement: function (error, element) {
       error.addClass("invalid-feedback");
 
-      var selects = ["id_worker", "id_area", "id_element1", "id_element2"];
+      var selects = ["id_worker", "id_element1", "id_element2"];
 
       if (selects.includes(element.prop("name"))) {
         error.insertAfter(element.next(".select2-container"));
@@ -417,46 +500,6 @@ $(function ($) {
       allowClear: true,
       ajax: {
         url: $path_workers,
-        dataType: "json",
-        delay: 250,
-        data: function (params) {
-          return {
-            q: params.term,
-            page: params.page || 1,
-          };
-        },
-        processResults: function (data, params) {
-          var page = params.page || 1;
-          return {
-            results: $.map(data.items, function (item) {
-              return {
-                id: item.id,
-                text: item.text,
-              };
-            }),
-            pagination: {
-              more: page * 10 <= data.total_count,
-            },
-          };
-        },
-      },
-      escapeMarkup: function (markup) {
-        return markup;
-      },
-    })
-    .on("change", function (e) {
-      $(this).valid();
-    });
-
-  $("select[name='id_area']")
-    .select2({
-      theme: "bootstrap4",
-      width: "100%",
-      language: "es",
-      placeholder: "Selecciona el área",
-      allowClear: true,
-      ajax: {
-        url: $path_areas,
         dataType: "json",
         delay: 250,
         data: function (params) {
@@ -572,9 +615,9 @@ $(function ($) {
 
   $("#btn_add").on("click", function () {
     $("#view_table").addClass("d-none");
+    $("#view_directory").addClass("d-none");
     $("#view_form_add").removeClass("d-none");
     $("#id_worker").empty().trigger("change");
-    $("#id_area").empty().trigger("change");
     $("#id_element1").empty().trigger("change");
     $("#id_element2").empty().trigger("change");
     validate.resetForm();
@@ -602,8 +645,6 @@ $(function ($) {
     $("#view_table").removeClass("d-none");
     $("#id_worker").empty().trigger("change");
     $("#id_worker").val(null).trigger("change");
-    $("#id_area").empty().trigger("change");
-    $("#id_area").val(null).trigger("change");
     $("#id_element1").empty().trigger("change");
     $("#id_element1").val(null).trigger("change");
     $("#id_element2").empty().trigger("change");
@@ -617,8 +658,6 @@ $(function ($) {
     $("#view_form_edit").removeClass("d-none");
     validate_edit.resetForm();
     $("#form_edit")[0].reset();
-    $("#id_area_edit").empty().trigger("change");
-    $("#id_area_edit").val(null).trigger("change");
     $("#id_element1_edit").empty().trigger("change");
     $("#id_element1_edit").val(null).trigger("change");
     $("#id_element2_edit").empty().trigger("change");
@@ -650,12 +689,6 @@ $(function ($) {
           data.ip_extension
         );
 
-        $('#form_edit select[name="id_area"]').val(data.id_area);
-        var id_area = new Option(data.name_area, data.id_area, true, true);
-        $('#form_edit select[name="id_area"]')
-          .append(id_area)
-          .trigger("change");
-
         if (data.id_element1) {
           $('#form_edit select[name="id_element1"]').val(data.id_element1);
           var id_element1 = new Option(
@@ -685,6 +718,11 @@ $(function ($) {
         if (data.git_company === "A") {
           $("#git_company_edit").prop("checked", true);
         }
+
+        if (data.flag_pdf === "0") {
+          $("#flag_pdf_edit").prop("checked", true);
+        }
+
         $("#loading").addClass("d-none");
       },
     });

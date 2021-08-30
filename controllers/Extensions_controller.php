@@ -70,7 +70,7 @@ class Extensions_controller extends CI_Controller
             $this->_view->assign('act_view',                                    in_array('VIEW', $this->actions));
             $this->_view->assign('act_add',                                     in_array('ADD', $this->actions));
             $this->_view->assign('act_edit',                                    in_array('EDIT', $this->actions));
-            $this->_view->assign('act_drop',                                    in_array('UDROP', $this->actions));
+            $this->_view->assign('act_drop',                                    in_array('DROP', $this->actions));
             $this->_view->assign('act_trace',                                   in_array('TRACE', $this->actions));
             $this->_view->assign('act_export_xlsx',                             in_array('EXPORTXLSX', $this->actions));
             $this->_view->assign('act_export_pdf',                              in_array('EXPORTPDF', $this->actions));
@@ -82,14 +82,16 @@ class Extensions_controller extends CI_Controller
             $this->_view->assign('path_edit',                                   site_url('extensions/edit'));
             $this->_view->assign('path_detail',                                 site_url('extensions/detail'));
             $this->_view->assign('path_userflags',                              site_url('extensions/userflags'));
-            $this->_view->assign('path_drop',                                   site_url('extensions/udrop'));
+            $this->_view->assign('path_drop',                                   site_url('extensions/drop'));
             $this->_view->assign('path_trace',                                  site_url('extensions/trace'));
             $this->_view->assign('path_workers',                                site_url('extensions/workers'));
-            $this->_view->assign('path_areas',                                  site_url('extensions/areas'));
+            $this->_view->assign('path_directory',                              site_url('extensions/directory'));
             $this->_view->assign('path_telephones',                             site_url('extensions/telephones'));
             $this->_view->assign('path_cellphones',                             site_url('extensions/cellphones'));
             $this->_view->assign('path_export_xlsx',                            site_url('extensions/exportxlsx'));
             $this->_view->assign('path_export_pdf',                             site_url('extensions/exportpdf'));
+
+            $this->_view->assign('current_year',                                date('Y'));
 
             $this->_view->display('admin/extensions.tpl');
         }
@@ -388,17 +390,17 @@ class Extensions_controller extends CI_Controller
     * @param     array $param
     * @return    json array
     **/
-    public function udrop() // Eliminar -> Revisado
+    public function drop() // Eliminar -> Revisado
     {
-        if(in_array('UDROP', $this->actions))
+        if(in_array('DROP', $this->actions))
         {
             $param                                                              =   $this->security->xss_clean($_POST);
 
             if ($param)
             {
-                $udrop                                                          =   $this->_extensions_model->udrop($param);
+                $drop                                                          =   $this->_extensions_model->drop($param);
 
-                echo json_encode($udrop);
+                echo json_encode($drop);
                 exit();
             }
             else
@@ -429,8 +431,39 @@ class Extensions_controller extends CI_Controller
             exit();
         }
     }
+
+    /**
+    * @author    Innovación y Tecnología
+    * @copyright 2021 Fabrica de Desarrollo
+    * @since     v2.0.1
+    * @param     array $param
+    * @return    json array
+    **/
+    public function directory()
+    {
+        if (in_array('VIEW', $this->actions))
+        {
+            $directory                                                          =   $this->_extensions_model->directory();
+
+            echo json_encode($directory);
+            exit();
+        } 
+        else
+        {
+            if ($this->input->method(TRUE) == 'GET')
+            {
+                header("Location: " . site_url('extensions'));
+            }
+            else
+            {
+                echo json_encode(array('data'=> FALSE, 'message' => 'No cuentas con los permisos necesarios para ejecutar esta solicitud.'));
+            }
+
+            exit();
+        }
+    }
     
-        /**
+    /**
     * @author    Innovación y Tecnología
     * @copyright 2021 Fabrica de Desarrollo
     * @since     v2.0.1

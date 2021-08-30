@@ -5505,6 +5505,10 @@ a.bg-red:focus, a.bg-red:hover {
   justify-content: space-around !important;
 }
 
+.justify-content-evenly {
+  justify-content: space-evenly !important;
+}
+
 .align-items-start {
   align-items: flex-start !important;
 }
@@ -6169,6 +6173,10 @@ a.bg-red:focus, a.bg-red:hover {
 
 .w-100 {
   width: 100% !important;
+}
+
+.fit-content {
+  height: fit-content;
 }
 
 .h-25 {
@@ -16961,6 +16969,11 @@ textarea.parsley-success:focus {
 .mx-ht-100p {
   max-height: 100%;
 }
+
+.mx-ht-100v {
+  max-height: 100vh;
+}
+
 
 .mn-ht-100p {
   min-height: 100%;
@@ -48655,7 +48668,16 @@ a.hover-white-8:hover, a.hover-white-8:focus {
 }
 
 .tx-ubuntu {
-  font-family: "ubuntu";
+  font-family: "ubunturegular";
+}
+
+.tx-ubuntu-medium {
+  font-family: "ubuntumedium"
+}
+
+
+.tx-ubuntu-bold {
+  font-family: "ubuntubold"
 }
 
 .tx-ubuntu-italic {
@@ -48668,6 +48690,10 @@ a.hover-white-8:hover, a.hover-white-8:focus {
 
 .tx-white {
   color: #fff !important;
+}
+
+.tx-color-black {
+  color: #000;
 }
 
 .tx-black {
@@ -53149,6 +53175,10 @@ a.hover-white-8:hover, a.hover-white-8:focus {
   min-width: 10% !important;
 }
 
+.wd-12p {
+  width: 12%;
+}
+
 .wd-15 {
   width: 15px;
 }
@@ -53735,6 +53765,10 @@ a.hover-white-8:hover, a.hover-white-8:focus {
 
 .mn-wd-100p-force {
   min-width: 100% !important;
+}
+
+.wd-120 {
+  width: 120px;
 }
 
 .wd-150 {
@@ -57069,6 +57103,10 @@ a.hover-white-8:hover, a.hover-white-8:focus {
     min-width: 100% !important;
   }
 
+  .wd-md-120 {
+    width: 120px;
+  }
+
   .wd-md-150 {
     width: 150px;
   }
@@ -58296,6 +58334,10 @@ a.hover-white-8:hover, a.hover-white-8:focus {
 
   .mn-wd-lg-100p-force {
     min-width: 100% !important;
+  }
+
+  .wd-lg-120 {
+    width: 120px;
   }
 
   .wd-lg-150 {
@@ -61497,4 +61539,46 @@ button.drop-cv {
 
 .div-news {
   padding-bottom: 55px;
+}
+
+/* Directory */
+
+.dir-outer-border {
+  border: 1px solid #004f9f;
+  border-collapse: collapse;
+}
+
+.dir-inner-border {
+  border: 1px solid #004f9f;
+}
+
+.dir-background {
+  background-color: #004f9f;
+}
+
+.dir-banner {
+  display: flex;
+  width:  100%;
+  background-color: #004f9f;
+  flex-direction: row;
+  margin: 0 .5rem 15px;
+  border-top-right-radius: 35px;
+}
+
+.dir-title {
+  font-family: ubuntubold;
+  color: white;
+  font-size: calc(.7rem + 1vw);
+  text-transform: uppercase;
+  width: 100%;
+  align-self: center;
+  text-align: center;
+}
+
+.grow-1 {
+  flex-grow: 1;
+}
+
+.break-word {
+  word-break: break-word;
 }

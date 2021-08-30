@@ -19,31 +19,49 @@
                         data-placement="top" title="Expandir">
                         <i class="fas fa-expand-arrows-alt"></i>
                     </button>
+                    {if $act_export_pdf}
+                        <a id="btn_export_pdf" class="btn btn-primary ft-right ml-1" data-toggle="tooltip" data-placement="top"
+                            title="Exportar PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </a>
+                    {/if}
+                    {if $act_export_xlsx}
+                        <a id="btn_export_xlsx" class="btn btn-primary ft-right ml-1" data-toggle="tooltip" data-placement="top"
+                            title="Exportar">
+                            <i class="fas fa-file-excel"></i>
+                        </a>
+                    {/if}
+                    {if $act_add}
+                        <a id="btn_view_table" class="btn btn-primary ft-right ml-1" data-toggle="tooltip" data-placement="top"
+                            title="Ver Tabla/Directorio">
+                            <i class="fas fa-table"></i>
+                        </a>
+                        <button type="button" id="btn_add" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
+                            data-placement="top" title="Agregar">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    {/if}
                 </div>
-                <div id="view_table">
-                    <div class="ft-right">
-                        {if $act_export_pdf}
-                            <a id="btn_export_pdf" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
-                                data-placement="top" title="Exportar PDF">
-                                <i class="fas fa-file-pdf"></i>
-                            </a>
-                        {/if}
-                        {if $act_export_xlsx}
-                            <a id="btn_export_xlsx" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
-                                data-placement="top" title="Exportar">
-                                <i class="fas fa-file-excel"></i>
-                            </a>
-                        {/if}
-                        {if $act_add}
-                            <button type="button" id="btn_add" class="btn btn-primary ft-right ml-1" data-toggle="tooltip"
-                                data-placement="top" title="Agregar">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        {/if}
+                {if $act_view}
+                    <div id="view_directory" class="mg-t-60">
+                        <div id="dir-container" class="d-flex flex-wrap flex-row justify-content-evenly">
+                            <div id="dir-banner-container" class="dir-banner d-none-force">
+                                <img src='{$RESOURCES}/img/logo_fet.png' alt='Directorio Teléfonico' class='d-flex wd-md-120 wd-70'>
+                                <span class="dir-title">Directorio FET {$current_year}</span>
+                            </div>
+                            <div id="dir-first-column" data-tag="dir-remove" class="d-flex flex-column grow-1 ml-2 mr-2 mx-wd-xl-50p mx-wd-md-100p">
+                            </div>
+                            <div id="dir-second-column" data-tag="dir-remove" class="d-flex flex-column grow-1 ml-2 mr-2 mx-wd-xl-50p mx-wd-md-100p">
+                            </div>
+                            <div id="dir-empty-error" class="wd-100p" data-tag="dir-remove">
+                            </div>
+                        </div>
                     </div>
+                {/if}
+                <div id="view_table" class="d-none">
                     {if $mobile}<br /><br /><br />{/if}
                     <div class="table-wrapper">
-                        {if $act_view}
+                        {if $act_add}
                             <table id="default_table" class="table table-hover tb-responsive wd-100p-force text-center">
                                 <thead>
                                     <tr>
@@ -143,15 +161,16 @@
                                             <label class="ckbox">
                                                 <input class="flags" type="checkbox" id="git_company" name="git_company"
                                                     value="A">
-                                                <span>¿El registro es multiplataforma?</span>
+                                                <span>Registro multiplataforma</span>
                                             </label>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="ckbox">
-                                                <input class="flags" type="checkbox" id="flag_pdf" name="flag_pdf" value="0">
-                                                <span>Mostrar en el directorio PDF</span>
+                                                <input class="flags" type="checkbox" id="flag_pdf" name="flag_pdf"
+                                                    value="checked">
+                                                <span>Mostrar en el directorio FET</span>
                                             </label>
                                         </div>
                                     </div>
@@ -217,8 +236,9 @@
                                     <div class="col-lg-12">
                                         <div class="form-group pos-relative">
                                             <label class="ckbox">
-                                                <input class="flags" type="checkbox" id="flag_pdf_edit" name="flag_pdf" value="0">
-                                                <span>Mostrar en el directorio PDF</span>
+                                                <input class="flags" type="checkbox" id="flag_pdf_edit" name="flag_pdf"
+                                                    value="0">
+                                                <span>Mostrar en el directorio FET</span>
                                             </label>
                                         </div>
                                     </div>
@@ -308,7 +328,7 @@
         var $path_drop                                                          =   '{$path_drop}';
         var $path_trace                                                         =   '{$path_trace}';
         var $path_workers                                                       =   '{$path_workers}';
-        var $path_areas                                                         =   '{$path_areas}';
+        var $path_directory                                                     =   '{$path_directory}';
         var $path_telephones                                                    =   '{$path_telephones}';
         var $path_cellphones                                                    =   '{$path_cellphones}';
         var $path_export_xlsx                                                   =   '{$path_export_xlsx}';
@@ -321,6 +341,8 @@
         var act_trace                                                           =   '{$act_trace}';
         var act_export_xlsx                                                     =   '{$act_export_xlsx}';
         var act_export_pdf                                                      =   '{$act_export_pdf}';
+
+        var $mobile                                                             =   '{$mobile}';
     </script>
     {if $mobile}
         <script src="{$RESOURCES}js/mobile/extensions.js"></script>
